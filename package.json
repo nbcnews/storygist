@@ -9,11 +9,13 @@
     "dev": "gulp watch",
     "build": "gulp",
     "style-lint": "stylelint 'src/**/*.scss'",
+    "script-lint": "standard --verbose",
     "lint-staged": "lint-staged",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "lint-staged": {
-    "*.scss": "style-lint"
+    "*.scss": "style-lint",
+    "*.js": "script-lint"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,11 @@
   },
   "stylelint": {
     "extends": "stylelint-config-standard"
+  },
+  "standard": {
+    "ignore": [
+      "dist/**"
+    ]
   },
   "homepage": "https://github.com/nbcnews/storygist#readme",
   "devDependencies": {
@@ -40,6 +47,7 @@
     "open": "0.0.5",
     "pre-commit": "^1.2.2",
     "serve-index": "^1.8.0",
+    "standard": "^10.0.2",
     "stylelint": "^7.10.1",
     "stylelint-config-standard": "^16.0.0"
   }
