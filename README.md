@@ -6,7 +6,7 @@ Storygist takes in an element and searches for bits of content (p, h2, blockquot
 
 To begin, you need a story which is made up of a series of elements. Your stories probably look like this already.
 
-```
+```html
 <body>
   <div id="content">
   <h1>This is my story</h1>
