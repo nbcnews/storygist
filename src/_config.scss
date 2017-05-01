@@ -1,0 +1,46 @@
+//==============================================================================
+// Story Gist Config Variables
+//==============================================================================
+// The config variables have default values that are just looking to be adjusted.
+// Use this variables to customize your Gist. Or take the whole thing
+// apart if you want :)
+
+// Text Settings
+$beat-onboard-font-size: 13.6px !default;
+$beat-onboard-font-ui-size: 14px !default;
+$gist-font-primary: serif !default;
+$gist-font-secondary: sans-serif !default;
+$gist-rotate-copy: 'Please Rotate Your Device ↺' !default;
+$beat-pullquote-font-size: 1.25em !default;
+
+// Color Settings
+$beat-background: #fff !default;
+$beat-onboard-background: rgba(0, 0, 0, 0.8) !default;
+$beat-last-background: #000 !default;
+$beat-active-body-background: #000 !default;
+$beat-share-icon-color: #fff !default;
+$beat-onboard-text-color: #fff !default;
+$beat-last-text-color: $beat-onboard-text-color !default;
+
+$gist-progress-bar-color: #737373 !default;
+$gist-progress-bar-background: #f0f0f0 !default;
+
+$gist-rotate-text-color: #fff !default;
+$gist-rotate-warning-backgorund: #000 !default;
+
+$gist-border-color: #bdbdbd !default;
+
+// Layout Settings
+$beat-gutter: 18px !default;
+$beat-element-max-width: 640px !default;
+$gist-view-story-cta-index: 999 !default;
+$gist-rotate-warning-min-width: 320px !default;
+$gist-rotate-warning-max-width: 767px !default;
+$gist-roate-warning-orientation: landscape !default;
+$beat-last-alignment: center !default;
+$gist-share-icon-size: 18px !default;
+$gist-progress-bar-height: 6px / 2;
+$gist-onboard-index: 99999 !default;
+$gist-body-index: 99 !default;
+$gist-progress-index: 19 !default;
+$gist-rotate-warning-index: 999999 !default;

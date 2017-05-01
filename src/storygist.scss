@@ -1,0 +1,214 @@
+@import "config";
+
+#gist-body {
+  position: relative;
+  z-index: $gist-body-index;
+
+  [data-sg]:first-of-type {
+    width: 100%; // Position absolute header fix
+  }
+}
+
+body.gist-active {
+  padding: 0;
+  background-color: $beat-active-body-background;
+
+  @media screen and (min-width: $gist-rotate-warning-min-width) and (max-width: $gist-rotate-warning-max-width) and (orientation: $gist-roate-warning-orientation) {
+    &::before {
+      content: $gist-rotate-copy;
+      position: fixed;
+      z-index: $gist-rotate-warning-index;
+      width: 100vw;
+      height: 100vh;
+      background-color: $gist-rotate-warning-backgorund;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $gist-rotate-text-color;
+      font-family: $gist-font-secondary;
+    }
+  }
+}
+
+#gist-progress {
+  position: absolute;
+  width: 100%;
+  top: 3px;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background-color: $gist-progress-bar-background;
+  height: $gist-progress-bar-height;
+  z-index: $gist-progress-index;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+#gist-view-story {
+  position: fixed;
+  bottom: $beat-gutter;
+  z-index: $gist-view-story-cta-index;
+  border: none;
+  color: #000;
+  left: 50%;
+  transform: translateX(-50%);
+  right: 0;
+  font-size: $beat-onboard-font-size;
+
+  .gist-beat-0-active &,
+  .gist-beat-last-active & {
+    color: #fff;
+  }
+}
+
+.gist-beat {
+  position: absolute;
+  background-color: $beat-background;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  & > p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  dl,
+  ul,
+  ol,
+  blockquote,
+  pre,
+  figcaption {
+    padding-left: $beat-gutter;
+    padding-right: $beat-gutter;
+    max-width: $beat-element-max-width;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .pullquote {
+    font-size: $beat-pullquote-font-size;
+  }
+
+  &.last {
+    background-color: $beat-last-background;
+    color: $beat-last-text-color;
+    text-align: $beat-last-alignment;
+
+    ul {
+      list-style: none;
+      margin-bottom: 0;
+    }
+
+    svg {
+      fill: $beat-share-icon-color;
+      height: $gist-share-icon-size;
+      vertical-align: middle;
+      width: $gist-share-icon-size;
+    }
+
+    li {
+      display: inline-block;
+      margin-right: 18px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.gist-progress-beat {
+  background-color: $gist-progress-bar-color;
+  margin-right: 1px;
+  margin-left: 1px;
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.gist-beat.gist-beat-onboard {
+  background-color: $beat-onboard-background;
+  color: #fff;
+  display: block;
+
+  p {
+    padding: ($beat-gutter * 2) $beat-gutter $beat-gutter $beat-gutter;
+    font-size: $beat-onboard-font-size;
+  }
+}
+
+.gist-onboard-ui-container {
+  border: 1px solid $gist-border-color dashed;
+  display: flex;
+  height: calc(100vh - 254px);
+  align-items: stretch;
+  text-align: center;
+  margin-bottom: $beat-gutter;
+}
+
+.gist-onboard-ui-right,
+.gist-onboard-ui-left {
+  padding: $beat-gutter;
+  display: flex;
+  align-items: center;
+}
+
+.gist-onboard-ui-text {
+  font-size: $beat-onboard-font-ui-size;
+  font-family: $gist-font-secondary;
+  width: 100%;
+}
+
+.gist-onboard-ui-left {
+  width: 40%;
+}
+
+.gist-onboard-ui-right {
+  width: 60%;
+}
+
+.gist-onboard-ui-right {
+  border-left: 1px $gist-border-color dashed;
+}
+
+.gist-beat-container {
+  width: 100%;
+  margin: $beat-gutter;
+  border-top: 1px solid $gist-border-color;
+}
+
+.gist-beat-row {
+  border-bottom: 1px solid $gist-border-color;
+  padding: $beat-gutter 0;
+}
+
+.gist-active {
+  figure a,
+  aside {
+    pointer-events: none;
+  }
+
+  .site-footer {
+    margin: 0;
+  }
+}
+
+.gist-onboard-container {
+  height: 100vh;
+  background: $beat-onboard-background;
+  position: relative;
+  z-index: $gist-onboard-index;
+  color: $beat-onboard-text-color;
+  padding: $beat-gutter;
+}
+
+.gist-onboard-ui-text-cta {
+  text-align: center;
+  font-size: 1.25em;
+  position: relative;
+  top: -1.5em;
+}

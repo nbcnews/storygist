@@ -1,0 +1,47 @@
+{
+  "name": "storygist",
+  "version": "0.1.0",
+  "description": "A jQuery plugin for generating a story gist that gives you the overall story quickly.",
+  "private": true,
+  "pre-commit": "lint-staged",
+  "main": "dist/jquery.storygist.min.js",
+  "scripts": {
+    "dev": "gulp watch",
+    "build": "gulp",
+    "style-lint": "stylelint 'src/**/*.scss'",
+    "lint-staged": "lint-staged",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "lint-staged": {
+    "*.scss": "style-lint",
+    "*.js": "script-lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nbcnews/storygist.git"
+  },
+  "author": "EJ Fox, Ian Rose",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nbcnews/storygist/issues"
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard"
+  },
+  "homepage": "https://github.com/nbcnews/storygist#readme",
+  "devDependencies": {
+    "express": "^4.15.2",
+    "gulp": "^3.9.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-uglify": "^2.1.2",
+    "lint-staged": "^3.4.1",
+    "open": "0.0.5",
+    "pre-commit": "^1.2.2",
+    "serve-index": "^1.8.0",
+    "stylelint": "^7.10.1",
+    "stylelint-config-standard": "^16.0.0"
+  }
+}
