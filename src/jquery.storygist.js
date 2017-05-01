@@ -1,7 +1,7 @@
 // jQuery Storygist
 // A jQuery plugin to quickly create story gists
 // version 0.1.0, Apr 25, 2017
-// by EJ Fox, Max Peterson and Ian Rose
+// by EJ Fox, Max Peterson, and Ian Rose
 
 (function ($) {
   $.storyGist = function (element, options) {
@@ -157,6 +157,7 @@
 
     plugin.init = function () {
       plugin.settings = $.extend({}, defaults, options);
+      console.log('Storygist init', $(window).width(),  plugin.settings.initWidth);
       if( $(window).width() <= plugin.settings.initWidth) {
         var $body = $('body');
         var parsedGistEls = [];

@@ -233,7 +233,10 @@
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="/dist/jquery.storygist.min.js"></script>
     <script>
-      $('body').storyGist();
+      $('body').storyGist({
+        beatSelector: '[data-sg]',
+        initWidth: 1200
+      });
     </script>
   </body>
 </html>
