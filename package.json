@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/nbcnews/storygist.git"
   },
-  "author": "EJ Fox, Ian Rose",
+  "author": "EJ Fox, Max Peterson, Ian Rose",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nbcnews/storygist/issues"

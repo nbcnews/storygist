@@ -1,7 +1,7 @@
 // jQuery Storygist
 // A jQuery plugin to quickly create story gists
 // version 0.1.0, Apr 25, 2017
-// by EJ Fox and Ian Rose
+// by EJ Fox, Max Peterson and Ian Rose
 
 (function ($) {
   $.storyGist = function (element, options) {
@@ -234,20 +234,21 @@
           }
         });
 
-        $('.gist-beat').hammer().bind('swipe', function (ev) {
-          var beatNum = $(ev.target).attr('id').split('-')[2];
-          plugin.beatVideoPauseAll();
-          if (ev.gesture.offsetDirection === 2) {
-            // Swipe left
-            plugin.nextBeat(beatNum, ev.target);
-          } else if (ev.gesture.offsetDirection === 4) {
-            // Swipe right
-            plugin.prevBeat(beatNum, ev.target);
-          } else if (ev.gesture.offsetDirection === 8) {
-            // Swipe up
-            //plugin.viewInStory();
-          }
-        });
+        // #TODO revisit swiping
+        // $('.gist-beat').hammer().bind('swipe', function (ev) {
+        //   var beatNum = $(ev.target).attr('id').split('-')[2];
+        //   plugin.beatVideoPauseAll();
+        //   if (ev.gesture.offsetDirection === 2) {
+        //     // Swipe left
+        //     plugin.nextBeat(beatNum, ev.target);
+        //   } else if (ev.gesture.offsetDirection === 4) {
+        //     // Swipe right
+        //     plugin.prevBeat(beatNum, ev.target);
+        //   } else if (ev.gesture.offsetDirection === 8) {
+        //     // Swipe up
+        //     //plugin.viewInStory();
+        //   }
+        // });
 
         var $initBeat = $('#gist-beat-0');
 
