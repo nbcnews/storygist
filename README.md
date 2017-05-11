@@ -1,3 +1,5 @@
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 # StoryGist
 A jQuery plugin for generating a story gist that gives you the overall story quickly.
 
