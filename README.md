@@ -80,7 +80,7 @@ To begin, you need a story which is made up of a series of elements. Your storie
 
 To create a Storygist of your content, you need to include jQuery and Storygist's JS and CSS.
 
-```
+```html
 <link rel="stylesheet" href="/dist/storygist.css">
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
