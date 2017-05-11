@@ -2,7 +2,9 @@
 
 // jQuery Storygist
 // A jQuery plugin to quickly create story gists
-// version 0.1.0, Apr 25, 2017
+// Release Versions: https://github.com/nbcnews/storygist/releases
+// Github: https://github.com/nbcnews/storygist
+// License: The MIT License (MIT)
 // by EJ Fox, Max Peterson, and Ian Rose
 
 (function ($) {
