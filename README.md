@@ -3,7 +3,7 @@
 # StoryGist
 A jQuery plugin for generating a story gist that gives you the overall story quickly.
 
-# Using StoryGist
+## Using StoryGist
 Storygist takes in an element and searches for bits of content (p, h2, blockquote, etc...) to semi-automatically create a tappable summary- the "gist" of the story.
 
 To begin, you need a story which is made up of a series of elements. Your stories probably look like this already.
