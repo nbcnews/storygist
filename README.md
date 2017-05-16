@@ -1,7 +1,9 @@
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 # StoryGist
 A jQuery plugin for generating a story gist that gives you the overall story quickly.
 
-# Using StoryGist
+## Using StoryGist
 Storygist takes in an element and searches for bits of content (p, h2, blockquote, etc...) to semi-automatically create a tappable summary- the "gist" of the story.
 
 To begin, you need a story which is made up of a series of elements. Your stories probably look like this already.
@@ -78,7 +80,7 @@ To begin, you need a story which is made up of a series of elements. Your storie
 
 To create a Storygist of your content, you need to include jQuery and Storygist's JS and CSS.
 
-```
+```html
 <link rel="stylesheet" href="/dist/storygist.css">
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -91,7 +93,7 @@ To create a Storygist of your content, you need to include jQuery and Storygist'
 
 To load the Storygist, select the parent element of your story and provide the selector Storygist should use to look for the 'beats' of your story. In our case, we've given every beat element the data-attribute of `data-sg`, but you can use any jQuery selector.
 
-```
+```html
 <script>
   $('body').storyGist({
     beatSelector: '[data-sg]'
@@ -110,7 +112,7 @@ Storygist also provides a few parameters you can set when creating your gist.
 
 `finalBeat` lets you provide HTML to be used as the final beat. It defaults to a beat that lets you share the article or go back to the beginning, but you could use it for whatever you want. To use it, provide an object that looks like this:
 
-```
+```js
 {
   'raw': null,
   'html': '<div class="gist-beat-container"><h1>Hello world!</h1></div>',
@@ -122,7 +124,8 @@ Storygist also provides a few parameters you can set when creating your gist.
 First, storygist goes through all of the elements on the page that match the `beatSelector`.
 
 Then to summarize the piece, it only shows 'p' elements that directly follow `h2` or `figure`. This behavior may become more advanced and configurable in the future.
-```
+
+```js
 // If the beat is a paragraph, do some special logic
 if (beat.type.toLowerCase() === 'p' && beat.prevtype !== undefined) {
   if (beat.prevtype.toLowerCase() === 'h2' ||
@@ -142,4 +145,4 @@ if (beat.type.toLowerCase() === 'p' && beat.prevtype !== undefined) {
 2. `npm install`
 3. `npm run dev`
 
-Files from /src/ are compiled into /dist/.
+Files from `./src/` are compiled into `./dist/`.
