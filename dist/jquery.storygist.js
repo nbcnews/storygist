@@ -1,4 +1,4 @@
-/* globals jQuery */
+/* globals jQuery SplitType */
 
 // jQuery Storygist
 // A jQuery plugin to quickly create story gists
@@ -88,25 +88,43 @@
 
         $nextEl.addClass('active')
 
-        $nextEl.find('p').velocity('slideDown', {'duration': 2000, 'easing': 'easeOutQuart'})
+        if ($nextEl.find('p').length) {
+          console.log('HAS A P TAG')
+          var split = new SplitType($nextEl.find('p'), {
+            split: 'lines, chars',
+            position: 'absolute'
+          })
+          console.log('split', split)
+          $nextEl.find('.line')
+          .velocity('transition.shrinkIn', {'duration': 800, 'stagger': 18})
+        }
 
         $nextEl.find('figure').velocity({'blur': 0},
-          { 'duration': 1500,
+          { 'duration': 1000,
             'begin': function (el) {
               $(el).css('-webkit-filter', 'blur(91px)')
             }
           })
 
-        $nextEl.find('pullquote').velocity({'fontSize': '8em'},
-          { 'duration': 2000,
-            'easing': 'easeOutQuart',
-            'begin': function (el) {
-              $(el).css('font-size', '1px')
-            }
+        if ($nextEl.find('.pullquote').length) {
+          console.log('HAS A PULLQUOTE')
+          split = new SplitType($nextEl.find('.pullquote'), {
+            split: 'lines'
           })
-        // $nextEl.css('background-color', 'red')
+          $nextEl.find('.line')
+          .velocity('transition.slideLeftIn', {'duration': 800, 'stagger': 400})
 
-        // console.log('$nextEl', $nextEl)
+          /*
+          var fontSize = $nextEl.find('.pullquote').css('font-size')
+          $nextEl.find('.pullquote').velocity({'fontSize': fontSize},
+            { 'duration': 2000,
+              'easing': 'easeInSine',
+              'begin': function (el) {
+                $(el).css('font-size', '1px')
+              }
+            })
+          */
+        }
 
         var $videoElNext = $nextEl.find('video').get(0)
         plugin.beatVideoPlay($videoElNext)
