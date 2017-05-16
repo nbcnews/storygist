@@ -83,7 +83,10 @@ body.gist-active {
   font-size: $beat-onboard-font-size;
   background-color: transparent;
 
-  .gist-beat-0-active &,
+  .gist-beat-0-active & {
+    color: $beat-first-cta-text-color;
+  }
+
   .gist-beat-last-active & {
     color: #fff;
   }
@@ -156,6 +159,23 @@ body.gist-active {
         margin-right: 0;
       }
     }
+  }
+}
+
+.gist-beat.last {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  dl,
+  ul,
+  ol,
+  blockquote,
+  pre,
+  figcaption {
+    color: $beat-last-text-color;
   }
 }
 
