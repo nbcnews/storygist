@@ -69,6 +69,16 @@ body.gist-active {
   width: 100%;
   display: flex;
   align-items: center;
+  
+  @if $beat-center-headings {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      text-align: center;
+    }
+  }
 
   & > p,
   h1,
