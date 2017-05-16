@@ -106,7 +106,7 @@
           })
         // $nextEl.css('background-color', 'red')
 
-        console.log('$nextEl', $nextEl)
+        // console.log('$nextEl', $nextEl)
 
         var $videoElNext = $nextEl.find('video').get(0)
         plugin.beatVideoPlay($videoElNext)
