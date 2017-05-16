@@ -132,6 +132,14 @@ body.gist-active {
 
   .pullquote {
     font-size: $beat-pullquote-font-size;
+
+    q {
+      margin: auto;
+
+      &::before {
+        margin-left: $beat-gutter / -2;
+      }
+    }
   }
 
   &.last {
