@@ -81,6 +81,7 @@ body.gist-active {
   transform: translateX(-50%);
   right: 0;
   font-size: $beat-onboard-font-size;
+  background-color: transparent;
 
   .gist-beat-0-active &,
   .gist-beat-last-active & {
