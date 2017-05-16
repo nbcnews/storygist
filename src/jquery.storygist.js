@@ -91,23 +91,22 @@
         $nextEl.find('p').velocity('slideDown', {'duration': 2000, 'easing': 'easeOutQuart'})
 
         $nextEl.find('figure').velocity({'blur': 0},
-        { 'duration': 1500,
-          'begin': function(el) {
-            $(el).css('-webkit-filter', 'blur(91px)')
-          }
-        })
+          { 'duration': 1500,
+            'begin': function (el) {
+              $(el).css('-webkit-filter', 'blur(91px)')
+            }
+          })
 
         $nextEl.find('pullquote').velocity({'fontSize': '8em'},
-        { 'duration': 2000,
-          'easing': 'easeOutQuart',
-          'begin': function(el) {
-            $(el).css('font-size', '1px')
-          }
-        })
-        //$nextEl.css('background-color', 'red')
+          { 'duration': 2000,
+            'easing': 'easeOutQuart',
+            'begin': function (el) {
+              $(el).css('font-size', '1px')
+            }
+          })
+        // $nextEl.css('background-color', 'red')
 
         console.log('$nextEl', $nextEl)
-
 
         var $videoElNext = $nextEl.find('video').get(0)
         plugin.beatVideoPlay($videoElNext)
