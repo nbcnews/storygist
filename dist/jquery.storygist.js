@@ -219,6 +219,9 @@
         // Create element to hold navbar
         $gistBody.append('<div id="gist-progress"></div>')
 
+        // Create element to hold autoplay progress bar
+        $gistBody.append('<div id="gist-ap-progress"></div>')
+
         // Write the beats back to the page
         parsedGistEls.forEach(function (el, i) {
           if (el.onBoard === true) {
@@ -327,21 +330,25 @@
             window.addEventListener('touchmove', plugin.scrollLock)
 
             var intervalTime = 2750
-            apIntverval = setInterval(apNext, intervalTime)
+            var apIntverval = setInterval(apNext, intervalTime)
 
-            $(window).on('touchstart', function(){
+            // TODO: Find a way to determine and fire an event/function
+            // when the last beat in the gist has been reached
+            // and turn off progress animation and clearInterval
+
+            $(window).on('touchstart', function () {
               console.log('touchstart')
               clearInterval(apIntverval)
             })
 
-            $(window).on('touchend', function(){
+            $(window).on('touchend', function () {
               console.log('touchend')
               clearInterval(apIntverval)
               apIntverval = setInterval(apNext, intervalTime)
             })
 
-
-
+            $('#gist-ap-progress').css('-wenkit-animation', 'anim9 ' + intervalTime + 'ms linear infinite')
+            $('#gist-ap-progress').css('animation', 'anim9 ' + intervalTime + 'ms linear infinite')
           }
         })
       }
