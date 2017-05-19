@@ -183,10 +183,6 @@
       // Find the original element that corresponds with the current beat
       var scrollToEl = $(plugin.settings.contentParent + ' ' + plugin.settings.beatSelector + ':eq(' + currentBeatNum + ')')
 
-      // Get that element's offset
-      // var scrollOffset = scrollToEl.offset().top
-      // scrollToEl.css('border', '5px solid red')
-
       // Scroll to that element
       $('html, body').animate({
         scrollTop: (scrollToEl.offset().top - 80)
