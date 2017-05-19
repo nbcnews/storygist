@@ -307,26 +307,41 @@
         })
 
         window.addEventListener('scroll', function scrollListener () {
+          function apNext () {
+            console.log('autoplay next')
+            // Need to grab the currently active beat
+            var currentBeat = $('.gist-beat:visible')[0]
+            console.log('currentBeat', currentBeat)
+            // And the current beat number
+            var beatNum = $(currentBeat).attr('id').split('-')[2]
+            // and pass that data into nextBeat
+            // Previously it was used in a click event
+            // And it expects to be passed the target
+            // Which we don't have in this particular case
+            plugin.nextBeat(beatNum, currentBeat)
+          }
+
           if (window.pageYOffset >= $gistBody.offset().top) {
             $onboardDiv.remove()
             window.removeEventListener('scroll', scrollListener)
             window.addEventListener('touchmove', plugin.scrollLock)
 
-            function apNext() {
-              console.log('autoplay next')
-              // Need to grab the currently active beat
-              var currentBeat = $('.gist-beat:visible')[0]
-              console.log('currentBeat', currentBeat)
-              // And the current beat number
-              var beatNum = $(currentBeat).attr('id').split('-')[2]
-              // and pass that data into nextBeat
-              // Previously it was used in a click event
-              // And it expects to be passed the target
-              // Which we don't have in this particular case
-              plugin.nextBeat(beatNum, currentBeat)
-            }
+            var intervalTime = 2750
+            apIntverval = setInterval(apNext, intervalTime)
 
-            var apInterval = setInterval(apNext, 1200)
+            $(window).on('touchstart', function(){
+              console.log('touchstart')
+              clearInterval(apIntverval)
+            })
+
+            $(window).on('touchend', function(){
+              console.log('touchend')
+              clearInterval(apIntverval)
+              apIntverval = setInterval(apNext, intervalTime)
+            })
+
+
+
           }
         })
       }

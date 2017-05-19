@@ -326,7 +326,19 @@
             window.removeEventListener('scroll', scrollListener)
             window.addEventListener('touchmove', plugin.scrollLock)
 
-            setInterval(apNext, 1200)
+            var intervalTime = 2750
+            var apIntverval = setInterval(apNext, intervalTime)
+
+            $(window).on('touchstart', function () {
+              console.log('touchstart')
+              clearInterval(apIntverval)
+            })
+
+            $(window).on('touchend', function () {
+              console.log('touchend')
+              clearInterval(apIntverval)
+              apIntverval = setInterval(apNext, intervalTime)
+            })
           }
         })
       }
