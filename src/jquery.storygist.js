@@ -27,7 +27,8 @@
         'html': '<div class="gist-beat-container"><!--Entypo pictograms by Daniel Bruce — www.entypo.com--><div class="gist-beat-row"><h4>Share</h4><ul class="gist-share"><li><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + encodedShareURL + '">' + facebookIcon + '</a></li><li><a target="_blank" href="https://twitter.com/intent/tweet?url=' + encodedShareURL + '">' + twitterIcon + '</a></li><li><a target="_blank" href="mailto:?body=' + encodedShareURL + '">' + mailIcon + '</a></li></ul></div><div class="gist-beat-row"><h4 class="go-to-beginning">Go to the beginning</h4><ul></li><a class="go-to-beginning" href="#">' + goToIcon + '</li></ul></div></div>',
         'type': 'DIV'
       },
-      autoPlay: false
+      autoPlay: false,
+      autoPlayMs: 2400
     }
 
     var plugin = this
@@ -219,9 +220,6 @@
         // Create element to hold navbar
         $gistBody.append('<div id="gist-progress"></div>')
 
-        // Create element to hold autoplay progress bar
-        $gistBody.append('<div id="gist-ap-progress"></div>')
-
         // Write the beats back to the page
         parsedGistEls.forEach(function (el, i) {
           if (el.onBoard === true) {
@@ -329,26 +327,33 @@
             window.removeEventListener('scroll', scrollListener)
             window.addEventListener('touchmove', plugin.scrollLock)
 
-            var intervalTime = 2750
-            var apIntverval = setInterval(apNext, intervalTime)
+            console.log('plugin settings', plugin.settings)
 
-            // TODO: Find a way to determine and fire an event/function
-            // when the last beat in the gist has been reached
-            // and turn off progress animation and clearInterval
+            if (plugin.settings.autoPlay === true) {
+              var intervalTime = plugin.settings.autoPlayMs
+              var apIntverval = setInterval(apNext, intervalTime)
 
-            $(window).on('touchstart', function () {
-              console.log('touchstart')
-              clearInterval(apIntverval)
-            })
+              // Create element to hold autoplay progress bar
+              $gistBody.append('<div id="gist-ap-progress"></div>')
 
-            $(window).on('touchend', function () {
-              console.log('touchend')
-              clearInterval(apIntverval)
-              apIntverval = setInterval(apNext, intervalTime)
-            })
+              // TODO: Find a way to determine and fire an event/function
+              // when the last beat in the gist has been reached
+              // and turn off progress animation and clearInterval
 
-            $('#gist-ap-progress').css('-wenkit-animation', 'anim9 ' + intervalTime + 'ms linear infinite')
-            $('#gist-ap-progress').css('animation', 'anim9 ' + intervalTime + 'ms linear infinite')
+              $(window).on('touchstart', function () {
+                console.log('touchstart')
+                clearInterval(apIntverval)
+              })
+
+              $(window).on('touchend', function () {
+                console.log('touchend')
+                clearInterval(apIntverval)
+                apIntverval = setInterval(apNext, intervalTime)
+              })
+
+              $('#gist-ap-progress').css('-wenkit-animation', 'anim9 ' + intervalTime + 'ms linear infinite')
+              $('#gist-ap-progress').css('animation', 'anim9 ' + intervalTime + 'ms linear infinite')
+            }
           }
         })
       }
