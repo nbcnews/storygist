@@ -1,4 +1,4 @@
-/* globals jQuery */
+/* globals jQuery SplitType */
 
 // jQuery Storygist
 // A jQuery plugin to quickly create story gists
@@ -78,14 +78,88 @@
     }
 
     plugin.nextBeat = function (beatNum, el) {
+      function getRandTransition () {
+        return transitions[Math.floor(Math.random() * transitions.length)]
+      }
       // Handle behavior to move to next beat
       // A click on the right side of the window
       if ($(el).hasClass('last')) {
         // Do nothing for the final beat
       } else {
         $('.gist-beat').removeClass('active')
-        $(el).next('.gist-beat').addClass('active')
-        var $videoElNext = $(el).next('.gist-beat').find('video').get(0)
+        var $nextEl = $(el).next('.gist-beat')
+
+        $nextEl.addClass('active')
+
+        var baseAnimSpeed = 750
+        var blurPx = 81
+
+        var transitions = ['transition.slideLeftIn',
+          'transition.slideDownIn',
+          'transition.slideLeftBigIn',
+          'transition.shrinkIn',
+          'transition.flipXIn',
+          'transition.flipYIn',
+          'transition.fadeIn',
+          'transition.expandIn']
+
+        if ($nextEl.find('p').length) {
+          console.log('HAS A P TAG')
+          var split = new SplitType($nextEl.find('p'), {
+            split: 'lines, chars',
+            position: 'absolute'
+          })
+          console.log('split', split)
+          $nextEl.find('.line')
+          .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        }
+
+        $nextEl.find('figure img')
+        // .css('margin-bottom', -800)
+        .velocity({
+          'blur': 0
+          // 'margin-bottom': 0,
+        },
+          { 'duration': baseAnimSpeed,
+            'begin': function (el) {
+              $nextEl.find('figure figcaption').css('opacity', 0)
+              $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
+            },
+            'complete': function (el) {
+              $nextEl.find('figure figcaption')
+              .velocity('transition.slideLeftIn', {'duration': baseAnimSpeed * 1.75})
+            }
+          })
+
+        $nextEl.find('figure.media')
+        .velocity({ 'blur': 0 },
+          { 'duration': baseAnimSpeed,
+            'begin': function (el) {
+              $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
+            }
+          })
+
+        if ($nextEl.find('.pullquote').length) {
+          console.log('HAS A PULLQUOTE')
+          split = new SplitType($nextEl.find('.pullquote'), {
+            split: 'lines'
+          })
+          $nextEl.find('.line')
+          .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+
+          /*
+          var fontSize = $nextEl.find('.pullquote').css('font-size')
+          $nextEl.find('.pullquote').velocity({'fontSize': fontSize},
+            { 'duration': 2000,
+              'easing': 'easeInSine',
+              'begin': function (el) {
+                $(el).css('font-size', '1px')
+              }
+            })
+          */
+        }
+
+        var $videoElNext = $nextEl.find('video').get(0)
         plugin.beatVideoPlay($videoElNext)
       }
 
@@ -141,10 +215,6 @@
 
       // Find the original element that corresponds with the current beat
       var scrollToEl = $(plugin.settings.contentParent + ' ' + plugin.settings.beatSelector + ':eq(' + currentBeatNum + ')')
-
-      // Get that element's offset
-      // var scrollOffset = scrollToEl.offset().top
-      // scrollToEl.css('border', '5px solid red')
 
       // Scroll to that element
       $('html, body').animate({
