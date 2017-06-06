@@ -22,30 +22,33 @@
   }
 }
 
-@keyframes fadeInOut{
+@keyframes fadeInOut {
   0% {
-    opacity:0.1;
+    opacity: 0.1;
   }
+
   50% {
-    opacity:1;
+    opacity: 1;
   }
+
   100% {
-    opacity:0.1;
+    opacity: 0.1;
   }
 }
 
-@keyframes fadeOutIn{
+@keyframes fadeOutIn {
   0% {
-    opacity:1;
+    opacity: 1;
   }
+
   50% {
-    opacity:0.2;
+    opacity: 0.2;
   }
+
   100% {
-    opacity:1;
+    opacity: 1;
   }
 }
-
 
 #gist-body {
   position: relative;
@@ -103,7 +106,6 @@ body.gist-active {
   right: 0;
   font-size: $beat-onboard-font-size;
   background-color: transparent;
-
   opacity: 0.4;
 
   .gist-beat-0-active & {
