@@ -240,7 +240,7 @@
         $body.prepend('<div id="gist-body"></div>')
 
         // Create the first div with explainer
-        var $onboardDiv = $('<div class="gist-onboard-container"><p>This story has an optional <strong>Gist</strong> view. Gist gives you the overall story quickly with the option at any time to drop into the full story.</p><div class="gist-onboard-ui-container"><div class="gist-onboard-ui-left"><div class="gist-onboard-ui-text">← Tap Previous</div></div><div class="gist-onboard-ui-right"><div class="gist-onboard-ui-text">Tap Next →</div></div></div><div class="gist-onboard-ui-text gist-onboard-ui-text-cta animated infinite bounce">Scroll to Start ↓</div></div>')
+        var $onboardDiv = $('<div class="gist-onboard-container"><p>You\'re viewing the <strong>Gist</strong> of this story. The Gist gives you a visual summary of the story.</p><div class="gist-onboard-ui-container"><div class="gist-onboard-ui-left"><div class="gist-onboard-ui-text"> <p>← <strong>Tap</strong> to go <strong>backward</strong> in Gist</p></div></div><div class="gist-onboard-ui-right"><div class="gist-onboard-ui-text"><p><strong>Tap</strong> to go <br /> <strong>forward</strong> in Gist →</div></div></div><div class="gist-onboard-ui-text gist-onboard-ui-text-cta animated infinite bounce">Scroll to enter Gist <br />↓</p></div></div>')
         $body.prepend($onboardDiv)
         var $gistBody = $('#gist-body')
 
@@ -278,7 +278,7 @@
         parsedGistEls.push(plugin.settings.finalBeat)
 
         // Empty the page of old content
-        $gistBody.append('<button id="gist-view-story">View in Story ↓</button>')
+        $gistBody.append('<button id="gist-view-story">View in full story ↓</button>')
 
         $('#gist-view-story').click(function () {
           // View beat in story when 'view in story' CTA is clicked
