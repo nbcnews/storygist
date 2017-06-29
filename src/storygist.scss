@@ -323,3 +323,29 @@ body.gist-active {
   //bottom: 1.5em;
   bottom: -2em;
 }
+
+// Reusable storygist styles
+
+.title-top {
+  .story-header__intro {
+    margin-top: -204px;
+  }
+}
+
+.quote-top {
+  position: absolute;
+  top: 32px;
+}
+
+.huge-title {
+  h1 {
+    font-size: 5em;
+    line-height: 1em;
+    font-family: "Arimo", Arial, sans-serif;
+    text-align: left;
+  }
+
+  .story-header__intro {
+    margin-top: -25vh;
+  }
+}
