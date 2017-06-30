@@ -172,7 +172,7 @@
     // console.log('currentBeatNum', currentBeatNum);
 
     if ($(currentBeat).attr('data-cta-url')) {
-      console.log('Do browser CTA thing');
+      console.log('Do browser CTA thing')
     } else {
       this.beatVideoPauseAll()
 
