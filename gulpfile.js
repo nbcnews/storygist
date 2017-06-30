@@ -10,17 +10,22 @@ const browser = require('open')
 const sass = require('gulp-sass')
 const cssnano = require('gulp-cssnano')
 const sourcemaps = require('gulp-sourcemaps')
+const concat = require('gulp-concat')
+const eventStream = require('event-stream')
+const jsManifest = require('./src/js/manifest.json')
 
 // scripts
-gulp.task('scripts', function () {
-  return gulp.src(['./src/*.js'])
-    .pipe(gulp.dest('./dist'))
-    .pipe(rename({
-      suffix: '.min',
-      extname: '.js'
-    }))
-    .pipe(uglify())
-    .pipe(gulp.dest('./dist'))
+gulp.task('scripts', function (done) {
+  const tasks = Object.keys(jsManifest).map((bundle) => {
+    return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
+      .pipe(concat(bundle))
+      .pipe(gulp.dest('./dist'))
+      .pipe(rename({suffix: '.min', extname: '.js'}))
+      .pipe(uglify())
+      .pipe(gulp.dest('./dist'))
+  })
+
+  eventStream.merge(tasks).on('end', done)
 })
 
 // styles
@@ -48,8 +53,8 @@ gulp.task('watch', ['scripts', 'styles'], function () {
   app.use(express.static('./'))
   app.use(directory('./'))
   app.listen(8090)
-  browser('http://localhost:8090/demo.html', 'Google Chrome')
-  gulp.watch(['src/*.js', 'src/**/*.scss'], ['scripts', 'styles'])
+  browser('http://localhost:8090/examples/demo.html', 'Google Chrome')
+  gulp.watch(['src/js/*.js', 'src/**/*.scss'], ['scripts', 'styles'])
 })
 
 // tasks aliases
