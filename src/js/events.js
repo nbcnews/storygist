@@ -193,21 +193,25 @@
 
   sg.prototype.swipeHandler = function (e) {
     // console.log($(e.target), e.type, '>>>>>')
-    if (!$(e.target).hasClass('gist-beat')) {
-      return
+    var $target = $(e.target)
+    if (!$target.hasClass('gist-beat')) {
+      $target = $target.closest('.gist-beat')
+      if (!$target.hasClass('gist-beat')) {
+        return
+      }
     }
 
-    var beatNum = $(e.target).attr('id').split('-')[2]
+    var beatNum = $target.attr('id').split('-')[2]
     this.beatVideoPauseAll()
     switch (e.type) {
       case 'swipeup':
         this.viewInStory()
         break
       case 'swipeleft':
-        this.nextBeat(beatNum, e.target)
+        this.nextBeat(beatNum, $target)
         break
       case 'swiperight':
-        this.prevBeat(beatNum, e.target)
+        this.prevBeat(beatNum, $target)
         break
       default:
         console.log(e.type)

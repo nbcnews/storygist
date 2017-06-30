@@ -20,6 +20,16 @@ gulp.task('scripts', function (done) {
     return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
       .pipe(concat(bundle))
       .pipe(gulp.dest('./dist'))
+  })
+
+  eventStream.merge(tasks).on('end', done)
+})
+
+gulp.task('scripts-prod', function (done) {
+  const tasks = Object.keys(jsManifest).map((bundle) => {
+    return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
+      .pipe(concat(bundle))
+      .pipe(gulp.dest('./dist'))
       .pipe(rename({suffix: '.min', extname: '.js'}))
       .pipe(uglify())
       .pipe(gulp.dest('./dist'))
@@ -59,3 +69,4 @@ gulp.task('watch', ['scripts', 'styles'], function () {
 
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
+gulp.task('build', ['scripts-prod', 'styles'])
