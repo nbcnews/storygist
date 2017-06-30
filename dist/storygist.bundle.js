@@ -213,24 +213,28 @@
     // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
     // console.log('currentBeatNum', currentBeatNum);
 
-    this.beatVideoPauseAll()
+    if ($(currentBeat).attr('data-cta-url')) {
+      console.log('Do browser CTA thing');
+    } else {
+      this.beatVideoPauseAll()
 
-    // Hide the storygist
-    $('#gist-body').css('display', 'none')
-    $(this.element).toggleClass('gist-active')
+      // Hide the storygist
+      $('#gist-body').css('display', 'none')
+      $(this.element).toggleClass('gist-active')
 
-    // Show all the original story elements
-    $(this.settings.contentParent).css('display', 'block')
-    $('.site-header').css('display', 'block')
-    $('.progress').css('display', 'block')
+      // Show all the original story elements
+      $(this.settings.contentParent).css('display', 'block')
+      $('.site-header').css('display', 'block')
+      $('.progress').css('display', 'block')
 
-    // Find the original element that corresponds with the current beat
-    var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
+      // Find the original element that corresponds with the current beat
+      var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
 
-    // Scroll to that element
-    $('html, body').animate({
-      scrollTop: (scrollToEl.offset().top - 80)
-    }, 2000)
+      // Scroll to that element
+      $('html, body').animate({
+        scrollTop: (scrollToEl.offset().top - 80)
+      }, 2000)
+    }
   }
 
   sg.prototype.scrollLock = function (e) {
@@ -274,6 +278,10 @@
           'id': i
         }
 
+        if ($(el).attr('data-cta-url')) {
+          beat.ctaUrl = $(el).attr('data-cta-url')
+        }
+
         // If the beat has a preceding element, add it's type to the object
         if (el.previousElementSibling != null) {
           beat.prevtype = el.previousElementSibling.nodeName
@@ -313,7 +321,7 @@
         if (el.onBoard === true) {
           $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat gist-beat-onboard" style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         } else {
-          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-origid="' + el.id + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
+          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-cta-url="' + el.ctaUrl + '" data-origid="' + el.id + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         }
 
         // Create progress bar
