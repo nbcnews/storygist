@@ -1,0 +1,11 @@
+{
+  "storygist.bundle.js": [
+    "options.js",
+    "events.js",
+    "init.js",
+    "plugin.js"
+  ],
+  "jquery.storygist.js": [
+    "jquery.storygist.js"
+  ]
+}
