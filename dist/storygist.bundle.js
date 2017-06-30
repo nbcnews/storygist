@@ -22,6 +22,7 @@
 
     var defaults = {
       beatSelector: '[data-sg]',
+      enableSwiping: false,
       contentParent: 'main',
       initWidth: 640,
       onboard: true,
@@ -233,12 +234,35 @@
     }, 2000)
   }
 
+  sg.prototype.swipeHandler = function (e) {
+    // console.log($(e.target), e.type, '>>>>>')
+    if (!$(e.target).hasClass('gist-beat')) {
+      return
+    }
+
+    var beatNum = $(e.target).attr('id').split('-')[2]
+    this.beatVideoPauseAll()
+    switch (e.type) {
+      case 'swipeup':
+        this.viewInStory()
+        break
+      case 'swipeleft':
+        this.nextBeat(beatNum, e.target)
+        break
+      case 'swiperight':
+        this.prevBeat(beatNum, e.target)
+        break
+      default:
+        console.log(e.type)
+    }
+  }
+
   sg.prototype.scrollLock = function (e) {
     e.preventDefault()
   }
 })(jQuery, StoryGist)
 
-/* globals jQuery, StoryGist */
+/* globals jQuery, StoryGist, Hammer */
 // init.js
 ;(function ($, sg) {
   // called in plugin.js
@@ -322,21 +346,14 @@
         }
       })
 
-      // #TODO revisit swiping
-      // $('.gist-beat').hammer().bind('swipe', function (ev) {
-      //   var beatNum = $(ev.target).attr('id').split('-')[2];
-      //   plugin.beatVideoPauseAll();
-      //   if (ev.gesture.offsetDirection === 2) {
-      //     // Swipe left
-      //     plugin.nextBeat(beatNum, ev.target);
-      //   } else if (ev.gesture.offsetDirection === 4) {
-      //     // Swipe right
-      //     plugin.prevBeat(beatNum, ev.target);
-      //   } else if (ev.gesture.offsetDirection === 8) {
-      //     // Swipe up
-      //     //plugin.viewInStory();
-      //   }
-      // });
+      // ++++ Swiping via Hammer.js
+      if (self.settings.enableSwiping) {
+        $('.gist-beat').each(function (index, beat) {
+          // console.log(beat, index, 'beat')
+          var mc = new Hammer(beat)
+          mc.on('swipeleft swiperight swipeup', self.swipeHandler.bind(self))
+        })
+      }
 
       var $initBeat = $('#gist-beat-0')
 
