@@ -1,4 +1,4 @@
-/* globals jQuery SplitType */
+/* globals jQuery */
 
 // jQuery Storygist
 // A jQuery plugin to quickly create story gists
@@ -9,7 +9,7 @@
 
 // options.js
 ;(function ($) {
-  function StoryGist(element, options) {
+  function StoryGist (element, options) {
     var encodedShareURL = encodeURIComponent(window.location.href)
     // Define icons to be used in final beat
     var facebookIcon = '<svg version="1.1" x="0" y="0" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">\n<title>Facebook Logo</title>\n<desc>Share on Facebook</desc>\n<path d="M17 1H3C1.9 1 1 1.9 1 3v14c0 1.1 0.9 2 2 2h7v-7H8V9.53h2V7.48c0-2.16 1.21-3.68 3.77-3.68l1.8 0v2.61h-1.2C13.38 6.4 13 7.14 13 7.84v1.69h2.57L15 12h-2v7h4c1.1 0 2-0.9 2-2V3C19 1.9 18.1 1 17 1z"></path>\n</svg>'
@@ -37,212 +37,213 @@
     this.settings = $.extend({}, defaults, options)
   }
 
-  window.StoryGist = StoryGist; // export to window for use in modules
-
+  window.StoryGist = StoryGist // export to window for use in modules
 })(jQuery)
 
+/* globals SplitType, jQuery, StoryGist */
 // events.js
+
 ;(function ($, sg) {
-    sg.prototype.beatVideoPlay = function (videoEl) {
-      if (videoEl) { videoEl.play() }
-    }
+  sg.prototype.beatVideoPlay = function (videoEl) {
+    if (videoEl) { videoEl.play() }
+  }
 
-    sg.prototype.beatVideoPause = function (videoEl) {
-      if (videoEl) { videoEl.pause() }
-    }
+  sg.prototype.beatVideoPause = function (videoEl) {
+    if (videoEl) { videoEl.pause() }
+  }
 
-    sg.prototype.beatVideoPauseAll = function (videoEl) {
-      var self = this;
-      $('video').each(function () {
-        var videoEl = $(this).get(0)
-        self.beatVideoPause(videoEl)
-      })
-    }
+  sg.prototype.beatVideoPauseAll = function (videoEl) {
+    var self = this
+    $('video').each(function () {
+      var videoEl = $(this).get(0)
+      self.beatVideoPause(videoEl)
+    })
+  }
 
-    sg.prototype.goToBeginning = function () {
-      // Set all beats to visible (aka go to beginning)
-      $('.gist-beat').css('display', 'flex')
-    }
+  sg.prototype.goToBeginning = function () {
+    // Set all beats to visible (aka go to beginning)
+    $('.gist-beat').css('display', 'flex')
+  }
 
-    sg.prototype.globalActiveGist = function ($body) {
-      // Set classes for active gist
-      var $gistBeat = $('.gist-beat')
+  sg.prototype.globalActiveGist = function ($body) {
+    // Set classes for active gist
+    var $gistBeat = $('.gist-beat')
 
-      $gistBeat.each(function (gistIndex) {
-        if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
-          $body.removeClass('gist-beat-' + gistIndex + '-active')
-        }
-
-        if ($(this).hasClass('active')) {
-          $body.addClass('gist-beat-' + gistIndex + '-active')
-        }
-
-        if ($body.hasClass('gist-beat-last-active')) {
-          $body.removeClass('gist-beat-last-active')
-        }
-
-        if ($('.gist-beat.last').hasClass('active')) {
-          $body.addClass('gist-beat-last-active')
-        }
-      })
-    }
-
-    sg.prototype.nextBeat = function (beatNum, el) {
-      function getRandTransition () {
-        return transitions[Math.floor(Math.random() * transitions.length)]
+    $gistBeat.each(function (gistIndex) {
+      if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
+        $body.removeClass('gist-beat-' + gistIndex + '-active')
       }
-      // Handle behavior to move to next beat
-      // A click on the right side of the window
-      if ($(el).hasClass('last')) {
-        // Do nothing for the final beat
-      } else {
-        $('.gist-beat').removeClass('active')
-        var $nextEl = $(el).next('.gist-beat')
 
-        $nextEl.addClass('active')
+      if ($(this).hasClass('active')) {
+        $body.addClass('gist-beat-' + gistIndex + '-active')
+      }
 
-        var baseAnimSpeed = 750
-        var blurPx = 81
+      if ($body.hasClass('gist-beat-last-active')) {
+        $body.removeClass('gist-beat-last-active')
+      }
 
-        var transitions = ['transition.slideLeftIn',
-          'transition.slideDownIn',
-          'transition.slideLeftBigIn',
-          'transition.shrinkIn',
-          'transition.flipXIn',
-          'transition.flipYIn',
-          'transition.fadeIn',
-          'transition.expandIn']
+      if ($('.gist-beat.last').hasClass('active')) {
+        $body.addClass('gist-beat-last-active')
+      }
+    })
+  }
 
-        if ($nextEl.find('p').length) {
-          console.log('HAS A P TAG')
-          var split = new SplitType($nextEl.find('p'), {
-            split: 'lines, chars',
-            position: 'absolute'
-          })
-          console.log('split', split)
-          $nextEl.find('.line')
-          .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
-        }
+  sg.prototype.nextBeat = function (beatNum, el) {
+    function getRandTransition () {
+      return transitions[Math.floor(Math.random() * transitions.length)]
+    }
+    // Handle behavior to move to next beat
+    // A click on the right side of the window
+    if ($(el).hasClass('last')) {
+      // Do nothing for the final beat
+    } else {
+      $('.gist-beat').removeClass('active')
+      var $nextEl = $(el).next('.gist-beat')
 
-        $nextEl.find('figure img')
-        // .css('margin-bottom', -800)
-        .velocity({
-          'blur': 0
-          // 'margin-bottom': 0,
-        },
-          { 'duration': baseAnimSpeed,
+      $nextEl.addClass('active')
+
+      var baseAnimSpeed = 750
+      var blurPx = 81
+
+      var transitions = ['transition.slideLeftIn',
+        'transition.slideDownIn',
+        'transition.slideLeftBigIn',
+        'transition.shrinkIn',
+        'transition.flipXIn',
+        'transition.flipYIn',
+        'transition.fadeIn',
+        'transition.expandIn']
+
+      if ($nextEl.find('p').length) {
+        console.log('HAS A P TAG')
+        var split = new SplitType($nextEl.find('p'), {
+          split: 'lines, chars',
+          position: 'absolute'
+        })
+        console.log('split', split)
+        $nextEl.find('.line')
+        .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+      }
+
+      $nextEl.find('figure img')
+      // .css('margin-bottom', -800)
+      .velocity({
+        'blur': 0
+        // 'margin-bottom': 0,
+      },
+        { 'duration': baseAnimSpeed,
+          'begin': function (el) {
+            $nextEl.find('figure figcaption').css('opacity', 0)
+            $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
+          },
+          'complete': function (el) {
+            $nextEl.find('figure figcaption')
+            .velocity('transition.slideLeftIn', {'duration': baseAnimSpeed * 1.75})
+          }
+        })
+
+      $nextEl.find('figure.media')
+      .velocity({ 'blur': 0 },
+        { 'duration': baseAnimSpeed,
+          'begin': function (el) {
+            $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
+          }
+        })
+
+      if ($nextEl.find('.pullquote').length) {
+        console.log('HAS A PULLQUOTE')
+        split = new SplitType($nextEl.find('.pullquote'), {
+          split: 'lines'
+        })
+        $nextEl.find('.line')
+        .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+
+        /*
+        var fontSize = $nextEl.find('.pullquote').css('font-size')
+        $nextEl.find('.pullquote').velocity({'fontSize': fontSize},
+          { 'duration': 2000,
+            'easing': 'easeInSine',
             'begin': function (el) {
-              $nextEl.find('figure figcaption').css('opacity', 0)
-              $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
-            },
-            'complete': function (el) {
-              $nextEl.find('figure figcaption')
-              .velocity('transition.slideLeftIn', {'duration': baseAnimSpeed * 1.75})
+              $(el).css('font-size', '1px')
             }
           })
-
-        $nextEl.find('figure.media')
-        .velocity({ 'blur': 0 },
-          { 'duration': baseAnimSpeed,
-            'begin': function (el) {
-              $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
-            }
-          })
-
-        if ($nextEl.find('.pullquote').length) {
-          console.log('HAS A PULLQUOTE')
-          split = new SplitType($nextEl.find('.pullquote'), {
-            split: 'lines'
-          })
-          $nextEl.find('.line')
-          .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
-
-          /*
-          var fontSize = $nextEl.find('.pullquote').css('font-size')
-          $nextEl.find('.pullquote').velocity({'fontSize': fontSize},
-            { 'duration': 2000,
-              'easing': 'easeInSine',
-              'begin': function (el) {
-                $(el).css('font-size', '1px')
-              }
-            })
-          */
-        }
-
-        var $videoElNext = $nextEl.find('video').get(0)
-        this.beatVideoPlay($videoElNext)
+        */
       }
 
-      // If this is the last beat before fin
-      if (+beatNum === (this.totalBeats - 1)) {
-        $('#gist-progress').css('display', 'none')
-        $(el).css('display', 'none')
-      } else if (+beatNum === +this.totalBeats) {
-        // Do nothing
-      } else {
-        $(el).css('display', 'none')
-        $('#gist-progress #gist-progress-beat-' + beatNum).css('opacity', 0)
-      }
+      var $videoElNext = $nextEl.find('video').get(0)
+      this.beatVideoPlay($videoElNext)
     }
 
-    sg.prototype.prevBeat = function (beatNum, el) {
-      // Handle behavior to move to previous beat
-      if ($(el).is('#gist-beat-0')) {
-        // Do nothing for the first beat
-      } else {
-        $('.gist-beat').removeClass('active')
-        $(el).prev('.gist-beat').addClass('active')
-        var $videoEl = $(el).prev('.gist-beat').find('video').get(0)
-        this.beatVideoPlay($videoEl)
-      }
+    // If this is the last beat before fin
+    if (+beatNum === (this.totalBeats - 1)) {
+      $('#gist-progress').css('display', 'none')
+      $(el).css('display', 'none')
+    } else if (+beatNum === +this.totalBeats) {
+      // Do nothing
+    } else {
+      $(el).css('display', 'none')
+      $('#gist-progress #gist-progress-beat-' + beatNum).css('opacity', 0)
+    }
+  }
 
-      if (+beatNum === (this.totalBeats)) {
-        $('#gist-progress').css('display', 'flex')
-      }
-      $('#gist-progress #gist-progress-beat-' + (beatNum - 1)).css('opacity', 1)
-      $(el.previousSibling).css('display', 'flex')
+  sg.prototype.prevBeat = function (beatNum, el) {
+    // Handle behavior to move to previous beat
+    if ($(el).is('#gist-beat-0')) {
+      // Do nothing for the first beat
+    } else {
+      $('.gist-beat').removeClass('active')
+      $(el).prev('.gist-beat').addClass('active')
+      var $videoEl = $(el).prev('.gist-beat').find('video').get(0)
+      this.beatVideoPlay($videoEl)
     }
 
-    sg.prototype.viewInStory = function () {
-      // Get the current gist beat (the first that's visible)
-      var currentBeat = $('.gist-beat:visible')[0]
-      // console.log('currentBeat', currentBeat);
-
-      var currentBeatNum = $(currentBeat).attr('data-origid')
-      // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
-      // console.log('currentBeatNum', currentBeatNum);
-
-      this.beatVideoPauseAll()
-
-      // Hide the storygist
-      $('#gist-body').css('display', 'none')
-      $(this.element).toggleClass('gist-active')
-
-      // Show all the original story elements
-      $(this.settings.contentParent).css('display', 'block')
-      $('.site-header').css('display', 'block')
-      $('.progress').css('display', 'block')
-
-      // Find the original element that corresponds with the current beat
-      var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
-
-      // Scroll to that element
-      $('html, body').animate({
-        scrollTop: (scrollToEl.offset().top - 80)
-      }, 2000)
+    if (+beatNum === (this.totalBeats)) {
+      $('#gist-progress').css('display', 'flex')
     }
+    $('#gist-progress #gist-progress-beat-' + (beatNum - 1)).css('opacity', 1)
+    $(el.previousSibling).css('display', 'flex')
+  }
 
-    sg.prototype.scrollLock = function (e) {
-      e.preventDefault()
-    }
+  sg.prototype.viewInStory = function () {
+    // Get the current gist beat (the first that's visible)
+    var currentBeat = $('.gist-beat:visible')[0]
+    // console.log('currentBeat', currentBeat);
+
+    var currentBeatNum = $(currentBeat).attr('data-origid')
+    // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
+    // console.log('currentBeatNum', currentBeatNum);
+
+    this.beatVideoPauseAll()
+
+    // Hide the storygist
+    $('#gist-body').css('display', 'none')
+    $(this.element).toggleClass('gist-active')
+
+    // Show all the original story elements
+    $(this.settings.contentParent).css('display', 'block')
+    $('.site-header').css('display', 'block')
+    $('.progress').css('display', 'block')
+
+    // Find the original element that corresponds with the current beat
+    var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
+
+    // Scroll to that element
+    $('html, body').animate({
+      scrollTop: (scrollToEl.offset().top - 80)
+    }, 2000)
+  }
+
+  sg.prototype.scrollLock = function (e) {
+    e.preventDefault()
+  }
 })(jQuery, StoryGist)
 
+/* globals jQuery, StoryGist */
 // init.js
 ;(function ($, sg) {
-
   // called in plugin.js
   sg.prototype.init = function () {
-    var self = this;
+    var self = this
     var $body = $(self.element) // TODO: add to $els object
 
     if ($(window).width() <= self.settings.initWidth) {
@@ -407,15 +408,16 @@
   }
 })(jQuery, StoryGist)
 
+/* globals jQuery, StoryGist */
 // plugin.js
-;(function ($, sg) {
+;(function ($) {
   $.fn.storyGist = function (options) {
     return this.each(function () {
       if (undefined === $(this).data('storyGist')) {
-        var plugin = new sg(this, options)
-        plugin.init();
+        var plugin = new StoryGist(this, options)
+        plugin.init()
         // $(this).data('storyGist', plugin)
       }
     })
   }
-})(jQuery, StoryGist)
+})(jQuery)
