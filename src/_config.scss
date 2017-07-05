@@ -48,6 +48,8 @@ $gist-progress-index: 19 !default;
 $gist-rotate-warning-index: 999999 !default;
 
 // Pacakge Settings
+$pkg-gist: true;
+$pkg-gist-bp: 1200px;
 $pkg-beat-background: #000;
 $pkg-beat-headline-min-size: 40px;
 $pkg-beat-headline-max-size: 100px;
