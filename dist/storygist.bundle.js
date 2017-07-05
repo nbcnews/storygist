@@ -40,7 +40,7 @@
   window.StoryGist = StoryGist // export to window for use in modules
 })(jQuery)
 
-/* globals SplitType, jQuery, StoryGist */
+/* globals jQuery, StoryGist */
 // events.js
 
 ;(function ($, sg) {
@@ -89,9 +89,9 @@
   }
 
   sg.prototype.nextBeat = function (beatNum, el) {
-    function getRandTransition () {
-      return transitions[Math.floor(Math.random() * transitions.length)]
-    }
+    // function getRandTransition () {
+    //   return transitions[Math.floor(Math.random() * transitions.length)]
+    // }
     // Handle behavior to move to next beat
     // A click on the right side of the window
     if ($(el).hasClass('last')) {
@@ -105,14 +105,14 @@
       var baseAnimSpeed = 750
       var blurPx = 81
 
-      var transitions = ['transition.slideLeftIn',
-        'transition.slideDownIn',
-        'transition.slideLeftBigIn',
-        'transition.shrinkIn',
-        'transition.flipXIn',
-        'transition.flipYIn',
-        'transition.fadeIn',
-        'transition.expandIn']
+      // var transitions = ['transition.slideLeftIn',
+      //   'transition.slideDownIn',
+      //   'transition.slideLeftBigIn',
+      //   'transition.shrinkIn',
+      //   'transition.flipXIn',
+      //   'transition.flipYIn',
+      //   'transition.fadeIn',
+      //   'transition.expandIn']
 
       if ($nextEl.find('p').length) {
         // console.log('HAS A P TAG')
