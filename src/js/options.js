@@ -22,7 +22,6 @@
 
     var defaults = {
       beatSelector: '[data-sg]',
-      enableSwiping: false,
       contentParent: 'main',
       initWidth: 640,
       onboard: true,

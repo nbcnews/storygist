@@ -83,9 +83,10 @@
       })
 
       // ++++ Swiping via Hammer.js
-      if (self.settings.enableSwiping) {
+      if (typeof window.Hammer === 'function') {
         $('.gist-beat').each(function (index, beat) {
           // console.log(beat, index, 'beat')
+          console.log('Hammer init:', index)
           var mc = new Hammer(beat)
           mc.on('swipeleft swiperight swipeup', self.swipeHandler.bind(self))
         })
