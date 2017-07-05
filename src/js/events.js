@@ -197,31 +197,47 @@
     }, 2000)
   }
 
-  sg.prototype.swipeHandler = function (e) {
+  // Handle behavior for next/prev on beats
+  sg.prototype.swipeBeat = function (e) {
     this.pauseBeats()
-
-    var $target = $(e.target)
-    if (!$target.hasClass('gist-beat')) {
-      $target = $target.closest('.gist-beat')
-      if (!$target.hasClass('gist-beat')) {
-        return
-      }
-    }
-    // console.log(e.type, e.direction, 'ev')
-    var beatNum = $target.attr('id').split('-')[2]
+    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var beatNum = $thisBeat.attr('id').split('-')[2]
     switch (e.direction) {
       case 8: // DIRECTION_UP
         this.viewInStory()
         break
       case 2: // DIRECTION_LEFT
-        this.nextBeat(beatNum, $target)
+        this.nextBeat(beatNum, $thisBeat)
         break
       case 4: // DIRECTION_RIGHT
-        this.prevBeat(beatNum, $target)
+        this.prevBeat(beatNum, $thisBeat)
         break
       default:
-        console.log(e.type)
+        console.log(e.type, e.direction)
     }
+    this.globalActiveGist($(this.element))
+  }
+
+  sg.prototype.clickBeat = function (e) {
+    this.pauseBeats()
+    // Get this beat's number from it's ID
+    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var beatNum = $thisBeat.attr('id').split('-')[2]
+
+    // Get pagewidth and mouse position
+    // Which we use to determine whether to go prev/next
+    var pageWidth = $(window).width()
+    var posX = $thisBeat.position().left
+    var clickX = e.pageX - posX
+
+    // If it's the last beat
+    if (clickX > (pageWidth / 2.5)) {
+      // A click on the right side of the window
+      this.nextBeat(beatNum, $thisBeat)
+    } else {
+      this.prevBeat(beatNum, $thisBeat)
+    };
+    this.globalActiveGist($(this.element))
   }
 
   sg.prototype.scrollLock = function (e) {

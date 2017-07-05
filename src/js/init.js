@@ -1,28 +1,11 @@
 /* globals jQuery, StoryGist, Hammer */
 // init.js
-
-function dependencyChecker (deps) {
-  deps.forEach(function (dep) {
-    var global = window
-    var depName = dep
-    if (dep.indexOf('$.') === 0) {
-      global = window.$
-      depName = dep.replace('$.', '')
-    }
-    if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
-      console.log('### window.' + dep, ' detected')
-    } else {
-      console.warn('### window.' + dep, ' Not Found')
-    }
-  })
-}
-
 ;(function ($, sg) {
   // called in plugin.js
   sg.prototype.init = function () {
     var self = this
     // check dependencies
-    dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
+    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
 
     var $body = $(self.element) // TODO: add to $els object
 
@@ -110,34 +93,12 @@ function dependencyChecker (deps) {
         $('.gist-progress-beat').css('opacity', 1)
         $('.gist-beat.last').removeClass('active')
         $initBeat.addClass('active')
-
         self.goToBeginning()
       })
 
       $initBeat.addClass('active')
 
-      // Handle behavior for next/prev on beats
-      $('.gist-beat').click(function (e) {
-        // Get this beat's number from it's ID
-        var beatNum = $(this).attr('id').split('-')[2]
-
-        // Get pagewidth and mouse position
-        // Which we use to determine whether to go prev/next
-        var pageWidth = $(window).width()
-        var posX = $(this).position().left
-        var clickX = e.pageX - posX
-
-        self.pauseBeats()
-
-        // If it's the last beat
-        if (clickX > (pageWidth / 2.5)) {
-          // A click on the right side of the window
-          self.nextBeat(beatNum, this)
-        } else {
-          self.prevBeat(beatNum, this)
-        };
-        self.globalActiveGist($body)
-      })
+      $('.gist-beat').click(self.clickBeat.bind(self))
 
       $('.gist-beat:last-of-type').addClass('last')
 
@@ -180,7 +141,7 @@ function dependencyChecker (deps) {
       $('.gist-beat').each(function (index, beat) {
         console.log('Hammer init:', index)
         var hammer = new Hammer(beat)
-        hammer.on('swipe', self.swipeHandler.bind(self))
+        hammer.on('swipe', self.swipeBeat.bind(self))
         hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'
       })
     }
