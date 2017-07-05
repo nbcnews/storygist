@@ -181,6 +181,7 @@ function dependencyChecker (deps) {
         console.log('Hammer init:', index)
         var hammer = new Hammer(beat)
         hammer.on('swipe', self.swipeHandler.bind(self))
+        hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'
       })
     }
   }
