@@ -76,3 +76,4 @@ gulp.task('copy', function () {
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
 gulp.task('build', ['scripts-prod', 'styles'])
+gulp.task('deploy', ['scripts-prod', 'styles', 'copy'])

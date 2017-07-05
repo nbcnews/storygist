@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "gulp watch",
     "build": "gulp build",
+    "deploy": "gulp deploy",
     "style-lint": "stylelint 'src/**/*.scss'",
     "script-lint": "standard --verbose",
     "lint-staged": "lint-staged",
