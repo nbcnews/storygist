@@ -46,6 +46,10 @@
     })
   }
 
+  sg.prototype.pauseBeats = function () {
+    this.beatVideoPauseAll()
+  }
+
   sg.prototype.nextBeat = function (beatNum, el) {
     function getRandTransition () {
       return transitions[Math.floor(Math.random() * transitions.length)]
@@ -73,14 +77,16 @@
         'transition.expandIn']
 
       if ($nextEl.find('p').length) {
-        console.log('HAS A P TAG')
-        var split = new SplitType($nextEl.find('p'), {
-          split: 'lines, chars',
-          position: 'absolute'
-        })
-        console.log('split', split)
-        $nextEl.find('.line')
-        .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        if (typeof window.SplitType === 'function') {
+          console.log('Split P Tag')
+          var split = new SplitType($nextEl.find('p'), {
+            split: 'lines, chars',
+            position: 'absolute'
+          })
+          console.log('split', split)
+          $nextEl.find('.line')
+          .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        }
       }
 
       $nextEl.find('figure img')
@@ -159,7 +165,7 @@
       $('#gist-progress').css('display', 'flex')
     }
     $('#gist-progress #gist-progress-beat-' + (beatNum - 1)).css('opacity', 1)
-    $(el.previousSibling).css('display', 'flex')
+    $('#gist-beat-' + (beatNum - 1)).css('display', 'flex')
   }
 
   sg.prototype.viewInStory = function () {
@@ -171,7 +177,7 @@
     // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
     // console.log('currentBeatNum', currentBeatNum);
 
-    this.beatVideoPauseAll()
+    this.pauseBeats()
 
     // Hide the storygist
     $('#gist-body').css('display', 'none')
@@ -189,6 +195,49 @@
     $('html, body').animate({
       scrollTop: (scrollToEl.offset().top - 80)
     }, 2000)
+  }
+
+  // Handle behavior for next/prev on beats
+  sg.prototype.swipeBeat = function (e) {
+    this.pauseBeats()
+    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var beatNum = $thisBeat.attr('id').split('-')[2]
+    switch (e.direction) {
+      case 8: // DIRECTION_UP
+        this.viewInStory()
+        break
+      case 2: // DIRECTION_LEFT
+        this.nextBeat(beatNum, $thisBeat)
+        break
+      case 4: // DIRECTION_RIGHT
+        this.prevBeat(beatNum, $thisBeat)
+        break
+      default:
+        console.log(e.type, e.direction)
+    }
+    this.globalActiveGist($(this.element))
+  }
+
+  sg.prototype.clickBeat = function (e) {
+    this.pauseBeats()
+    // Get this beat's number from it's ID
+    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var beatNum = $thisBeat.attr('id').split('-')[2]
+
+    // Get pagewidth and mouse position
+    // Which we use to determine whether to go prev/next
+    var pageWidth = $(window).width()
+    var posX = $thisBeat.position().left
+    var clickX = e.pageX - posX
+
+    // If it's the last beat
+    if (clickX > (pageWidth / 2.5)) {
+      // A click on the right side of the window
+      this.nextBeat(beatNum, $thisBeat)
+    } else {
+      this.prevBeat(beatNum, $thisBeat)
+    };
+    this.globalActiveGist($(this.element))
   }
 
   sg.prototype.scrollLock = function (e) {
