@@ -1,0 +1,81 @@
+@import "config";
+@import "mixins";
+@import "minireset";
+@import "base";
+
+body {
+  color: #fff;
+  font-family: sans-serif;
+}
+
+.pkg-beat {
+  background-color: $pkg-beat-background;
+  border-bottom: 1px solid red;
+  position: relative;
+  height: 100vh;
+
+  img,
+  video {
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  h1 {
+    @include fluid-type(640px, 1280px, $pkg-beat-headline-min-size, $pkg-beat-headline-max-size);
+
+    font-weight: bold;
+    padding: 0;
+  }
+}
+
+.pkg-beat__main {
+  position: absolute;
+  z-index: 1;
+  padding: $beat-gutter;
+}
+
+.pullquote {
+  q::before {
+    margin-left: $beat-gutter;
+  }
+
+  q {
+    font-family: serif;
+  }
+
+  q + p {
+    margin-top: $beat-gutter;
+    font-family: monospace;
+    text-transform: uppercase;
+  }
+}
+
+// Layout
+.set--top {
+  top: 80px;
+}
+
+.set--center {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.set--bottom {
+  bottom: 80px;
+}
+
+// Align
+.align--left {
+  text-align: left;
+}
+
+.align--center {
+  text-align: center;
+}
+
+.align--right {
+  text-align: right;
+}

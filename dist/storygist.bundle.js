@@ -115,14 +115,14 @@
         'transition.expandIn']
 
       if ($nextEl.find('p').length) {
-        console.log('HAS A P TAG')
-        var split = new SplitType($nextEl.find('p'), {
-          split: 'lines, chars',
-          position: 'absolute'
-        })
-        console.log('split', split)
-        $nextEl.find('.line')
-        .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        // console.log('HAS A P TAG')
+        // var split = new SplitType($nextEl.find('p'), {
+        //   split: 'lines, chars',
+        //   position: 'absolute'
+        // })
+        // console.log('split', split)
+        // $nextEl.find('.line')
+        // .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
       }
 
       $nextEl.find('figure img')
@@ -151,12 +151,12 @@
         })
 
       if ($nextEl.find('.pullquote').length) {
-        console.log('HAS A PULLQUOTE')
-        split = new SplitType($nextEl.find('.pullquote'), {
-          split: 'lines'
-        })
-        $nextEl.find('.line')
-        .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+        // console.log('HAS A PULLQUOTE')
+        // split = new SplitType($nextEl.find('.pullquote'), {
+        //   split: 'lines'
+        // })
+        // $nextEl.find('.line')
+        // .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
 
         /*
         var fontSize = $nextEl.find('.pullquote').css('font-size')
