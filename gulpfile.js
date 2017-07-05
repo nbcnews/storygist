@@ -4,18 +4,28 @@
 const gulp = require('gulp')
 const rename = require('gulp-rename')
 const uglify = require('gulp-uglify')
-const express = require('express')
-const directory = require('serve-index')
-const browser = require('open')
 const sass = require('gulp-sass')
 const cssnano = require('gulp-cssnano')
+const browserSync = require('browser-sync').create()
 const sourcemaps = require('gulp-sourcemaps')
 const concat = require('gulp-concat')
+const sequence = require('gulp-sequence')
 const eventStream = require('event-stream')
 const jsManifest = require('./src/js/manifest.json')
 
 // scripts
 gulp.task('scripts', function (done) {
+  const tasks = Object.keys(jsManifest).map((bundle) => {
+    return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
+      .pipe(concat(bundle))
+      .pipe(gulp.dest('./dist'))
+      .pipe(browserSync.stream())
+  })
+
+  eventStream.merge(tasks).on('end', done)
+})
+
+gulp.task('scripts-prod', function (done) {
   const tasks = Object.keys(jsManifest).map((bundle) => {
     return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
       .pipe(concat(bundle))
@@ -44,18 +54,31 @@ gulp.task('styles', function () {
     }))
     .pipe(sourcemaps.write('.', {includeContents: false}))
     .pipe(gulp.dest('./dist'))
+    .pipe(browserSync.stream())
   return stream
 })
 
 // watch Files For Changes
-gulp.task('watch', ['scripts', 'styles'], function () {
-  const app = express()
-  app.use(express.static('./'))
-  app.use(directory('./'))
-  app.listen(8090)
-  browser('http://localhost:8090/examples/demo.html', 'Google Chrome')
-  gulp.watch(['src/js/*.js', 'src/**/*.scss'], ['scripts', 'styles'])
+gulp.task('serve', ['styles', 'scripts'], function () {
+  browserSync.init({
+    server: './',
+    online: true,
+    index: 'index.html',
+    startPath: '/examples'
+  })
+
+  gulp.watch('./src/**/*.scss', ['styles'])
+  gulp.watch('./src/js/*.js', ['scripts'])
+  gulp.watch('./examples/**/*.html').on('change', browserSync.reload)
+})
+
+// copy dist files for examples
+gulp.task('copy', function () {
+  gulp.src('./dist/**')
+    .pipe(gulp.dest('./examples/dist/'))
 })
 
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
+gulp.task('build', ['scripts-prod', 'styles'])
+gulp.task('deploy', sequence('scripts-prod', 'styles', 'copy'))

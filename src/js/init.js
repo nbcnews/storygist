@@ -1,9 +1,12 @@
-/* globals jQuery, StoryGist */
+/* globals jQuery, StoryGist, Hammer */
 // init.js
 ;(function ($, sg) {
   // called in plugin.js
   sg.prototype.init = function () {
     var self = this
+    // check dependencies
+    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
+
     var $body = $(self.element) // TODO: add to $els object
 
     if ($(window).width() <= self.settings.initWidth) {
@@ -86,22 +89,6 @@
         }
       })
 
-      // #TODO revisit swiping
-      // $('.gist-beat').hammer().bind('swipe', function (ev) {
-      //   var beatNum = $(ev.target).attr('id').split('-')[2];
-      //   plugin.beatVideoPauseAll();
-      //   if (ev.gesture.offsetDirection === 2) {
-      //     // Swipe left
-      //     plugin.nextBeat(beatNum, ev.target);
-      //   } else if (ev.gesture.offsetDirection === 4) {
-      //     // Swipe right
-      //     plugin.prevBeat(beatNum, ev.target);
-      //   } else if (ev.gesture.offsetDirection === 8) {
-      //     // Swipe up
-      //     //plugin.viewInStory();
-      //   }
-      // });
-
       var $initBeat = $('#gist-beat-0')
 
       $('.go-to-beginning').click(function () {
@@ -110,34 +97,12 @@
         $('.gist-progress-beat').css('opacity', 1)
         $('.gist-beat.last').removeClass('active')
         $initBeat.addClass('active')
-
         self.goToBeginning()
       })
 
       $initBeat.addClass('active')
 
-      // Handle behavior for next/prev on beats
-      $('.gist-beat').click(function (e) {
-        // Get this beat's number from it's ID
-        var beatNum = $(this).attr('id').split('-')[2]
-
-        // Get pagewidth and mouse position
-        // Which we use to determine whether to go prev/next
-        var pageWidth = $(window).width()
-        var posX = $(this).position().left
-        var clickX = e.pageX - posX
-
-        self.beatVideoPauseAll()
-
-        // If it's the last beat
-        if (clickX > (pageWidth / 2.5)) {
-          // A click on the right side of the window
-          self.nextBeat(beatNum, this)
-        } else {
-          self.prevBeat(beatNum, this)
-        };
-        self.globalActiveGist($body)
-      })
+      $('.gist-beat').click(self.clickBeat.bind(self))
 
       $('.gist-beat:last-of-type').addClass('last')
 
@@ -167,6 +132,21 @@
           window.removeEventListener('scroll', scrollListener)
           window.addEventListener('touchmove', self.scrollLock)
         }
+      })
+
+      self.initHammer()
+    }
+  }
+
+  sg.prototype.initHammer = function () {
+    var self = this
+    // ++++ Swiping via Hammer.js
+    if (typeof window.Hammer === 'function') {
+      $('.gist-beat').each(function (index, beat) {
+        console.log('Hammer init:', index)
+        var hammer = new Hammer(beat)
+        hammer.on('swipe', self.swipeBeat.bind(self))
+        hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'
       })
     }
   }
