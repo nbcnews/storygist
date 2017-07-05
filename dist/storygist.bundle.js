@@ -40,6 +40,40 @@
   window.StoryGist = StoryGist // export to window for use in modules
 })(jQuery)
 
+/* globals jQuery, StoryGist */
+
+;(function ($, sg) {
+  sg.Static = {}
+
+  sg.Static.dependencyChecker = function (deps) {
+    deps.forEach(function (dep) {
+      var global = window
+      var depName = dep
+      if (dep.indexOf('$.') === 0) {
+        global = window.$
+        depName = dep.replace('$.', '')
+      }
+      if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
+        console.log('### window.' + dep, ' detected')
+      } else {
+        console.warn('### window.' + dep, ' Not Found')
+      }
+    })
+  }
+
+  sg.Static.getBeatFromTarget = function (target) {
+    // console.log(target, 'target -> getBeat')
+    var $beat = $(target)
+    if (!$beat.hasClass('gist-beat')) {
+      $beat = $beat.closest('.gist-beat')
+      if (!$beat.hasClass('gist-beat')) {
+        return null
+      }
+    }
+    return $beat
+  }
+})(jQuery, StoryGist)
+
 /* globals SplitType, jQuery, StoryGist */
 // events.js
 
@@ -88,6 +122,10 @@
     })
   }
 
+  sg.prototype.pauseBeats = function () {
+    this.beatVideoPauseAll()
+  }
+
   sg.prototype.nextBeat = function (beatNum, el) {
     function getRandTransition () {
       return transitions[Math.floor(Math.random() * transitions.length)]
@@ -115,14 +153,16 @@
         'transition.expandIn']
 
       if ($nextEl.find('p').length) {
-        console.log('HAS A P TAG')
-        var split = new SplitType($nextEl.find('p'), {
-          split: 'lines, chars',
-          position: 'absolute'
-        })
-        console.log('split', split)
-        $nextEl.find('.line')
-        .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        if (typeof window.SplitType === 'function') {
+          console.log('Split P Tag')
+          var split = new SplitType($nextEl.find('p'), {
+            split: 'lines, chars',
+            position: 'absolute'
+          })
+          console.log('split', split)
+          $nextEl.find('.line')
+          .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        }
       }
 
       $nextEl.find('figure img')
@@ -213,7 +253,7 @@
     // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
     // console.log('currentBeatNum', currentBeatNum);
 
-    this.beatVideoPauseAll()
+    this.pauseBeats()
 
     // Hide the storygist
     $('#gist-body').css('display', 'none')
@@ -233,31 +273,47 @@
     }, 2000)
   }
 
-  sg.prototype.swipeHandler = function (e) {
-    // console.log($(e.target), e.type, '>>>>>')
-    var $target = $(e.target)
-    if (!$target.hasClass('gist-beat')) {
-      $target = $target.closest('.gist-beat')
-      if (!$target.hasClass('gist-beat')) {
-        return
-      }
-    }
-
-    var beatNum = $target.attr('id').split('-')[2]
-    this.beatVideoPauseAll()
-    switch (e.type) {
-      case 'swipeup':
+  // Handle behavior for next/prev on beats
+  sg.prototype.swipeBeat = function (e) {
+    this.pauseBeats()
+    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var beatNum = $thisBeat.attr('id').split('-')[2]
+    switch (e.direction) {
+      case 8: // DIRECTION_UP
         this.viewInStory()
         break
-      case 'swipeleft':
-        this.nextBeat(beatNum, $target)
+      case 2: // DIRECTION_LEFT
+        this.nextBeat(beatNum, $thisBeat)
         break
-      case 'swiperight':
-        this.prevBeat(beatNum, $target)
+      case 4: // DIRECTION_RIGHT
+        this.prevBeat(beatNum, $thisBeat)
         break
       default:
-        console.log(e.type)
+        console.log(e.type, e.direction)
     }
+    this.globalActiveGist($(this.element))
+  }
+
+  sg.prototype.clickBeat = function (e) {
+    this.pauseBeats()
+    // Get this beat's number from it's ID
+    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var beatNum = $thisBeat.attr('id').split('-')[2]
+
+    // Get pagewidth and mouse position
+    // Which we use to determine whether to go prev/next
+    var pageWidth = $(window).width()
+    var posX = $thisBeat.position().left
+    var clickX = e.pageX - posX
+
+    // If it's the last beat
+    if (clickX > (pageWidth / 2.5)) {
+      // A click on the right side of the window
+      this.nextBeat(beatNum, $thisBeat)
+    } else {
+      this.prevBeat(beatNum, $thisBeat)
+    };
+    this.globalActiveGist($(this.element))
   }
 
   sg.prototype.scrollLock = function (e) {
@@ -271,6 +327,9 @@
   // called in plugin.js
   sg.prototype.init = function () {
     var self = this
+    // check dependencies
+    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
+
     var $body = $(self.element) // TODO: add to $els object
 
     if ($(window).width() <= self.settings.initWidth) {
@@ -349,16 +408,6 @@
         }
       })
 
-      // ++++ Swiping via Hammer.js
-      if (typeof window.Hammer === 'function') {
-        $('.gist-beat').each(function (index, beat) {
-          // console.log(beat, index, 'beat')
-          console.log('Hammer init:', index)
-          var mc = new Hammer(beat)
-          mc.on('swipeleft swiperight swipeup', self.swipeHandler.bind(self))
-        })
-      }
-
       var $initBeat = $('#gist-beat-0')
 
       $('.go-to-beginning').click(function () {
@@ -367,34 +416,12 @@
         $('.gist-progress-beat').css('opacity', 1)
         $('.gist-beat.last').removeClass('active')
         $initBeat.addClass('active')
-
         self.goToBeginning()
       })
 
       $initBeat.addClass('active')
 
-      // Handle behavior for next/prev on beats
-      $('.gist-beat').click(function (e) {
-        // Get this beat's number from it's ID
-        var beatNum = $(this).attr('id').split('-')[2]
-
-        // Get pagewidth and mouse position
-        // Which we use to determine whether to go prev/next
-        var pageWidth = $(window).width()
-        var posX = $(this).position().left
-        var clickX = e.pageX - posX
-
-        self.beatVideoPauseAll()
-
-        // If it's the last beat
-        if (clickX > (pageWidth / 2.5)) {
-          // A click on the right side of the window
-          self.nextBeat(beatNum, this)
-        } else {
-          self.prevBeat(beatNum, this)
-        };
-        self.globalActiveGist($body)
-      })
+      $('.gist-beat').click(self.clickBeat.bind(self))
 
       $('.gist-beat:last-of-type').addClass('last')
 
@@ -424,6 +451,21 @@
           window.removeEventListener('scroll', scrollListener)
           window.addEventListener('touchmove', self.scrollLock)
         }
+      })
+
+      self.initHammer()
+    }
+  }
+
+  sg.prototype.initHammer = function () {
+    var self = this
+    // ++++ Swiping via Hammer.js
+    if (typeof window.Hammer === 'function') {
+      $('.gist-beat').each(function (index, beat) {
+        console.log('Hammer init:', index)
+        var hammer = new Hammer(beat)
+        hammer.on('swipe', self.swipeBeat.bind(self))
+        hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'
       })
     }
   }
