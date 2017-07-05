@@ -11,6 +11,7 @@ const sass = require('gulp-sass')
 const cssnano = require('gulp-cssnano')
 const sourcemaps = require('gulp-sourcemaps')
 const concat = require('gulp-concat')
+const sequence = require('gulp-sequence')
 const eventStream = require('event-stream')
 const jsManifest = require('./src/js/manifest.json')
 
@@ -76,4 +77,4 @@ gulp.task('copy', function () {
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
 gulp.task('build', ['scripts-prod', 'styles'])
-gulp.task('deploy', ['scripts-prod', 'styles', 'copy'])
+gulp.task('deploy', sequence('scripts-prod', 'styles', 'copy'))

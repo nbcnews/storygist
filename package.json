@@ -59,5 +59,7 @@
     "stylelint": "^7.10.1",
     "stylelint-config-standard": "^16.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "gulp-sequence": "^0.4.6"
+  }
 }
