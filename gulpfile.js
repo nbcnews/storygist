@@ -20,6 +20,16 @@ gulp.task('scripts', function (done) {
     return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
       .pipe(concat(bundle))
       .pipe(gulp.dest('./dist'))
+  })
+
+  eventStream.merge(tasks).on('end', done)
+})
+
+gulp.task('scripts-prod', function (done) {
+  const tasks = Object.keys(jsManifest).map((bundle) => {
+    return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
+      .pipe(concat(bundle))
+      .pipe(gulp.dest('./dist'))
       .pipe(rename({suffix: '.min', extname: '.js'}))
       .pipe(uglify())
       .pipe(gulp.dest('./dist'))
@@ -53,9 +63,16 @@ gulp.task('watch', ['scripts', 'styles'], function () {
   app.use(express.static('./'))
   app.use(directory('./'))
   app.listen(8090)
-  browser('http://localhost:8090/examples/demo.html', 'Google Chrome')
+  browser('http://localhost:8090/examples/index.html', 'Google Chrome')
   gulp.watch(['src/js/*.js', 'src/**/*.scss'], ['scripts', 'styles'])
+})
+
+// copy dist files for examples
+gulp.task('copy', function () {
+  gulp.src('./dist/**')
+    .pipe(gulp.dest('./examples/dist/'))
 })
 
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
+gulp.task('build', ['scripts-prod', 'styles'])
