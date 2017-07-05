@@ -40,7 +40,7 @@
   window.StoryGist = StoryGist // export to window for use in modules
 })(jQuery)
 
-/* globals jQuery, StoryGist */
+/* globals SplitType, jQuery, StoryGist */
 // events.js
 
 ;(function ($, sg) {
@@ -89,9 +89,9 @@
   }
 
   sg.prototype.nextBeat = function (beatNum, el) {
-    // function getRandTransition () {
-    //   return transitions[Math.floor(Math.random() * transitions.length)]
-    // }
+    function getRandTransition () {
+      return transitions[Math.floor(Math.random() * transitions.length)]
+    }
     // Handle behavior to move to next beat
     // A click on the right side of the window
     if ($(el).hasClass('last')) {
@@ -105,24 +105,24 @@
       var baseAnimSpeed = 750
       var blurPx = 81
 
-      // var transitions = ['transition.slideLeftIn',
-      //   'transition.slideDownIn',
-      //   'transition.slideLeftBigIn',
-      //   'transition.shrinkIn',
-      //   'transition.flipXIn',
-      //   'transition.flipYIn',
-      //   'transition.fadeIn',
-      //   'transition.expandIn']
+      var transitions = ['transition.slideLeftIn',
+        'transition.slideDownIn',
+        'transition.slideLeftBigIn',
+        'transition.shrinkIn',
+        'transition.flipXIn',
+        'transition.flipYIn',
+        'transition.fadeIn',
+        'transition.expandIn']
 
       if ($nextEl.find('p').length) {
-        // console.log('HAS A P TAG')
-        // var split = new SplitType($nextEl.find('p'), {
-        //   split: 'lines, chars',
-        //   position: 'absolute'
-        // })
-        // console.log('split', split)
-        // $nextEl.find('.line')
-        // .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        console.log('HAS A P TAG')
+        var split = new SplitType($nextEl.find('p'), {
+          split: 'lines, chars',
+          position: 'absolute'
+        })
+        console.log('split', split)
+        $nextEl.find('.line')
+        .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
       }
 
       $nextEl.find('figure img')
@@ -151,12 +151,12 @@
         })
 
       if ($nextEl.find('.pullquote').length) {
-        // console.log('HAS A PULLQUOTE')
-        // split = new SplitType($nextEl.find('.pullquote'), {
-        //   split: 'lines'
-        // })
-        // $nextEl.find('.line')
-        // .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+        console.log('HAS A PULLQUOTE')
+        split = new SplitType($nextEl.find('.pullquote'), {
+          split: 'lines'
+        })
+        $nextEl.find('.line')
+        .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
 
         /*
         var fontSize = $nextEl.find('.pullquote').css('font-size')
