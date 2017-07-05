@@ -1,8 +1,28 @@
 /* globals jQuery, StoryGist, Hammer */
 // init.js
+
+function dependencyChecker (deps) {
+  deps.forEach(function (dep) {
+    var global = window
+    var depName = dep
+    if (dep.indexOf('$.') === 0) {
+      global = window.$
+      depName = dep.replace('$.', '')
+    }
+    if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
+      console.log('### window.' + dep, ' detected')
+    } else {
+      console.warn('### window.' + dep, ' Not Found')
+    }
+  })
+}
+
 ;(function ($, sg) {
   // called in plugin.js
   sg.prototype.init = function () {
+    // check dependencies
+    dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
+
     var self = this
     var $body = $(self.element) // TODO: add to $els object
 

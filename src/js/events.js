@@ -77,14 +77,16 @@
         'transition.expandIn']
 
       if ($nextEl.find('p').length) {
-        console.log('HAS A P TAG')
-        var split = new SplitType($nextEl.find('p'), {
-          split: 'lines, chars',
-          position: 'absolute'
-        })
-        console.log('split', split)
-        $nextEl.find('.line')
-        .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        if (typeof window.SplitType === 'function') {
+          console.log('Split P Tag')
+          var split = new SplitType($nextEl.find('p'), {
+            split: 'lines, chars',
+            position: 'absolute'
+          })
+          console.log('split', split)
+          $nextEl.find('.line')
+          .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
+        }
       }
 
       $nextEl.find('figure img')
