@@ -159,7 +159,7 @@
       $('#gist-progress').css('display', 'flex')
     }
     $('#gist-progress #gist-progress-beat-' + (beatNum - 1)).css('opacity', 1)
-    $(el.previousSibling).css('display', 'flex')
+    $('#gist-beat-' + (beatNum - 1)).css('display', 'flex')
   }
 
   sg.prototype.viewInStory = function () {
