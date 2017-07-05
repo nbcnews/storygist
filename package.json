@@ -7,7 +7,7 @@
   "main": "dist/jquery.storygist.min.js",
   "scripts": {
     "dev": "gulp watch",
-    "build": "gulp",
+    "build": "gulp build",
     "style-lint": "stylelint 'src/**/*.scss'",
     "script-lint": "standard --verbose",
     "lint-staged": "lint-staged",

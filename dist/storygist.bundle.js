@@ -22,7 +22,6 @@
 
     var defaults = {
       beatSelector: '[data-sg]',
-      enableSwiping: false,
       contentParent: 'main',
       initWidth: 640,
       onboard: true,
@@ -202,7 +201,7 @@
       $('#gist-progress').css('display', 'flex')
     }
     $('#gist-progress #gist-progress-beat-' + (beatNum - 1)).css('opacity', 1)
-    $(el.previousSibling).css('display', 'flex')
+    $('#gist-beat-' + (beatNum - 1)).css('display', 'flex')
   }
 
   sg.prototype.viewInStory = function () {
@@ -351,9 +350,10 @@
       })
 
       // ++++ Swiping via Hammer.js
-      if (self.settings.enableSwiping) {
+      if (typeof window.Hammer === 'function') {
         $('.gist-beat').each(function (index, beat) {
           // console.log(beat, index, 'beat')
+          console.log('Hammer init:', index)
           var mc = new Hammer(beat)
           mc.on('swipeleft swiperight swipeup', self.swipeHandler.bind(self))
         })
