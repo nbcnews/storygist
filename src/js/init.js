@@ -1,8 +1,28 @@
-/* globals jQuery, StoryGist */
+/* globals jQuery, StoryGist, Hammer */
 // init.js
+
+function dependencyChecker (deps) {
+  deps.forEach(function (dep) {
+    var global = window
+    var depName = dep
+    if (dep.indexOf('$.') === 0) {
+      global = window.$
+      depName = dep.replace('$.', '')
+    }
+    if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
+      console.log('### window.' + dep, ' detected')
+    } else {
+      console.warn('### window.' + dep, ' Not Found')
+    }
+  })
+}
+
 ;(function ($, sg) {
   // called in plugin.js
   sg.prototype.init = function () {
+    // check dependencies
+    dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
+
     var self = this
     var $body = $(self.element) // TODO: add to $els object
 
@@ -82,21 +102,15 @@
         }
       })
 
-      // #TODO revisit swiping
-      // $('.gist-beat').hammer().bind('swipe', function (ev) {
-      //   var beatNum = $(ev.target).attr('id').split('-')[2];
-      //   plugin.beatVideoPauseAll();
-      //   if (ev.gesture.offsetDirection === 2) {
-      //     // Swipe left
-      //     plugin.nextBeat(beatNum, ev.target);
-      //   } else if (ev.gesture.offsetDirection === 4) {
-      //     // Swipe right
-      //     plugin.prevBeat(beatNum, ev.target);
-      //   } else if (ev.gesture.offsetDirection === 8) {
-      //     // Swipe up
-      //     //plugin.viewInStory();
-      //   }
-      // });
+      // ++++ Swiping via Hammer.js
+      if (typeof window.Hammer === 'function') {
+        $('.gist-beat').each(function (index, beat) {
+          // console.log(beat, index, 'beat')
+          console.log('Hammer init:', index)
+          var mc = new Hammer(beat)
+          mc.on('swipeleft swiperight swipeup', self.swipeHandler.bind(self))
+        })
+      }
 
       var $initBeat = $('#gist-beat-0')
 
@@ -123,7 +137,7 @@
         var posX = $(this).position().left
         var clickX = e.pageX - posX
 
-        self.beatVideoPauseAll()
+        self.pauseBeats()
 
         // If it's the last beat
         if (clickX > (pageWidth / 2.5)) {
