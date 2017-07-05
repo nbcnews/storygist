@@ -8,7 +8,6 @@
     sg.Static.dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
 
     var $body = $(self.element) // TODO: add to $els object
-
     if ($(window).width() <= self.settings.initWidth) {
       var parsedGistEls = []
       var $originalStoryContent = $(self.settings.contentParent)
