@@ -4,11 +4,9 @@
 const gulp = require('gulp')
 const rename = require('gulp-rename')
 const uglify = require('gulp-uglify')
-const express = require('express')
-const directory = require('serve-index')
-const browser = require('open')
 const sass = require('gulp-sass')
 const cssnano = require('gulp-cssnano')
+const browserSync = require('browser-sync').create()
 const sourcemaps = require('gulp-sourcemaps')
 const concat = require('gulp-concat')
 const sequence = require('gulp-sequence')
@@ -21,6 +19,7 @@ gulp.task('scripts', function (done) {
     return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
       .pipe(concat(bundle))
       .pipe(gulp.dest('./dist'))
+      .pipe(browserSync.stream())
   })
 
   eventStream.merge(tasks).on('end', done)
@@ -55,17 +54,22 @@ gulp.task('styles', function () {
     }))
     .pipe(sourcemaps.write('.', {includeContents: false}))
     .pipe(gulp.dest('./dist'))
+    .pipe(browserSync.stream())
   return stream
 })
 
 // watch Files For Changes
-gulp.task('watch', ['scripts', 'styles'], function () {
-  const app = express()
-  app.use(express.static('./'))
-  app.use(directory('./'))
-  app.listen(8090)
-  browser('http://localhost:8090/examples/index.html', 'Google Chrome')
-  gulp.watch(['src/js/*.js', 'src/**/*.scss'], ['scripts', 'styles'])
+gulp.task('serve', ['styles', 'scripts'], function () {
+  browserSync.init({
+    server: './',
+    online: true,
+    index: 'index.html',
+    startPath: '/examples'
+  })
+
+  gulp.watch('./src/**/*.scss', ['styles'])
+  gulp.watch('./src/js/*.js', ['scripts'])
+  gulp.watch('./examples/**/*.html').on('change', browserSync.reload)
 })
 
 // copy dist files for examples
