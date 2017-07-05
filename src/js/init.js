@@ -20,10 +20,10 @@ function dependencyChecker (deps) {
 ;(function ($, sg) {
   // called in plugin.js
   sg.prototype.init = function () {
+    var self = this
     // check dependencies
     dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
 
-    var self = this
     var $body = $(self.element) // TODO: add to $els object
 
     if ($(window).width() <= self.settings.initWidth) {
@@ -102,16 +102,6 @@ function dependencyChecker (deps) {
         }
       })
 
-      // ++++ Swiping via Hammer.js
-      if (typeof window.Hammer === 'function') {
-        $('.gist-beat').each(function (index, beat) {
-          // console.log(beat, index, 'beat')
-          console.log('Hammer init:', index)
-          var mc = new Hammer(beat)
-          mc.on('swipeleft swiperight swipeup', self.swipeHandler.bind(self))
-        })
-      }
-
       var $initBeat = $('#gist-beat-0')
 
       $('.go-to-beginning').click(function () {
@@ -177,6 +167,20 @@ function dependencyChecker (deps) {
           window.removeEventListener('scroll', scrollListener)
           window.addEventListener('touchmove', self.scrollLock)
         }
+      })
+
+      self.initHammer()
+    }
+  }
+
+  sg.prototype.initHammer = function () {
+    var self = this
+    // ++++ Swiping via Hammer.js
+    if (typeof window.Hammer === 'function') {
+      $('.gist-beat').each(function (index, beat) {
+        console.log('Hammer init:', index)
+        var hammer = new Hammer(beat)
+        hammer.on('swipe', self.swipeHandler.bind(self))
       })
     }
   }

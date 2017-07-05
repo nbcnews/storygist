@@ -207,16 +207,16 @@
         return
       }
     }
-
+    // console.log(e.type, e.direction, 'ev')
     var beatNum = $target.attr('id').split('-')[2]
-    switch (e.type) {
-      case 'swipeup':
+    switch (e.direction) {
+      case 8: // DIRECTION_UP
         this.viewInStory()
         break
-      case 'swipeleft':
+      case 2: // DIRECTION_LEFT
         this.nextBeat(beatNum, $target)
         break
-      case 'swiperight':
+      case 4: // DIRECTION_RIGHT
         this.prevBeat(beatNum, $target)
         break
       default:
