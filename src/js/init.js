@@ -117,7 +117,7 @@
         var posX = $(this).position().left
         var clickX = e.pageX - posX
 
-        self.beatVideoPauseAll()
+        self.pauseBeats()
 
         // If it's the last beat
         if (clickX > (pageWidth / 2.5)) {

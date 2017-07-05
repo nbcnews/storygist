@@ -46,6 +46,10 @@
     })
   }
 
+  sg.prototype.pauseBeats = function () {
+    this.beatVideoPauseAll()
+  }
+
   sg.prototype.nextBeat = function (beatNum, el) {
     function getRandTransition () {
       return transitions[Math.floor(Math.random() * transitions.length)]
@@ -171,7 +175,7 @@
     // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
     // console.log('currentBeatNum', currentBeatNum);
 
-    this.beatVideoPauseAll()
+    this.pauseBeats()
 
     // Hide the storygist
     $('#gist-body').css('display', 'none')
@@ -192,7 +196,8 @@
   }
 
   sg.prototype.swipeHandler = function (e) {
-    // console.log($(e.target), e.type, '>>>>>')
+    this.pauseBeats()
+
     var $target = $(e.target)
     if (!$target.hasClass('gist-beat')) {
       $target = $target.closest('.gist-beat')
@@ -202,7 +207,6 @@
     }
 
     var beatNum = $target.attr('id').split('-')[2]
-    this.beatVideoPauseAll()
     switch (e.type) {
       case 'swipeup':
         this.viewInStory()
