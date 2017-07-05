@@ -39,6 +39,15 @@ body {
   padding: $beat-gutter;
 }
 
+.pkg-beat__kicker {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding-top: $beat-gutter;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .pullquote {
   q::before {
     margin-left: $beat-gutter;
