@@ -122,6 +122,7 @@ body.gist-active {
   width: 100%;
   display: flex;
   align-items: center;
+  overflow-y: hidden;
 
   @if $beat-center-headings {
     h2,
