@@ -2,6 +2,7 @@
   "storygist.bundle.js": [
     "options.js",
     "static.js",
+    "browserModal.js",
     "events.js",
     "init.js",
     "plugin.js"

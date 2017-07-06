@@ -172,8 +172,10 @@
     // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
     // console.log('currentBeatNum', currentBeatNum);
 
-    if ($(currentBeat).attr('data-cta-url')) {
-      console.log('Do browser CTA thing')
+    var ctaURL = $(currentBeat).data('cta-url')
+    if (ctaURL !== 'undefined') { // TODO: fix how data-cta-url is being set
+      console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
+      sg.Modal.launch($(currentBeat).attr('data-cta-url'), currentBeatNum)
     } else {
       this.pauseBeats()
 
