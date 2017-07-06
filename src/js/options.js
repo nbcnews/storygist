@@ -31,7 +31,7 @@
       onboard: true,
       callToAction: 'View in full story ↓',
       pager: {
-        html: '<div class="gist-pager"><button class="gist-pager__btn gitst-pager__btn--prev" aria-label="previous">' + prevIcon + '</button> <button class="gist-pager__btn gitst-pager__btn--next" aria-label="next">' + nextIcon + '</button></div>'
+        html: '<div class="gist-pager"><button class="gist-pager__btn gist-pager__btn--prev" aria-label="previous">' + prevIcon + '</button> <button class="gist-pager__btn gist-pager__btn--next" aria-label="next">' + nextIcon + '</button></div>'
       },
       finalBeat: {
         raw: null,
