@@ -69,6 +69,7 @@
 
       // Create element to hold navbar
       $gistBody.append('<div id="gist-progress"></div>')
+      $gistBody.append(self.settings.pager.html)
 
       // Write the beats back to the page
       parsedGistEls.forEach(function (el, i) {
