@@ -36,6 +36,10 @@
           'id': i
         }
 
+        if ($(el).attr('data-cta-url')) {
+          beat.ctaUrl = $(el).attr('data-cta-url')
+        }
+
         // If the beat has a preceding element, add it's type to the object
         if (el.previousElementSibling != null) {
           beat.prevtype = el.previousElementSibling.nodeName
@@ -86,7 +90,7 @@
         if (el.onBoard === true) {
           $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat gist-beat-onboard" style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         } else {
-          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-origid="' + el.id + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
+          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-cta-url="' + el.ctaUrl + '" data-origid="' + el.id + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         }
 
         // Create progress bar

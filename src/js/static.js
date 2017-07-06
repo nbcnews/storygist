@@ -30,4 +30,15 @@
     }
     return $beat
   }
+
+  sg.Static.TRANSITIONS = [
+    'transition.slideLeftIn',
+    'transition.slideDownIn',
+    'transition.slideLeftBigIn',
+    'transition.shrinkIn',
+    'transition.flipXIn',
+    'transition.flipYIn',
+    'transition.fadeIn',
+    'transition.expandIn'
+  ]
 })(jQuery, StoryGist)
