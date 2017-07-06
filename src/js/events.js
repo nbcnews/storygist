@@ -65,7 +65,7 @@
       var baseAnimSpeed = 750
       var blurPx = 81
 
-      if (typeof window.SplitType === 'function' && $nextEl.find('.js-text-block').length) {
+      if (window.SplitType && $nextEl.find('.js-text-block').length) {
         console.log('Animate Textblock')
         var splitTextBlock = new SplitType('.js-text-block')
         splitTextBlock.split({
@@ -101,7 +101,7 @@
           }
         })
 
-      if ($nextEl.find('.pullquote').length) {
+      if (window.SplitType && $nextEl.find('.pullquote').length) {
         console.log('Animate PULLQUOTE')
         var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
           split: 'lines'
