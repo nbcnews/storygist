@@ -164,24 +164,28 @@
     // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
     // console.log('currentBeatNum', currentBeatNum);
 
-    this.pauseBeats()
+    if ($(currentBeat).attr('data-cta-url')) {
+      console.log('Do browser CTA thing')
+    } else {
+      this.pauseBeats()
 
-    // Hide the storygist
-    $('#gist-body').css('display', 'none')
-    $(this.element).toggleClass('gist-active')
+      // Hide the storygist
+      $('#gist-body').css('display', 'none')
+      $(this.element).toggleClass('gist-active')
 
-    // Show all the original story elements
-    $(this.settings.contentParent).css('display', 'block')
-    $('.site-header').css('display', 'block')
-    $('.progress').css('display', 'block')
+      // Show all the original story elements
+      $(this.settings.contentParent).css('display', 'block')
+      $('.site-header').css('display', 'block')
+      $('.progress').css('display', 'block')
 
-    // Find the original element that corresponds with the current beat
-    var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
+      // Find the original element that corresponds with the current beat
+      var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
 
-    // Scroll to that element
-    $('html, body').animate({
-      scrollTop: (scrollToEl.offset().top - 80)
-    }, 2000)
+      // Scroll to that element
+      $('html, body').animate({
+        scrollTop: (scrollToEl.offset().top - 80)
+      }, 2000)
+    }
   }
 
   // Handle behavior for next/prev on beats
