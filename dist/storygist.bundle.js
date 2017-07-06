@@ -29,6 +29,7 @@
       contentParent: 'main',
       initWidth: 640,
       onboard: true,
+      callToAction: 'View in full story ↓',
       pager: {
         html: '<div class="gist-pager"><button class="gist-pager__btn gitst-pager__btn--prev" aria-label="previous">' + prevIcon + '</button> <button class="gist-pager__btn gitst-pager__btn--next" aria-label="next">' + nextIcon + '</button></div>'
       },
@@ -387,7 +388,7 @@
       parsedGistEls.push(self.settings.finalBeat)
 
       // Empty the page of old content
-      $gistBody.append('<button id="gist-view-story">View in full story ↓</button>')
+      $gistBody.append('<button id="gist-view-story">' + self.settings.callToAction + '</button>')
 
       $('#gist-view-story').click(function () {
         // View beat in story when 'view in story' CTA is clicked

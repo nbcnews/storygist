@@ -57,7 +57,7 @@
       parsedGistEls.push(self.settings.finalBeat)
 
       // Empty the page of old content
-      $gistBody.append('<button id="gist-view-story">View in full story ↓</button>')
+      $gistBody.append('<button id="gist-view-story">' + self.settings.callToAction + '</button>')
 
       $('#gist-view-story').click(function () {
         // View beat in story when 'view in story' CTA is clicked
