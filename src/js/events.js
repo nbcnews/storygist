@@ -49,6 +49,8 @@
   }
 
   sg.prototype.nextBeat = function (beatNum, el) {
+    sg.Static.currentBeatIndex++
+
     function getRandTransition () {
       return sg.Static.TRANSITIONS[Math.floor(Math.random() * sg.Static.TRANSITIONS.length)]
     }
@@ -138,6 +140,8 @@
   }
 
   sg.prototype.prevBeat = function (beatNum, el) {
+    sg.Static.currentBeatIndex--
+
     // Handle behavior to move to previous beat
     if ($(el).is('#gist-beat-0')) {
       // Do nothing for the first beat
@@ -210,6 +214,8 @@
   }
 
   sg.prototype.clickBeat = function (e) {
+    console.log(sg.Static.getCurrentBeat, 'currentBeat')
+
     this.pauseBeats()
     // Get this beat's number from it's ID
     var $thisBeat = sg.Static.getBeatFromTarget(e.target)
