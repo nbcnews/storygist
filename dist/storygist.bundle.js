@@ -72,11 +72,21 @@
     }
     return $beat
   }
+
+  sg.Static.TRANSITIONS = [
+    'transition.slideLeftIn',
+    'transition.slideDownIn',
+    'transition.slideLeftBigIn',
+    'transition.shrinkIn',
+    'transition.flipXIn',
+    'transition.flipYIn',
+    'transition.fadeIn',
+    'transition.expandIn'
+  ]
 })(jQuery, StoryGist)
 
 /* globals SplitType, jQuery, StoryGist */
 // events.js
-
 ;(function ($, sg) {
   sg.prototype.beatVideoPlay = function (videoEl) {
     if (videoEl) { videoEl.play() }
@@ -88,9 +98,8 @@
 
   sg.prototype.beatVideoPauseAll = function (videoEl) {
     var self = this
-    $('video').each(function () {
-      var videoEl = $(this).get(0)
-      self.beatVideoPause(videoEl)
+    $('video').each(function (idx, el) {
+      self.beatVideoPause(el)
     })
   }
 
@@ -128,7 +137,7 @@
 
   sg.prototype.nextBeat = function (beatNum, el) {
     function getRandTransition () {
-      return transitions[Math.floor(Math.random() * transitions.length)]
+      return sg.Static.TRANSITIONS[Math.floor(Math.random() * sg.Static.TRANSITIONS.length)]
     }
     // Handle behavior to move to next beat
     // A click on the right side of the window
@@ -143,26 +152,15 @@
       var baseAnimSpeed = 750
       var blurPx = 81
 
-      var transitions = ['transition.slideLeftIn',
-        'transition.slideDownIn',
-        'transition.slideLeftBigIn',
-        'transition.shrinkIn',
-        'transition.flipXIn',
-        'transition.flipYIn',
-        'transition.fadeIn',
-        'transition.expandIn']
+      if (window.SplitType && $nextEl.find('.js-text-block').length) {
+        console.log('Animate Textblock')
+        var splitTextBlock = new SplitType('.js-text-block')
+        splitTextBlock.split({
+          split: 'lines',
+          position: 'relative'
+        })
 
-      if ($nextEl.find('p').length) {
-        if (typeof window.SplitType === 'function') {
-          console.log('Split P Tag')
-          var split = new SplitType($nextEl.find('p'), {
-            split: 'lines, chars',
-            position: 'absolute'
-          })
-          console.log('split', split)
-          $nextEl.find('.line')
-          .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
-        }
+        $.Velocity(splitTextBlock.lines, sg.Static.TRANSITIONS[3], {duration: baseAnimSpeed * 0.6, stagger: baseAnimSpeed * 0.05})
       }
 
       $nextEl.find('figure img')
@@ -190,13 +188,13 @@
           }
         })
 
-      if ($nextEl.find('.pullquote').length) {
-        console.log('HAS A PULLQUOTE')
-        split = new SplitType($nextEl.find('.pullquote'), {
+      if (window.SplitType && $nextEl.find('.pullquote').length) {
+        console.log('Animate PULLQUOTE')
+        var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
           split: 'lines'
         })
-        $nextEl.find('.line')
-        .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+
+        $.Velocity(splitPullQuote.lines, getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
 
         /*
         var fontSize = $nextEl.find('.pullquote').css('font-size')

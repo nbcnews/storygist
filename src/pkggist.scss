@@ -1,3 +1,5 @@
+$beat-last-background: #5b00d5;
+
 @import "config";
 @import "mixins";
 @import "minireset";
@@ -6,6 +8,10 @@
 body {
   color: #fff;
   font-family: sans-serif;
+}
+
+a {
+  text-decoration: none;
 }
 
 .pkg-beat {
@@ -62,6 +68,138 @@ body {
     font-family: monospace;
     text-transform: uppercase;
   }
+}
+
+// Newsletter
+.newsletter {
+  border: 3px solid grey;
+  padding: $beat-gutter;
+  text-align: center;
+}
+
+.newsletter--prompt {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 320px;
+}
+
+.j-subscribe {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 320px;
+}
+
+.c-privacy-link a {
+  color: #fff;
+}
+
+.c-input-text {
+  flex: 1;
+}
+
+.j-caption {
+  margin-bottom: 9px;
+
+  p {
+    margin-bottom: 9px;
+  }
+}
+
+.c-privacy-link {
+  font-family: monospace;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  font-size: 0.7em;
+}
+
+[type="email"],
+[type="number"],
+[type="search"],
+[type="text"],
+[type="tel"],
+[type="url"],
+[type="password"],
+[type="date"],
+[type="month"],
+[type="week"],
+[type="time"],
+[type="datetime"],
+[type="datetime-local"],
+textarea,
+select {
+  background-color: #fff;
+  border: 1px solid #2a2a2a; /* The 6px vertically centers text on FF, ignored by Webkit */
+  box-shadow: none;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  font-weight: 400;
+  height: 40px;
+  padding: 6px;
+  vertical-align: middle;
+}
+
+button,
+[type="button"] {
+  border: 0;
+}
+
+.button,
+[type="submit"],
+[type="reset"] {
+  background-color: #2a2a2a;
+  border: 1px solid #2a2a2a;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: monospace;
+  font-size: 0.75em;
+  font-weight: normal;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 12px;
+  text-align: center;
+  text-decoration: none;
+  transition-duration: 0.5s, 0.5s;
+  transition-property: border-color, background-color;
+  transition-timing-function: ease, ease;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.button:hover,
+[type="submit"]:hover,
+[type="reset"]:hover,
+.button:focus,
+[type="submit"]:focus,
+[type="reset"]:focus {
+  background-color: grey;
+  border-color: grey;
+  outline: 0;
+}
+
+.button:active,
+[type="submit"]:active,
+[type="reset"]:active,
+.button:active {
+  background-color: darken(grey, 30%);
+  border-color: darken(grey, 30%);
+  outline: 0;
+}
+
+/* Removes awkward default styles on some inputs for iOS */
+[type="email"],
+[type="number"],
+[type="search"],
+[type="text"],
+[type="tel"],
+[type="url"],
+[type="password"],
+textarea {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 // Layout
