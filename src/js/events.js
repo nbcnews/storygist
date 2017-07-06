@@ -68,7 +68,7 @@
       var baseAnimSpeed = 750
       var blurPx = 81
 
-      if (window.SplitType && $nextEl.find('.js-text-block').length) {
+      if (window.SplitType && $nextEl.find('.js-text-block').length && this.settings.animate) {
         console.log('Animate Textblock')
         var splitTextBlock = new SplitType('.js-text-block')
         splitTextBlock.split({
@@ -79,38 +79,40 @@
         $.Velocity(splitTextBlock.lines, sg.Static.TRANSITIONS[3], {duration: baseAnimSpeed * 0.6, stagger: baseAnimSpeed * 0.05})
       }
 
-      $nextEl.find('figure img')
-      // .css('margin-bottom', -800)
-      .velocity({
-        'blur': 0
-        // 'margin-bottom': 0,
-      },
-        { 'duration': baseAnimSpeed,
-          'begin': function (el) {
-            $nextEl.find('figure figcaption').css('opacity', 0)
-            $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
-          },
-          'complete': function (el) {
-            $nextEl.find('figure figcaption')
-            .velocity('transition.slideLeftIn', {'duration': baseAnimSpeed * 1.75})
-          }
-        })
+      if (this.settings.animate) {
+        $nextEl.find('figure img')
+        // .css('margin-bottom', -800)
+        .velocity({
+          'blur': 0
+          // 'margin-bottom': 0,
+        },
+          { 'duration': baseAnimSpeed,
+            'begin': function (el) {
+              $nextEl.find('figure figcaption').css('opacity', 0)
+              $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
+            },
+            'complete': function (el) {
+              $nextEl.find('figure figcaption')
+              .velocity('transition.slideLeftIn', {'duration': baseAnimSpeed * 1.75})
+            }
+          })
 
-      $nextEl.find('figure.media')
-      .velocity({ 'blur': 0 },
-        { 'duration': baseAnimSpeed,
-          'begin': function (el) {
-            $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
-          }
-        })
+        $nextEl.find('figure.media')
+        .velocity({ 'blur': 0 },
+          { 'duration': baseAnimSpeed,
+            'begin': function (el) {
+              $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)')
+            }
+          })
 
-      if (window.SplitType && $nextEl.find('.pullquote').length) {
-        console.log('Animate PULLQUOTE')
-        var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
-          split: 'lines'
-        })
+        if (window.SplitType && $nextEl.find('.pullquote').length) {
+          console.log('Animate PULLQUOTE')
+          var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
+            split: 'lines'
+          })
 
-        $.Velocity(splitPullQuote.lines, getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+          $.Velocity(splitPullQuote.lines, getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+        }
 
         /*
         var fontSize = $nextEl.find('.pullquote').css('font-size')

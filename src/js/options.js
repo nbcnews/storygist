@@ -24,6 +24,7 @@
       beatSelector: '[data-sg]',
       contentParent: 'main',
       initWidth: 640,
+      animate: false,
       onboard: true,
       finalBeat: {
         raw: null,
