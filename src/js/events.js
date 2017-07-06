@@ -227,7 +227,8 @@
 
     // Get pagewidth and mouse position
     // Which we use to determine whether to go prev/next
-    var pageWidth = $(window).width()
+    // var pageWidth = $(window).width()
+    var pageWidth = $thisBeat.width()
     var posX = $thisBeat.position().left
     var clickX = e.pageX - posX
 
