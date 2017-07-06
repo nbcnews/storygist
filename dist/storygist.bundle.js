@@ -53,6 +53,13 @@
 ;(function ($, sg) {
   sg.Static = {}
 
+  sg.Static.currentBeatIndex = 0
+
+  sg.Static.getCurrentBeat = function (beatIndex) {
+    var _beatIndex = beatIndex || sg.Static.currentBeatIndex
+    return $('#gist-beat-' + _beatIndex)
+  }
+
   sg.Static.dependencyChecker = function (deps) {
     deps.forEach(function (dep) {
       var global = window
@@ -80,11 +87,21 @@
     }
     return $beat
   }
+
+  sg.Static.TRANSITIONS = [
+    'transition.slideLeftIn',
+    'transition.slideDownIn',
+    'transition.slideLeftBigIn',
+    'transition.shrinkIn',
+    'transition.flipXIn',
+    'transition.flipYIn',
+    'transition.fadeIn',
+    'transition.expandIn'
+  ]
 })(jQuery, StoryGist)
 
 /* globals SplitType, jQuery, StoryGist */
 // events.js
-
 ;(function ($, sg) {
   sg.prototype.beatVideoPlay = function (videoEl) {
     if (videoEl) { videoEl.play() }
@@ -96,9 +113,8 @@
 
   sg.prototype.beatVideoPauseAll = function (videoEl) {
     var self = this
-    $('video').each(function () {
-      var videoEl = $(this).get(0)
-      self.beatVideoPause(videoEl)
+    $('video').each(function (idx, el) {
+      self.beatVideoPause(el)
     })
   }
 
@@ -135,10 +151,11 @@
   }
 
   sg.prototype.nextBeat = function (beatNum, el) {
-    var self = this
-    console.log('self', self)
+    sg.Static.currentBeatIndex++
+    console.log('next>>', sg.Static.currentBeatIndex)
+
     function getRandTransition () {
-      return transitions[Math.floor(Math.random() * transitions.length)]
+      return sg.Static.TRANSITIONS[Math.floor(Math.random() * sg.Static.TRANSITIONS.length)]
     }
     // Handle behavior to move to next beat
     // A click on the right side of the window
@@ -153,26 +170,15 @@
       var baseAnimSpeed = 750
       var blurPx = 81
 
-      var transitions = ['transition.slideLeftIn',
-        'transition.slideDownIn',
-        'transition.slideLeftBigIn',
-        'transition.shrinkIn',
-        'transition.flipXIn',
-        'transition.flipYIn',
-        'transition.fadeIn',
-        'transition.expandIn']
+      if (window.SplitType && $nextEl.find('.js-text-block').length) {
+        console.log('Animate Textblock')
+        var splitTextBlock = new SplitType('.js-text-block')
+        splitTextBlock.split({
+          split: 'lines',
+          position: 'relative'
+        })
 
-      if ($nextEl.find('p').length) {
-        if (typeof window.SplitType === 'function') {
-          console.log('Split P Tag')
-          var split = new SplitType($nextEl.find('p'), {
-            split: 'lines, chars',
-            position: 'absolute'
-          })
-          console.log('split', split)
-          $nextEl.find('.line')
-          .velocity('transition.shrinkIn', {'duration': baseAnimSpeed * 0.6, 'stagger': baseAnimSpeed * 0.05})
-        }
+        $.Velocity(splitTextBlock.lines, sg.Static.TRANSITIONS[3], {duration: baseAnimSpeed * 0.6, stagger: baseAnimSpeed * 0.05})
       }
 
       $nextEl.find('figure img')
@@ -200,13 +206,13 @@
           }
         })
 
-      if ($nextEl.find('.pullquote').length) {
-        console.log('HAS A PULLQUOTE')
-        split = new SplitType($nextEl.find('.pullquote'), {
+      if (window.SplitType && $nextEl.find('.pullquote').length) {
+        console.log('Animate PULLQUOTE')
+        var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
           split: 'lines'
         })
-        $nextEl.find('.line')
-        .velocity(getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
+
+        $.Velocity(splitPullQuote.lines, getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
 
         /*
         var fontSize = $nextEl.find('.pullquote').css('font-size')
@@ -221,8 +227,7 @@
       }
 
       var $videoElNext = $nextEl.find('video').get(0)
-      console.log('next this', this)
-      self.beatVideoPlay($videoElNext)
+      this.beatVideoPlay($videoElNext)
     }
 
     // If this is the last beat before fin
@@ -238,6 +243,11 @@
   }
 
   sg.prototype.prevBeat = function (beatNum, el) {
+    if (sg.Static.currentBeatIndex > 0) {
+      sg.Static.currentBeatIndex--
+    }
+    console.log('<<prev', sg.Static.currentBeatIndex)
+
     // Handle behavior to move to previous beat
     if ($(el).is('#gist-beat-0')) {
       // Do nothing for the first beat
@@ -264,24 +274,28 @@
     // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
     // console.log('currentBeatNum', currentBeatNum);
 
-    this.pauseBeats()
+    if ($(currentBeat).attr('data-cta-url')) {
+      console.log('Do browser CTA thing')
+    } else {
+      this.pauseBeats()
 
-    // Hide the storygist
-    $('#gist-body').css('display', 'none')
-    $(this.element).toggleClass('gist-active')
+      // Hide the storygist
+      $('#gist-body').css('display', 'none')
+      $(this.element).toggleClass('gist-active')
 
-    // Show all the original story elements
-    $(this.settings.contentParent).css('display', 'block')
-    $('.site-header').css('display', 'block')
-    $('.progress').css('display', 'block')
+      // Show all the original story elements
+      $(this.settings.contentParent).css('display', 'block')
+      $('.site-header').css('display', 'block')
+      $('.progress').css('display', 'block')
 
-    // Find the original element that corresponds with the current beat
-    var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
+      // Find the original element that corresponds with the current beat
+      var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')')
 
-    // Scroll to that element
-    $('html, body').animate({
-      scrollTop: (scrollToEl.offset().top - 80)
-    }, 2000)
+      // Scroll to that element
+      $('html, body').animate({
+        scrollTop: (scrollToEl.offset().top - 80)
+      }, 2000)
+    }
   }
 
   // Handle behavior for next/prev on beats
@@ -306,6 +320,8 @@
   }
 
   sg.prototype.clickBeat = function (e) {
+    console.log(sg.Static.getCurrentBeat(), 'currentBeat')
+
     this.pauseBeats()
     // Get this beat's number from it's ID
     var $thisBeat = sg.Static.getBeatFromTarget(e.target)
@@ -370,6 +386,10 @@
           'id': i
         }
 
+        if ($(el).attr('data-cta-url')) {
+          beat.ctaUrl = $(el).attr('data-cta-url')
+        }
+
         // If the beat has a preceding element, add it's type to the object
         if (el.previousElementSibling != null) {
           beat.prevtype = el.previousElementSibling.nodeName
@@ -404,15 +424,18 @@
       // Create element to hold navbar
       $gistBody.append('<div id="gist-progress"></div>')
       var $pager = $(self.settings.pager.html)
-      $pager.find('.gist-pager__btn--next').on('click', function(){
-        beatNum = 1
-        // el = 
-        self.nextBeat(beatNum, el);
-      }))
 
-      // $pager.find('.gist-pager__btn--prev').on('click', self.prevBeat)
+      $pager.find('.gist-pager__btn--next').on('click', function () {
+        var el = sg.Static.getCurrentBeat()
+        var beatNum = sg.Static.currentBeatIndex
+        self.nextBeat(beatNum, el)
+      })
 
-
+      $pager.find('.gist-pager__btn--prev').on('click', function () {
+        var el = sg.Static.getCurrentBeat()
+        var beatNum = sg.Static.currentBeatIndex
+        self.prevBeat(beatNum, el)
+      })
 
       $gistBody.append($pager)
 
@@ -421,7 +444,7 @@
         if (el.onBoard === true) {
           $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat gist-beat-onboard" style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         } else {
-          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-origid="' + el.id + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
+          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-cta-url="' + el.ctaUrl + '" data-origid="' + el.id + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         }
 
         // Create progress bar
