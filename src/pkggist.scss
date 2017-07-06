@@ -12,8 +12,8 @@ body {
   background-color: $pkg-beat-background;
   position: relative;
 
-  img,
-  video {
+  & > img,
+  & > video {
     display: block;
     object-fit: cover;
     top: 0;
