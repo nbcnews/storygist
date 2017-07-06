@@ -331,6 +331,10 @@ body.gist-active {
     }
   }
 
+  .gist-beat.last {
+    min-height: 70vh;
+  }
+
   .gist-beat {
     @media (min-width: 1200px) {
       max-width: 520px;
