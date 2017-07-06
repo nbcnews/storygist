@@ -128,6 +128,7 @@ a {
 [type="datetime-local"],
 textarea,
 select {
+  -webkit-appearance: none;
   background-color: #fff;
   border: 1px solid #2a2a2a; /* The 6px vertically centers text on FF, ignored by Webkit */
   box-shadow: none;
@@ -137,23 +138,27 @@ select {
   height: 40px;
   padding: 6px;
   vertical-align: middle;
+  border-radius: 0;
 }
 
 button,
 [type="button"] {
   border: 0;
+  -webkit-appearance: none;
 }
 
 .button,
 [type="submit"],
 [type="reset"] {
+  -webkit-appearance: none;
   background-color: #2a2a2a;
   border: 1px solid #2a2a2a;
+  border-radius: 0;
   color: #fff;
   cursor: pointer;
   display: inline-block;
   font-family: monospace;
-  font-size: 0.75em;
+  font-size: 12px;
   font-weight: normal;
   height: 40px;
   line-height: 40px;
