@@ -322,6 +322,36 @@ body.gist-active {
   bottom: -2em;
 }
 
+.gist-pager {
+  position: absolute;
+  top: 16px;
+  z-index: 157;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  width: 100%;
+
+  @media (min-width: $pkg-gist-bp) {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: $pkg-gist-bp;
+    left: 50%;
+  }
+}
+
+.gist-pager__btn {
+  display: block;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+
+  svg {
+    fill: #fff;
+    width: 40px;
+    height: 40px;
+  }
+}
+
 @if $pkg-gist {
   #gist-body {
     height: 100vh;
@@ -332,7 +362,7 @@ body.gist-active {
   }
 
   .gist-beat {
-    @media (min-width: 1200px) {
+    @media (min-width: $pkg-gist-bp) {
       max-width: 520px;
       left: 50%;
       top: 50%;

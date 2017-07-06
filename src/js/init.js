@@ -61,7 +61,7 @@
       parsedGistEls.push(self.settings.finalBeat)
 
       // Empty the page of old content
-      $gistBody.append('<button id="gist-view-story">View in full story ↓</button>')
+      $gistBody.append('<button id="gist-view-story">' + self.settings.callToAction + '</button>')
 
       $('#gist-view-story').click(function () {
         // View beat in story when 'view in story' CTA is clicked
@@ -73,6 +73,21 @@
 
       // Create element to hold navbar
       $gistBody.append('<div id="gist-progress"></div>')
+      var $pager = $(self.settings.pager.html)
+
+      $pager.find('.gist-pager__btn--next').on('click', function () {
+        var el = sg.Static.getCurrentBeat()
+        var beatNum = sg.Static.currentBeatIndex
+        self.nextBeat(beatNum, el)
+      })
+
+      $pager.find('.gist-pager__btn--prev').on('click', function () {
+        var el = sg.Static.getCurrentBeat()
+        var beatNum = sg.Static.currentBeatIndex
+        self.prevBeat(beatNum, el)
+      })
+
+      $gistBody.append($pager)
 
       // Write the beats back to the page
       parsedGistEls.forEach(function (el, i) {
