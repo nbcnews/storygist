@@ -20,6 +20,7 @@
         </header>
 
         <section class="pkg-beat" data-cta-url="http://google.com" data-sg>
+          <div class="pkg-beat__kicker">Article</div>        
           <div class="pkg-beat__main set--top align--center">
             <h1 itemprop="headline">The New Right Stuff</h1>
             <p class="standfirst" itemprop="description">With budgets being slashed and pushes from private enterprise: what does it take to get into space in 2017?</p>
@@ -29,6 +30,7 @@
         </section>
 
         <section class="pkg-beat" data-sg>
+          <div class="pkg-beat__kicker">Article</div>
           <div class="pkg-beat__main set--center">
             <aside class="pullquote">
               <q>From the distance of the moon, Earth was four times the size of a full moon seen from Earth. It was a brilliant jewel in the black velvet sky.</q>
@@ -39,6 +41,7 @@
         </section>
 
         <section class="pkg-beat" data-sg>
+          <div class="pkg-beat__kicker">Video</div>
           <div class="pkg-beat__main set--bottom">
             <h1 itemprop="headline">Space Camp for Adults</h1>
           </div>
@@ -46,6 +49,7 @@
         </section>
 
         <section class="pkg-beat" data-sg>
+          <div class="pkg-beat__kicker">Video</div>
           <div class="pkg-beat__main set--bottom">
             <h1 itemprop="headline">Check Out NASA's Float Lab</h1>
           </div>
@@ -53,18 +57,20 @@
         </section>
 
         <section class="pkg-beat" data-sg>
-          <div class="pkg-beat__main">
+          <div class="pkg-beat__kicker">Article</div>
+          <div class="pkg-beat__main set--top">
             <h1 itemprop="headline">So You Want To Be An Astronaut?</h1>
             <p class="standfirst" itemprop="description">One man’s story of pursuing space over the course of a lifetime</p>
             <p class="byline"><span itemprop="author">MACH</span> <time class="dateline" datetime="2016-01-01T05:00:00.000Z" itemprop="datePublished">Nov 14, 1851</time></p>
           </div>
-          <img src="card5bg.png" alt="" class="lazyload" itemprop="image">
+          <img src="card5bg.png" alt="" itemprop="image">
         </section>
 
         <section class="pkg-beat" data-sg>
-          <div class="pkg-beat__main">
+          <div class="pkg-beat__kicker">Article</div>
+          <div class="pkg-beat__main set--center">
             <aside class="pullquote">
-              <img src="card6-inlay.png" style="border-radius: 100%;" alt="">
+              <img src="card6-inlay.png" alt="">
               <q>I'm convinced that sending people to Mars is so expensive that if you go once and bring the people back and then go again and bring the people back, we're eventually going to run out of money. But what if we send people the first time and they don't come back? What if they stay there?</q>
               <p>- Buzz Aldrin</p>
             </aside>
@@ -73,38 +79,42 @@
         </section>
 
         <section class="pkg-beat" data-sg>
-          <div class="pkg-beat__main">
+          <div class="pkg-beat__kicker">Article</div>
+          <div class="pkg-beat__main set--top">
             <h1 itemprop="headline">A new design for the ISS?</h1>
           </div>
-          <img src="card7bg.png" alt="" class="lazyload" itemprop="image">
+          <img src="card7bg.png" alt="" itemprop="image">
         </section>
 
         <section class="pkg-beat" data-sg>
+          <div class="pkg-beat__kicker">Article</div>
           <div class="pkg-beat__main">
             <h1 itemprop="headline">A new design for the ISS?</h1>
           </div>
-          <img src="card8bg.png" alt="" class="lazyload" itemprop="image">
+          <img src="card8bg.png" alt="" itemprop="image">
         </section>
 
         <section class="pkg-beat" data-sg>
-          <div class="pkg-beat__main">
+          <div class="pkg-beat__kicker">Gallery</div>
+          <div class="pkg-beat__main set--bottom">
             <figcaption>Kris looks out at the sky after a long day of trying to be an astronaut. | <a href="https://unsplash.com/photos/y6amoiq258Y">Marius Fiskum</a></figcaption>
           </div>
-          <img src="card9bg.png" alt="" class="lazyload" itemprop="image">
+          <img src="card9bg.png" alt="" itemprop="image">
         </section>
 
         <section class="pkg-beat" data-sg>
+          <div class="pkg-beat__kicker">Article</div>
           <div class="pkg-beat__main">
             <h1 itemprop="headline">Animals in space</h1>
           </div>
-          <img src="card10bg.png" alt="" class="lazyload" itemprop="image">
+          <img src="card10bg.png" alt="" itemprop="image">
         </section>
 
         <section class="pkg-beat" data-sg>
-          <div class="pkg-beat__main">
-            <h1 itemprop="headline">Animals in space</h1>
+          <div class="pkg-beat__main set--center">
+            <h1 itemprop="headline">More on MACH</h1>
           </div>
-          <img src="card11bg.png" alt="" class="lazyload" itemprop="image">
+          <img src="card11bg.png" alt="" itemprop="image">
         </section>
       </article>
     </main>
@@ -112,13 +122,13 @@
 	  <script src="http://vjs.zencdn.net/5.6.0/video.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.min.js"></script>
     <script src="https://cdn.rawgit.com/julianshapiro/velocity/master/velocity.ui.js"></script>
-    <script src="https://cdn.rawgit.com/lukePeavey/SplitType/7897e2b7/splittype.js"></script>
+    <!-- <script src="https://cdn.rawgit.com/lukePeavey/SplitType/7897e2b7/splittype.js"></script> -->
     <script src="https://hammerjs.github.io/dist/hammer.js"></script>
     <script src="../../dist/storygist.bundle.js"></script>
     <script>
       $('body').storyGist({
         beatSelector: '[data-sg]',
-        initWidth: 1200,
+        initWidth: 999999,
         onboard: false,
       });
     </script>

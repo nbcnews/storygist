@@ -11,19 +11,22 @@ body {
 .pkg-beat {
   background-color: $pkg-beat-background;
   position: relative;
-  height: 100vh;
 
   img,
   video {
+    display: block;
     object-fit: cover;
-    position: absolute;
     top: 0;
-    height: 100%;
+    height: 100vh;
     width: 100%;
+
+    @media (min-width: $pkg-gist-bp) {
+      height: 70vh;
+    }
   }
 
   h1 {
-    @include fluid-type(640px, 1280px, $pkg-beat-headline-min-size, $pkg-beat-headline-max-size);
+    @include fluid-type(640px, 1200px, $pkg-beat-headline-min-size, $pkg-beat-headline-max-size);
 
     font-weight: bold;
     padding: 0;
@@ -34,6 +37,15 @@ body {
   position: absolute;
   z-index: 1;
   padding: $beat-gutter;
+}
+
+.pkg-beat__kicker {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding-top: $beat-gutter;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .pullquote {

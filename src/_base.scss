@@ -318,6 +318,26 @@ body.gist-active {
   text-align: center;
   font-size: 1.1em;
   position: relative;
-  //bottom: 1.5em;
   bottom: -2em;
+}
+
+@if $pkg-gist {
+  #gist-body {
+    height: 100vh;
+
+    [data-sg] {
+      width: 100%;
+    }
+  }
+
+  .gist-beat {
+    @media (min-width: 1200px) {
+      max-width: 520px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      height: auto;
+      overflow: hidden;
+    }
+  }
 }
