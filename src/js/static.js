@@ -3,6 +3,13 @@
 ;(function ($, sg) {
   sg.Static = {}
 
+  sg.Static.currentBeatIndex = 0
+
+  sg.Static.getCurrentBeat = function (beatIndex) {
+    var _beatIndex = beatIndex || sg.Static.currentBeatIndex
+    return $('#gist-beat-' + _beatIndex)
+  }
+
   sg.Static.dependencyChecker = function (deps) {
     deps.forEach(function (dep) {
       var global = window
