@@ -69,7 +69,17 @@
 
       // Create element to hold navbar
       $gistBody.append('<div id="gist-progress"></div>')
-      $gistBody.append(self.settings.pager.html)
+      var $pager = $(self.settings.pager.html)
+      $pager.find('.gist-pager__btn--next').on('click', function () {
+        // beatNum = 1
+        // el =
+        // TODO: Find current beat using global value
+        // self.nextBeat(beatNum, el)
+      })
+
+      // $pager.find('.gist-pager__btn--prev').on('click', self.prevBeat)
+
+      $gistBody.append($pager)
 
       // Write the beats back to the page
       parsedGistEls.forEach(function (el, i) {
