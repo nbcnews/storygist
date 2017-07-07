@@ -145,6 +145,15 @@ button,
 [type="button"] {
   border: 0;
   -webkit-appearance: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:active {
+    opacity: 0.45;
+  }
 }
 
 .button,
@@ -239,6 +248,14 @@ textarea {
   opacity: 1;
   font-size: 1.5em;
 
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:active {
+    opacity: 0.45;
+  }
+
   svg {
     fill: #fff;
     width: 40px;
@@ -246,5 +263,9 @@ textarea {
     display: block;
     margin-left: auto;
     margin-right: auto;
+
+    @media (min-width: 1200px) {
+      display: none;
+    }
   }
 }

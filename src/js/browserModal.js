@@ -3,20 +3,23 @@
 ;(function ($, sg) {
   sg.Modal = {}
 
+  var $gistModalWrapper = $('.gist-modal-wrapper')
+  var $gistModalClose = $('.gist-modal-close')
+
   sg.Modal.createIframe = function (src, beatNum) {
     console.log('createIframe>>', src, beatNum)
     var html = '<iframe id="beat-modal-' + beatNum + '" src="' + src + '" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>'
-    $('#modal-wrapper').append(html)
+    $gistModalWrapper.append(html)
   }
 
   sg.Modal.show = function (beatNum) {
-    $('#modal-wrapper').show().css({ width: '100%', height: '100%', position: 'absolute', 'z-index': 999, top: 10, left: 0 })
+    $gistModalWrapper.show().css({ width: '100%', height: '100%', position: 'absolute', 'z-index': 999, left: 0 })
     $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' })
-    $('#modal-wrapper').show()
+    $gistModalWrapper.show()
   }
 
   sg.Modal.hide = function (beatNum) {
-    $('#modal-wrapper').hide()
+    $gistModalWrapper.hide()
     $('#beat-modal-' + beatNum).hide()
   }
 
@@ -31,7 +34,7 @@
   }
 
   // init stuff
-  $('.js-close').click(function (ev) {
+  $gistModalClose.click(function (ev) {
     sg.Modal.hide(sg.Static.getCurrentBeatNum())
   })
 })(jQuery, StoryGist)

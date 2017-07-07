@@ -105,6 +105,7 @@ body.gist-active {
   font-size: $beat-onboard-font-size;
   background-color: transparent;
   opacity: 0.4;
+  cursor: pointer;
 
   .gist-beat-0-active & {
     color: $beat-first-cta-text-color;
@@ -350,6 +351,29 @@ body.gist-active {
     width: 40px;
     height: 40px;
   }
+}
+
+.gist-modal-bar {
+  border-bottom: 1px solid #8b4ae4;
+}
+
+.gist-modal-close {
+  background-color: transparent;
+
+  svg {
+    width: 40px;
+    height: 40px;
+    fill: #fff;
+  }
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.gist-modal-wrapper {
+  background-color: #5b00d5;
+  top: 0;
 }
 
 @if $pkg-gist {
