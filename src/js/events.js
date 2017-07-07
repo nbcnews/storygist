@@ -52,9 +52,6 @@
     sg.Static.currentBeatIndex++
     console.log('next>>', sg.Static.currentBeatIndex)
 
-    function getRandTransition () {
-      return sg.Static.TRANSITIONS[Math.floor(Math.random() * sg.Static.TRANSITIONS.length)]
-    }
     // Handle behavior to move to next beat
     // A click on the right side of the window
     if ($(el).hasClass('last')) {
@@ -110,18 +107,7 @@
           split: 'lines'
         })
 
-        $.Velocity(splitPullQuote.lines, getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
-
-        /*
-        var fontSize = $nextEl.find('.pullquote').css('font-size')
-        $nextEl.find('.pullquote').velocity({'fontSize': fontSize},
-          { 'duration': 2000,
-            'easing': 'easeInSine',
-            'begin': function (el) {
-              $(el).css('font-size', '1px')
-            }
-          })
-        */
+        $.Velocity(splitPullQuote.lines, sg.Static.getRandTransition(), {'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2})
       }
 
       var $videoElNext = $nextEl.find('video').get(0)
@@ -165,20 +151,17 @@
 
   sg.prototype.viewInStory = function () {
     // Get the current gist beat (the first that's visible)
-    var currentBeat = $('.gist-beat:visible')[0]
-    // console.log('currentBeat', currentBeat);
-
-    var currentBeatNum = $(currentBeat).attr('data-origid')
-    // var currentBeatNum = ($(currentBeat).attr('id').split('-')[2] - 1);
-    // console.log('currentBeatNum', currentBeatNum);
-
+    var currentBeat = sg.Static.getCurrentBeat()
+    var currentBeatNum = $(currentBeat).data('origid')
     var ctaURL = $(currentBeat).data('cta-url')
-    if (ctaURL && ctaURL !== 'undefined') { // TODO: fix how data-cta-url is being set
-      console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
-      sg.Modal.launch(ctaURL, currentBeatNum)
-    } else {
-      this.pauseBeats()
 
+    // pause any videos, animations, etc
+    this.pauseBeats()
+
+    if (ctaURL) {
+      // console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
+      this.launchModal(ctaURL, currentBeatNum)
+    } else {
       // Hide the storygist
       $('#gist-body').css('display', 'none')
       $(this.element).toggleClass('gist-active')
@@ -198,10 +181,9 @@
     }
   }
 
-  // Handle behavior for next/prev on beats
   sg.prototype.swipeBeat = function (e) {
     this.pauseBeats()
-    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var $thisBeat = sg.Static.getCurrentBeat()
     var beatNum = $thisBeat.attr('id').split('-')[2]
     switch (e.direction) {
       case 8: // DIRECTION_UP
@@ -220,11 +202,11 @@
   }
 
   sg.prototype.clickBeat = function (e) {
-    console.log(sg.Static.getCurrentBeat(), 'currentBeat')
+    // console.log(sg.Static.getCurrentBeat(), 'currentBeat')
 
     this.pauseBeats()
     // Get this beat's number from it's ID
-    var $thisBeat = sg.Static.getBeatFromTarget(e.target)
+    var $thisBeat = sg.Static.getCurrentBeat()
     var beatNum = $thisBeat.attr('id').split('-')[2]
 
     // Get pagewidth and mouse position

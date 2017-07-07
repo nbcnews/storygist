@@ -10,24 +10,21 @@
   }
 
   sg.Modal.show = function (beatNum) {
-    console.log('show>>', beatNum)
     $('#modal-wrapper').show().css({ width: '100%', height: '100%', position: 'absolute', 'z-index': 999, top: 10, left: 0 })
     $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' })
     $('#modal-wrapper').show()
   }
 
   sg.Modal.hide = function (beatNum) {
-    console.log('hide>>', beatNum)
     $('#modal-wrapper').hide()
     $('#beat-modal-' + beatNum).hide()
   }
 
-  // public
-  sg.Modal.launch = function (src, beatNum) {
+  // method on StoryGist(), so it can access 'this'
+  sg.prototype.launchModal = function (src, beatNum) {
     var _beatNum = beatNum || sg.Static.currentBeatIndex
-
-    console.log($('#beat-modal-' + _beatNum).get(0), '<<< modal')
-    if (!$('#beat-modal-' + _beatNum).get(0)) {
+    var modalExists = $('#beat-modal-' + _beatNum).length
+    if (!modalExists) {
       sg.Modal.createIframe(src, _beatNum)
     }
     sg.Modal.show(_beatNum)
@@ -35,6 +32,6 @@
 
   // init stuff
   $('.js-close').click(function (ev) {
-    sg.Modal.hide(sg.Static.currentBeatIndex)
+    sg.Modal.hide(sg.Static.getCurrentBeatNum())
   })
 })(jQuery, StoryGist)

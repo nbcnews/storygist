@@ -30,14 +30,15 @@
       gistEls.each(function (i, el) {
         // Create a new object for our beat
         var beat = {
-          'raw': el,
-          'html': el.outerHTML, // The HTML inside the beat
-          'type': el.nodeName, // The beat's element (p, h2, etc..)
-          'id': i
+          raw: el,
+          html: el.outerHTML, // The HTML inside the beat
+          type: el.nodeName, // The beat's element (p, h2, etc..)
+          id: i,
+          ctaUrl: ''
         }
 
-        if ($(el).attr('data-cta-url')) {
-          beat.ctaUrl = $(el).attr('data-cta-url')
+        if ($(el).data('cta-url')) {
+          beat.ctaUrl = $(el).data('cta-url')
         }
 
         // If the beat has a preceding element, add it's type to the object
