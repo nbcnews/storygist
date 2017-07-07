@@ -353,6 +353,10 @@ body.gist-active {
   }
 }
 
+.gist-beat-last-active .gist-pager__btn--next {
+  display: none;
+}
+
 .gist-modal-bar {
   border-bottom: 1px solid #8b4ae4;
 }
