@@ -5,9 +5,22 @@
 
   sg.Static.currentBeatIndex = 0
 
-  sg.Static.getCurrentBeat = function (beatIndex) {
-    var _beatIndex = beatIndex || sg.Static.currentBeatIndex
-    return $('#gist-beat-' + _beatIndex)
+  sg.Static.getCurrentBeat = function () {
+    return $('#gist-beat-' + sg.Static.getCurrentBeatNum())
+  }
+
+  sg.Static.getCurrentBeatNum = function () {
+    var $el = $('.gist-beat:visible')
+    var exists = $el.length
+    if (exists) {
+      var currentBeat = $('.gist-beat:visible').get(0)
+      return $(currentBeat).data('origid')
+    }
+    return 0
+  }
+
+  sg.Static.getRandTransition = function () {
+    return sg.Static.TRANSITIONS[Math.floor(Math.random() * sg.Static.TRANSITIONS.length)]
   }
 
   sg.Static.dependencyChecker = function (deps) {
