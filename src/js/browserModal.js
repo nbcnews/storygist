@@ -13,13 +13,13 @@
   }
 
   sg.Modal.show = function (beatNum) {
-    $gistModalWrapper.show().css({ width: '100%', height: '100%', position: 'absolute', 'z-index': 999, left: 0 })
+    $gistModalWrapper.addClass('is-active')
     $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' })
     $gistModalWrapper.show()
   }
 
   sg.Modal.hide = function (beatNum) {
-    $gistModalWrapper.hide()
+    $gistModalWrapper.removeClass('is-active')
     $('#beat-modal-' + beatNum).hide()
   }
 

@@ -49,8 +49,15 @@ a {
   position: absolute;
   top: 0;
   width: 100%;
-  padding-top: $beat-gutter;
+  margin-top: $beat-gutter;
   text-align: center;
+
+  span {
+    display: block;
+  }
+}
+
+.pkg-beat__kicker__title {
   text-transform: uppercase;
 }
 
