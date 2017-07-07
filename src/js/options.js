@@ -28,6 +28,7 @@
       beatSelector: '[data-sg]',
       contentParent: 'main',
       initWidth: 640,
+      animate: false,
       onboard: true,
       callToAction: 'View in full story ↓',
       pager: {
