@@ -56,7 +56,7 @@
     } else {
       $('.gist-beat').removeClass('active')
       var $nextEl = $(el).next('.gist-beat')
-
+      $nextEl.show()
       $nextEl.addClass('active')
 
       var baseAnimSpeed = 750
@@ -125,6 +125,7 @@
     }
 
     this.globalActiveGist($(this.element))
+    sg.Navigation.navigateToBeat(+beatNum + 1, +this.totalBeats)
   }
 
   sg.prototype.prevBeat = function (beatNum, el) {
@@ -145,6 +146,7 @@
     $('#gist-beat-' + (beatNum - 1)).css('display', 'flex')
 
     this.globalActiveGist($(this.element))
+    sg.Navigation.navigateToBeat(+beatNum - 1)
   }
 
   sg.prototype.viewInStory = function () {

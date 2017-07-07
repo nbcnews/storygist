@@ -5,7 +5,7 @@
   sg.prototype.init = function () {
     var self = this
     // check dependencies
-    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
+    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'Navigo', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
 
     var $body = $(self.element) // TODO: add to $els object
     if ($(window).width() <= self.settings.initWidth) {
@@ -150,6 +150,7 @@
       })
 
       self.initHammer()
+      self.initNavigation()
     }
   }
 
@@ -158,7 +159,7 @@
     // ++++ Swiping via Hammer.js
     if (typeof window.Hammer === 'function') {
       $('.gist-beat').each(function (index, beat) {
-        console.log('Hammer init:', index)
+        // console.log('Hammer init:', index)
         var hammer = new Hammer(beat)
         hammer.on('swipe', self.swipeBeat.bind(self))
         hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'
