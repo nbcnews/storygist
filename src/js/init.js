@@ -78,13 +78,13 @@
 
       $pager.find('.gist-pager__btn--next').on('click', function () {
         var el = sg.Static.getCurrentBeat()
-        var beatNum = sg.Static.currentBeatIndex
+        var beatNum = sg.Static.getCurrentBeatNum()
         self.nextBeat(beatNum, el)
       })
 
       $pager.find('.gist-pager__btn--prev').on('click', function () {
         var el = sg.Static.getCurrentBeat()
-        var beatNum = sg.Static.currentBeatIndex
+        var beatNum = sg.Static.getCurrentBeatNum()
         self.prevBeat(beatNum, el)
       })
 
@@ -95,7 +95,7 @@
         if (el.onBoard === true) {
           $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat gist-beat-onboard" style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         } else {
-          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-cta-url="' + el.ctaUrl + '" data-origid="' + el.id + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
+          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-cta-url="' + el.ctaUrl + '" data-origid="' + i + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>')
         }
 
         // Create progress bar
