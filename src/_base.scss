@@ -90,7 +90,7 @@ body.gist-active {
   height: $gist-progress-bar-height;
   z-index: $gist-progress-index;
   pointer-events: none;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 #gist-view-story {
@@ -328,9 +328,6 @@ body.gist-active {
   position: absolute;
   top: 16px;
   z-index: 157;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
   width: 100%;
 
   @media (min-width: $pkg-gist-bp) {
@@ -355,6 +352,18 @@ body.gist-active {
 }
 
 .gist-beat-last-active .gist-pager__btn--next {
+  display: none;
+}
+
+.gist-pager__btn--prev {
+  float: left;
+}
+
+.gist-pager__btn--next {
+  float: right;
+}
+
+.gist-beat-0-active .gist-pager__btn--prev {
   display: none;
 }
 
