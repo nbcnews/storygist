@@ -49,8 +49,15 @@ a {
   position: absolute;
   top: 0;
   width: 100%;
-  padding-top: $beat-gutter;
+  margin-top: $beat-gutter;
   text-align: center;
+
+  span {
+    display: block;
+  }
+}
+
+.pkg-beat__kicker__title {
   text-transform: uppercase;
 }
 
@@ -145,6 +152,15 @@ button,
 [type="button"] {
   border: 0;
   -webkit-appearance: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:active {
+    opacity: 0.45;
+  }
 }
 
 .button,
@@ -239,6 +255,14 @@ textarea {
   opacity: 1;
   font-size: 1.5em;
 
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:active {
+    opacity: 0.45;
+  }
+
   svg {
     fill: #fff;
     width: 40px;
@@ -246,5 +270,9 @@ textarea {
     display: block;
     margin-left: auto;
     margin-right: auto;
+
+    @media (min-width: 1200px) {
+      display: none;
+    }
   }
 }
