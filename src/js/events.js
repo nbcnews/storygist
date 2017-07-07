@@ -123,6 +123,8 @@
       $(el).css('display', 'none')
       $('#gist-progress #gist-progress-beat-' + beatNum).css('opacity', 0)
     }
+
+    this.globalActiveGist($(this.element))
   }
 
   sg.prototype.prevBeat = function (beatNum, el) {
@@ -141,6 +143,8 @@
     }
     $('#gist-progress #gist-progress-beat-' + (beatNum - 1)).css('opacity', 1)
     $('#gist-beat-' + (beatNum - 1)).css('display', 'flex')
+
+    this.globalActiveGist($(this.element))
   }
 
   sg.prototype.viewInStory = function () {
@@ -192,7 +196,6 @@
       default:
         console.log(e.type, e.direction)
     }
-    this.globalActiveGist($(this.element))
   }
 
   sg.prototype.clickBeat = function (e) {
@@ -217,7 +220,6 @@
     } else {
       this.prevBeat(beatNum, $thisBeat)
     };
-    this.globalActiveGist($(this.element))
   }
 
   sg.prototype.scrollLock = function (e) {
