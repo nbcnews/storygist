@@ -71,6 +71,7 @@
       })
 
       self.totalBeats = +(parsedGistEls.length - 1)
+      sg.Static.totalBeats = self.totalBeats
 
       // Create element to hold navbar
       $gistBody.append('<div id="gist-progress"></div>')
@@ -116,12 +117,8 @@
       })
 
       $initBeat.addClass('active')
-
       $('.gist-beat').click(self.clickBeat.bind(self))
-
       $('.gist-beat:last-of-type').addClass('last')
-
-      self.globalActiveGist($body)
 
       // Changes videos in beats to have a unique ID. Allows play() and pause() to work.
       $('.gist-beat').each(function (i) {
