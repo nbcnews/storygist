@@ -68,11 +68,33 @@
     }
   }
 
+  sg.Navigation.handleKeys = function (e) {
+    if (!e.key) {
+      return
+    }
+
+    this.pauseBeats()
+    var $thisBeat = sg.Static.getCurrentBeat()
+    var beatNum = $thisBeat.data('origid')
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        this.prevBeat(beatNum, $thisBeat)
+        break
+      case 'ArrowRight':
+        this.nextBeat(beatNum, $thisBeat)
+        break
+      default: return // exit this handler for other keys
+    }
+    e.preventDefault() // prevent the default action (scroll / move caret)
+  }
+
   sg.prototype.initNavigation = function () {
     // init stuff
     sg.Navigation.totalBeats = this.totalBeats
     sg.Navigation.$element = $(this.element)
     sg.Navigation.updateGlobalActiveGist(0) // sg.Static.getCurrentBeatNum()
+    $(document).keydown(sg.Navigation.handleKeys.bind(this))
 
     sg.Navigation.router
     .on('/beat/:beatNum', function (params) {
