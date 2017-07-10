@@ -180,4 +180,17 @@
   sg.prototype.scrollLock = function (e) {
     e.preventDefault()
   }
+
+  sg.prototype.onOrientationChange = function () {
+    var orientation = Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait'
+    var $orientationSelector = $('body')
+
+    if (orientation === 'portrait') {
+      $orientationSelector.addClass('gist-portrait').removeClass('gist-landscape')
+    }
+
+    if (orientation === 'landscape') {
+      $orientationSelector.addClass('gist-landscape').removeClass('gist-portrait')
+    }
+  }
 })(jQuery, StoryGist)
