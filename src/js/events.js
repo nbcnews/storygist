@@ -168,13 +168,17 @@
     var posX = $thisBeat.position().left
     var clickX = e.pageX - posX
 
-    // If it's the last beat
-    if (clickX > (pageWidth / 2.5)) {
-      // A click on the right side of the window
-      this.nextBeat(beatNum, $thisBeat)
-    } else {
-      this.prevBeat(beatNum, $thisBeat)
-    };
+    console.log('click target el', $(e.target)[0].tagName)
+
+    if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
+      // If it's the last beat
+      if (clickX > (pageWidth / 2.5)) {
+        // A click on the right side of the window
+        this.nextBeat(beatNum, $thisBeat)
+      } else {
+        this.prevBeat(beatNum, $thisBeat)
+      };
+    }
   }
 
   sg.prototype.scrollLock = function (e) {
