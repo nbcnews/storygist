@@ -48,6 +48,7 @@
 
     sg.Navigation.updateGlobalActiveGist(+beatNum)
     sg.Navigation.updateProgressBar(+beatNum)
+    sg.Navigation.updateCta(+beatNum)
   }
 
   sg.Navigation.updateProgressBar = function (beatNum) {
@@ -65,6 +66,19 @@
       $('#gist-progress').hide()
     } else {
       $('#gist-progress').show()
+    }
+  }
+
+  sg.Navigation.updateCta = function (beatNum) {
+    var currentBeat = sg.Static.getCurrentBeat()
+    var ctaText = $(currentBeat).data('cta-text')
+
+    console.log(currentBeat, ctaText)
+
+    console.log('currentBeat data', $(currentBeat).data())
+
+    if (ctaText) {
+      $('#gist-view-story').text(ctaText)
     }
   }
 
