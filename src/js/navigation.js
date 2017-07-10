@@ -73,7 +73,6 @@
       return
     }
 
-    this.pauseBeats()
     var $thisBeat = sg.Static.getCurrentBeat()
     var beatNum = $thisBeat.data('origid')
 
