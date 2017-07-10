@@ -35,7 +35,7 @@
           type: el.nodeName, // The beat's element (p, h2, etc..)
           id: i,
           ctaUrl: '',
-          ctaText: ''
+          ctaText: 'View Story'
         }
 
         if ($(el).data('cta-url')) {
