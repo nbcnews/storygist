@@ -155,7 +155,6 @@
       // $loading.animate({opacity: 0, duration: 500})
       $loading.remove()
     }
-
   }
 
   sg.prototype.initHammer = function () {
