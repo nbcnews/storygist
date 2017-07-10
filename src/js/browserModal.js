@@ -18,9 +18,11 @@
     $gistModalWrapper.show()
   }
 
-  sg.Modal.hide = function (beatNum) {
+  sg.Modal.close = function (beatNum) {
     $gistModalWrapper.removeClass('is-active')
-    $('#beat-modal-' + beatNum).hide()
+    var $beatModal = $('#beat-modal-' + beatNum)
+    $beatModal.hide()
+    $beatModal.remove()
   }
 
   // method on StoryGist(), so it can access 'this'
@@ -35,6 +37,6 @@
 
   // init stuff
   $gistModalClose.click(function (ev) {
-    sg.Modal.hide(sg.Static.getCurrentBeatNum())
+    sg.Modal.close(sg.Static.getCurrentBeatNum())
   })
 })(jQuery, StoryGist)
