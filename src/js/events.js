@@ -29,6 +29,8 @@
     // Handle behavior to move to next beat
     // A click on the right side of the window
     console.log('>> Next', beatNum)
+    this.pauseBeats()
+
     if ($(el).hasClass('last')) {
       // Do nothing for the final beat
     } else {
@@ -92,6 +94,7 @@
 
   sg.prototype.prevBeat = function (beatNum, el) {
     console.log('>> Prev', beatNum)
+    this.pauseBeats()
     // Handle behavior to move to previous beat
     if ($(el).is('#gist-beat-0')) {
       // Do nothing for the first beat
@@ -136,7 +139,6 @@
   }
 
   sg.prototype.swipeBeat = function (e) {
-    this.pauseBeats()
     var $thisBeat = sg.Static.getCurrentBeat()
     var beatNum = $thisBeat.attr('id').split('-')[2]
     switch (e.direction) {
@@ -155,9 +157,6 @@
   }
 
   sg.prototype.clickBeat = function (e) {
-    // console.log(sg.Static.getCurrentBeat(), 'currentBeat')
-
-    this.pauseBeats()
     // Get this beat's number from it's ID
     var $thisBeat = sg.Static.getCurrentBeat()
     var beatNum = $thisBeat.data('origid')
