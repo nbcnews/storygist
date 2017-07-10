@@ -34,7 +34,8 @@
           html: el.outerHTML, // The HTML inside the beat
           type: el.nodeName, // The beat's element (p, h2, etc..)
           id: i,
-          ctaUrl: ''
+          ctaUrl: '',
+          ctaText: ''
         }
 
         if ($(el).data('cta-url')) {
@@ -43,8 +44,6 @@
 
         if ($(el).data('cta-text')) {
           beat.ctaText = $(el).data('cta-text')
-        } else {
-          beat.ctaText = undefined
         }
 
         // If the beat has a preceding element, add it's type to the object
