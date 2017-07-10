@@ -1,7 +1,9 @@
 {
   "storygist.bundle.js": [
+    "navigo.js",
     "options.js",
     "static.js",
+    "navigation.js",
     "browserModal.js",
     "events.js",
     "init.js",

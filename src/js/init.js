@@ -5,7 +5,7 @@
   sg.prototype.init = function () {
     var self = this
     // check dependencies
-    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
+    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'Navigo', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
 
     var $body = $(self.element) // TODO: add to $els object
     if ($(window).width() <= self.settings.initWidth) {
@@ -116,12 +116,8 @@
       })
 
       $initBeat.addClass('active')
-
       $('.gist-beat').click(self.clickBeat.bind(self))
-
       $('.gist-beat:last-of-type').addClass('last')
-
-      self.globalActiveGist($body)
 
       // Changes videos in beats to have a unique ID. Allows play() and pause() to work.
       $('.gist-beat').each(function (i) {
@@ -150,6 +146,7 @@
       })
 
       self.initHammer()
+      self.initNavigation()
     }
   }
 
@@ -158,7 +155,7 @@
     // ++++ Swiping via Hammer.js
     if (typeof window.Hammer === 'function') {
       $('.gist-beat').each(function (index, beat) {
-        console.log('Hammer init:', index)
+        // console.log('Hammer init:', index)
         var hammer = new Hammer(beat)
         hammer.on('swipe', self.swipeBeat.bind(self))
         hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'

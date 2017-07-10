@@ -21,29 +21,6 @@
     $('.gist-beat').css('display', 'flex')
   }
 
-  sg.prototype.globalActiveGist = function ($body) {
-    // Set classes for active gist
-    var $gistBeat = $('.gist-beat')
-
-    $gistBeat.each(function (gistIndex) {
-      if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
-        $body.removeClass('gist-beat-' + gistIndex + '-active')
-      }
-
-      if ($(this).hasClass('active')) {
-        $body.addClass('gist-beat-' + gistIndex + '-active')
-      }
-
-      if ($body.hasClass('gist-beat-last-active')) {
-        $body.removeClass('gist-beat-last-active')
-      }
-
-      if ($('.gist-beat.last').hasClass('active')) {
-        $body.addClass('gist-beat-last-active')
-      }
-    })
-  }
-
   sg.prototype.pauseBeats = function () {
     this.beatVideoPauseAll()
   }
@@ -51,14 +28,11 @@
   sg.prototype.nextBeat = function (beatNum, el) {
     // Handle behavior to move to next beat
     // A click on the right side of the window
+    console.log('>> Next', beatNum)
     if ($(el).hasClass('last')) {
       // Do nothing for the final beat
     } else {
-      $('.gist-beat').removeClass('active')
       var $nextEl = $(el).next('.gist-beat')
-
-      $nextEl.addClass('active')
-
       var baseAnimSpeed = 750
       var blurPx = 81
 
@@ -113,38 +87,20 @@
       this.beatVideoPlay($videoElNext)
     }
 
-    // If this is the last beat before fin
-    if (+beatNum === (this.totalBeats - 1)) {
-      $('#gist-progress').css('display', 'none')
-      $(el).css('display', 'none')
-    } else if (+beatNum === +this.totalBeats) {
-      // Do nothing
-    } else {
-      $(el).css('display', 'none')
-      $('#gist-progress #gist-progress-beat-' + beatNum).css('opacity', 0)
-    }
-
-    this.globalActiveGist($(this.element))
+    sg.Navigation.navigateToBeat(+beatNum + 1, +this.totalBeats)
   }
 
   sg.prototype.prevBeat = function (beatNum, el) {
+    console.log('>> Prev', beatNum)
     // Handle behavior to move to previous beat
     if ($(el).is('#gist-beat-0')) {
       // Do nothing for the first beat
     } else {
-      $('.gist-beat').removeClass('active')
-      $(el).prev('.gist-beat').addClass('active')
       var $videoEl = $(el).prev('.gist-beat').find('video').get(0)
       this.beatVideoPlay($videoEl)
     }
 
-    if (+beatNum === (this.totalBeats)) {
-      $('#gist-progress').css('display', 'flex')
-    }
-    $('#gist-progress #gist-progress-beat-' + (beatNum - 1)).css('opacity', 1)
-    $('#gist-beat-' + (beatNum - 1)).css('display', 'flex')
-
-    this.globalActiveGist($(this.element))
+    sg.Navigation.navigateToBeat(+beatNum - 1)
   }
 
   sg.prototype.viewInStory = function () {
@@ -204,7 +160,7 @@
     this.pauseBeats()
     // Get this beat's number from it's ID
     var $thisBeat = sg.Static.getCurrentBeat()
-    var beatNum = $thisBeat.attr('id').split('-')[2]
+    var beatNum = $thisBeat.data('origid')
 
     // Get pagewidth and mouse position
     // Which we use to determine whether to go prev/next
