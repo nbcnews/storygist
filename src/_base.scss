@@ -335,6 +335,7 @@ body.gist-active {
     transform: translate(-50%, -50%);
     max-width: $pkg-gist-bp;
     left: 50%;
+    z-index: 0;
   }
 }
 
