@@ -11,16 +11,16 @@
   <body>
     <main>
       <article class="story" itemscope itemtype="http://schema.org/NewsArticle">
-        <header class="pkg-beat" data-cta-url="http://nbcnews.com" data-sg>
+        <header class="pkg-beat" data-cta-url="http://nbcnews.com/mach" data-cta-text="Read Article" data-sg>
           <div class="pkg-beat__main set--top">
             <p class="kicker"><small>Presents</small></p>
             <h1 itemprop="headline">Making of an Astronaut</h1>
             <p class="standfirst" itemprop="description">A special from Mach about everyone's favorite place: space.</p>
           </div>
-          <img src="card1bg.png" alt="" itemprop="image">
+          <img src="http://via.placeholder.com/520x924" alt="" itemprop="image">
         </header>
 
-        <section class="pkg-beat" data-cta-url="https://www.nbcnews.com/mach/amp/ncna780516" data-sg>
+        <section class="pkg-beat" data-cta-url="https://www.nbcnews.com/mach/amp/ncna780516" data-cta-text="Read Article" data-sg>
           <div class="pkg-beat__kicker"><span class="pkg-beat__kicker__title">Article</span><span class="pkg-beat__kicker__subtitle">5m</span></div>
           <div class="pkg-beat__main set--top align--center">
             <h1 itemprop="headline">The New Right Stuff</h1>
@@ -41,7 +41,7 @@
           <img src="card2bg.png" alt="" itemprop="image">
         </section>
 
-        <section class="pkg-beat" data-sg data-cta-url="https://www.nbcnews.com/mach/video/space-launches-who-s-getting-off-the-planet-these-days-and-why-976996419896">
+        <section class="pkg-beat" data-sg data-cta-url="https://www.nbcnews.com/mach/video/space-launches-who-s-getting-off-the-planet-these-days-and-why-976996419896" data-cta-text="Watch Video">
           <div class="pkg-beat__kicker"><span class="pkg-beat__kicker__title">Video</span><span class="pkg-beat__kicker__subtitle">2m</span></div>
           <div class="pkg-beat__main set--bottom">
             <h1 itemprop="headline">Space Camp for Adults</h1>
@@ -147,7 +147,9 @@
         finalBeat: {
           raw: null,
           html: '<div class="gist-beat-container"><!--Entypo pictograms by Daniel Bruce — www.entypo.com--><div class="gist-beat-row"><h4>Share</h4><ul class="gist-share"><li><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + encodedShareURL + '">' + facebookIcon + '</a></li><li><a target="_blank" href="https://twitter.com/intent/tweet?url=' + encodedShareURL + '">' + twitterIcon + '</a></li><li><a target="_blank" href="mailto:?body=' + encodedShareURL + '">' + mailIcon + '</a></li></ul></div><div class="gist-beat-row"><div class="j_newsletter_subscribe" data-show_prompt="true" data-prompt_text="Sign up for Mach. Let our news meet your inbox." data-button_label="SIGN UP" data-nlid="1" data-prd="mach"></div></div><div class="gist-beat-row"><h4 class="go-to-beginning">Go to the beginning</h4><ul></li><a class="go-to-beginning" href="#">' + goToIcon + '</li></ul></div>',
-          type: 'DIV'
+          type: 'DIV',
+          ctaUrl: '',
+          ctaText: 'Go to Mach'
         },
         callToAction: 'READ STORY <svg class="pkg-read-more-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve"> <polygon points="396.6,160 416,180.7 256,352 96,180.7 115.3,160 256,310.5 "/> </svg>'
       });

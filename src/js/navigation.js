@@ -48,6 +48,7 @@
 
     sg.Navigation.updateGlobalActiveGist(+beatNum)
     sg.Navigation.updateProgressBar(+beatNum)
+    sg.Navigation.updateCta(+beatNum)
   }
 
   sg.Navigation.updateProgressBar = function (beatNum) {
@@ -86,6 +87,15 @@
       default: return // exit this handler for other keys
     }
     e.preventDefault() // prevent the default action (scroll / move caret)
+  }
+
+  sg.Navigation.updateCta = function (beatNum) {
+    var currentBeat = sg.Static.getCurrentBeat()
+    var ctaText = $(currentBeat).data('cta-text')
+
+    if (ctaText) {
+      $('#gist-view-story').text(ctaText)
+    }
   }
 
   sg.prototype.initNavigation = function () {
