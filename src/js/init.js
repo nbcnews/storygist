@@ -71,7 +71,6 @@
       })
 
       self.totalBeats = +(parsedGistEls.length - 1)
-      sg.Static.totalBeats = self.totalBeats
 
       // Create element to hold navbar
       $gistBody.append('<div id="gist-progress"></div>')

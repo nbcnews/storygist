@@ -6,7 +6,7 @@
   sg.Navigation.router = new Navigo('', true)
 
   sg.Navigation.navigateToBeat = function (beatNum, limit) {
-    var _limit = limit || sg.Static.totalBeats
+    var _limit = limit || sg.Navigation.totalBeats
     if (beatNum >= 0 && beatNum <= _limit) {
       sg.Navigation.router.navigate('/beat/' + beatNum)
     }
@@ -51,7 +51,7 @@
   }
 
   sg.Navigation.updateProgressBar = function (beatNum) {
-    for (var i = 0; i < sg.Static.totalBeats; i++) {
+    for (var i = 0; i < sg.Navigation.totalBeats; i++) {
       if (i > beatNum) {
         // console.log('opacity 1', i)
         $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1)
@@ -61,7 +61,7 @@
     }
 
     // hide progress-bar on last beat before fin
-    if (+beatNum === (sg.Static.totalBeats)) {
+    if (+beatNum === (sg.Navigation.totalBeats)) {
       $('#gist-progress').hide()
     } else {
       $('#gist-progress').show()
@@ -70,6 +70,7 @@
 
   sg.prototype.initNavigation = function () {
     // init stuff
+    sg.Navigation.totalBeats = this.totalBeats
     sg.Navigation.$element = $(this.element)
     sg.Navigation.updateGlobalActiveGist(0) // sg.Static.getCurrentBeatNum()
 
