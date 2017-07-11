@@ -150,6 +150,12 @@
         }
       })
 
+      self.onOrientationChange()
+
+      window.addEventListener('orientationchange', function () {
+        self.onOrientationChange()
+      })
+
       self.initHammer()
       self.initNavigation()
     }
