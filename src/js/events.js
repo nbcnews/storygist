@@ -186,7 +186,15 @@
   }
 
   sg.prototype.onOrientationChange = function () {
-    var orientation = Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait'
+    var angle = window.orientation
+    if (window.screen && window.screen.orientation) {
+      angle = window.screen.orientation.angle
+    }
+
+    var orientation = Math.abs(angle) === 90 ? 'landscape' : 'portrait'
+    if (Math.abs(angle) === 270) { // secondary landscape
+      orientation = 'landscape'
+    }
     var $orientationSelector = $('body')
 
     if (orientation === 'portrait') {

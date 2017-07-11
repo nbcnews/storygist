@@ -140,6 +140,7 @@
         }
       })
 
+      // TODO: move to events.js
       window.addEventListener('scroll', function scrollListener () {
         if (window.pageYOffset >= $gistBody.offset().top) {
           if ($onboardDiv) {
@@ -150,12 +151,8 @@
         }
       })
 
+      window.addEventListener('orientationchange', self.onOrientationChange)
       self.onOrientationChange()
-
-      window.addEventListener('orientationchange', function () {
-        self.onOrientationChange()
-      })
-
       self.initHammer()
       self.initNavigation()
     }
