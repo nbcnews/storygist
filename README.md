@@ -145,4 +145,10 @@ if (beat.type.toLowerCase() === 'p' && beat.prevtype !== undefined) {
 2. `npm install`
 3. `npm run dev`
 
-Files from `./src/` are compiled into `./dist/`.
+Files from `./src/` are compiled into `./build/`.
+
+## Out for Distribution
+
+1. `nvm use`
+2. `npm install`
+3. `npm run dist`

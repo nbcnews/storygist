@@ -13,12 +13,18 @@ const sequence = require('gulp-sequence')
 const eventStream = require('event-stream')
 const jsManifest = require('./src/js/manifest.json')
 
+var distLoc = 'build'
+
+if (process.argv[3] === '--dist') {
+  distLoc = 'dist'
+}
+
 // scripts
 gulp.task('scripts', function (done) {
   const tasks = Object.keys(jsManifest).map((bundle) => {
     return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
       .pipe(concat(bundle))
-      .pipe(gulp.dest('./dist'))
+      .pipe(gulp.dest(distLoc))
       .pipe(browserSync.stream())
   })
 
@@ -29,10 +35,10 @@ gulp.task('scripts-prod', function (done) {
   const tasks = Object.keys(jsManifest).map((bundle) => {
     return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
       .pipe(concat(bundle))
-      .pipe(gulp.dest('./dist'))
+      .pipe(gulp.dest('./' + distLoc))
       .pipe(rename({suffix: '.min', extname: '.js'}))
       .pipe(uglify())
-      .pipe(gulp.dest('./dist'))
+      .pipe(gulp.dest('./' + distLoc))
   })
 
   eventStream.merge(tasks).on('end', done)
@@ -53,7 +59,7 @@ gulp.task('styles', function () {
       }
     }))
     .pipe(sourcemaps.write('.', {includeContents: false}))
-    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest('./' + distLoc))
     .pipe(browserSync.stream())
   return stream
 })
@@ -74,11 +80,15 @@ gulp.task('serve', ['styles', 'scripts'], function () {
 
 // copy dist files for examples
 gulp.task('copy', function () {
-  gulp.src('./dist/**')
-    .pipe(gulp.dest('./examples/dist/'))
+  gulp.src('./' + distLoc + '/**')
+    .pipe(gulp.dest('./examples/' + distLoc))
+})
+
+gulp.task('mytask', function () {
+  console.log(process.argv)
 })
 
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
-gulp.task('build', ['scripts-prod', 'styles'])
+gulp.task('build', ['mytask', 'scripts-prod', 'styles'])
 gulp.task('deploy', sequence('scripts-prod', 'styles', 'copy'))
