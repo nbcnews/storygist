@@ -14,7 +14,7 @@
 
     if ($(window).width() <= self.settings.initWidth) {
       var parsedGistEls = []
-      // var $originalStoryContent = $(self.settings.contentParent)
+      var $originalStoryContent = $(self.settings.contentParent)
       var gistEls = $(self.settings.beatSelector)
 
       // Make the element our storygist beats will live in
@@ -28,7 +28,7 @@
       var $gistBody = $('#gist-body')
 
       // Hide the element that held the original content
-      // $originalStoryContent.css('display', 'none')
+      $originalStoryContent.css('display', 'none')
       $body.addClass('gist-active')
 
       gistEls.each(function (i, el) {
