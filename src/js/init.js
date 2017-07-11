@@ -150,11 +150,8 @@
         }
       })
 
-      self.onOrientationChange()
-
-      window.addEventListener('orientationchange', function () {
-        self.onOrientationChange()
-      })
+      self.setOrientation()
+      $(window).on('resize', self.setOrientation)
 
       self.initHammer()
       self.initNavigation()

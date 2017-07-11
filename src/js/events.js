@@ -181,8 +181,8 @@
     e.preventDefault()
   }
 
-  sg.prototype.onOrientationChange = function () {
-    var orientation = Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait'
+  sg.prototype.setOrientation = function () {
+    var orientation = ($(window).width() > $(window).height()) ? 'landscape' : 'portrait'
     var $orientationSelector = $('body')
 
     if (orientation === 'portrait') {
