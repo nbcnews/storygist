@@ -7,8 +7,8 @@
     // check dependencies
 
     var $body = $(self.element) // TODO: add to $els object
-    var $loading = $('<div id="loading-screen"></div>')
-    $body.prepend($loading)
+    // var $loading = $('<div id="loading-screen"></div>')
+    // $body.prepend($loading)
 
     sg.Static.dependencyChecker(['jQuery', 'Hammer', 'Navigo', 'SplitType', 'videojs', '$.Velocity', 'lazySizes'])
 
@@ -153,7 +153,7 @@
       self.initNavigation()
 
       // $loading.animate({opacity: 0, duration: 500})
-      $loading.remove()
+      // $loading.remove()
     }
   }
 
