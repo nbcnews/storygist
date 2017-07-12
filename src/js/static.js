@@ -9,6 +9,22 @@
     return $('#gist-beat-' + sg.Static.getCurrentBeatNum())
   }
 
+  if (!String.prototype.includes) {
+    // eslint-disable-next-line no-extend-native
+    String.prototype.includes = function (search, start) {
+      'use strict'
+      if (typeof start !== 'number') {
+        start = 0
+      }
+
+      if (start + search.length > this.length) {
+        return false
+      } else {
+        return this.indexOf(search, start) !== -1
+      }
+    }
+  }
+
   sg.Static.getCurrentBeatNum = function () {
     var $el = $('.gist-beat:visible')
     var exists = $el.length
