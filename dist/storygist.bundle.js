@@ -59,6 +59,22 @@
     return $('#gist-beat-' + sg.Static.getCurrentBeatNum())
   }
 
+  if (!String.prototype.includes) {
+    // eslint-disable-next-line no-extend-native
+    String.prototype.includes = function (search, start) {
+      'use strict'
+      if (typeof start !== 'number') {
+        start = 0
+      }
+
+      if (start + search.length > this.length) {
+        return false
+      } else {
+        return this.indexOf(search, start) !== -1
+      }
+    }
+  }
+
   sg.Static.getCurrentBeatNum = function () {
     var $el = $('.gist-beat:visible')
     var exists = $el.length
@@ -151,7 +167,7 @@
   }
 
   sg.Navigation.goToBeat = function (beatNum) {
-    console.log('goToBeat:', beatNum)
+    // console.log('goToBeat:', beatNum)
     // set active class on current beat
     $('.gist-beat').removeClass('active')
     var $beat = $('#gist-beat-' + beatNum)
@@ -238,7 +254,7 @@
   var $gistModalClose = $('.gist-modal-close')
 
   sg.Modal.createIframe = function (src, beatNum) {
-    console.log('createIframe>>', src, beatNum)
+    // console.log('createIframe>>', src, beatNum)
     var html = '<iframe id="beat-modal-' + beatNum + '" src="' + src + '" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>'
     $gistModalWrapper.append(html)
   }
@@ -302,7 +318,7 @@
   sg.prototype.nextBeat = function (beatNum, el) {
     // Handle behavior to move to next beat
     // A click on the right side of the window
-    console.log('>> Next', beatNum)
+    // console.log('>> Next', beatNum)
     this.pauseBeats()
 
     if ($(el).hasClass('last')) {
@@ -313,7 +329,7 @@
       var blurPx = 81
 
       if (window.SplitType && $nextEl.find('.js-text-block').length && this.settings.animate) {
-        console.log('Animate Textblock')
+        // console.log('Animate Textblock')
         var splitTextBlock = new SplitType('.js-text-block')
         splitTextBlock.split({
           split: 'lines',
@@ -350,7 +366,7 @@
           })
 
         if (window.SplitType && $nextEl.find('.pullquote').length) {
-          console.log('Animate PULLQUOTE')
+          // console.log('Animate PULLQUOTE')
           var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
             split: 'lines'
           })
@@ -367,7 +383,7 @@
   }
 
   sg.prototype.prevBeat = function (beatNum, el) {
-    console.log('>> Prev', beatNum)
+    // console.log('>> Prev', beatNum)
     this.pauseBeats()
     // Handle behavior to move to previous beat
     if ($(el).is('#gist-beat-0')) {
@@ -391,7 +407,20 @@
 
     if (ctaURL) {
       // console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
-      this.launchModal(ctaURL, currentBeatNum)
+      // console.log($(window).width())
+      if ($(window).width() >= 1200) {
+        // On desktop follow link, don't open modal
+        // Also check if it's amp, if so, don't use the amp URL on desktop
+        var ampString = '/amp/'
+        if (ctaURL.includes(ampString)) {
+          // Hack the URL to show the non-amp version
+          // by supplying a category that doesn't exist but isn't /amp/
+          ctaURL = ctaURL.replace(ampString, '/gist/')
+        }
+        window.open(ctaURL, '_blank')
+      } else {
+        this.launchModal(ctaURL, currentBeatNum)
+      }
     } else {
       // Hide the storygist
       $('#gist-body').css('display', 'none')
@@ -426,7 +455,7 @@
         this.prevBeat(beatNum, $thisBeat)
         break
       default:
-        console.log(e.type, e.direction)
+        // console.log(e.type, e.direction)
     }
   }
 
@@ -442,7 +471,7 @@
     var posX = $thisBeat.position().left
     var clickX = e.pageX - posX
 
-    console.log('click target el', $(e.target)[0].tagName)
+    // console.log('click target el', $(e.target)[0].tagName)
 
     if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
       // If it's the last beat
