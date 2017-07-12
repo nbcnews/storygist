@@ -2,16 +2,19 @@
 
 // Include gulp
 const gulp = require('gulp')
-const rename = require('gulp-rename')
-const uglify = require('gulp-uglify')
+// const rename = require('gulp-rename')
+// const uglify = require('gulp-uglify')
+// const concat = require('gulp-concat')
+// const eventStream = require('event-stream')
 const sass = require('gulp-sass')
 const cssnano = require('gulp-cssnano')
 const browserSync = require('browser-sync').create()
 const sourcemaps = require('gulp-sourcemaps')
-const concat = require('gulp-concat')
 const sequence = require('gulp-sequence')
-const eventStream = require('event-stream')
-const jsManifest = require('./src/js/manifest.json')
+const path = require('path')
+
+const webpack = require('webpack')
+const webpackConfig = require('./webpack.config.js')
 
 var distLoc = 'build'
 
@@ -21,28 +24,25 @@ if (process.argv[3] === '--dist') {
 
 // scripts
 gulp.task('scripts', function (done) {
-  const tasks = Object.keys(jsManifest).map((bundle) => {
-    return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
-      .pipe(concat(bundle))
-      .pipe(gulp.dest(distLoc))
-      .pipe(browserSync.stream())
+  webpackConfig.output.path = path.resolve(__dirname, distLoc)
+  webpack(webpackConfig, function (err, stats) {
+    if (err) throw Error(err)
+    done()
+    browserSync.reload()
   })
-
-  eventStream.merge(tasks).on('end', done)
 })
 
-gulp.task('scripts-prod', function (done) {
-  const tasks = Object.keys(jsManifest).map((bundle) => {
-    return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
-      .pipe(concat(bundle))
-      .pipe(gulp.dest('./' + distLoc))
-      .pipe(rename({suffix: '.min', extname: '.js'}))
-      .pipe(uglify())
-      .pipe(gulp.dest('./' + distLoc))
-  })
-
-  eventStream.merge(tasks).on('end', done)
-})
+// gulp.task('scripts-prod', function (done) {
+//   const tasks = Object.keys(jsManifest).map((bundle) => {
+//     return gulp.src(jsManifest[bundle], { cwd: 'src/js' })
+//       .pipe(concat(bundle))
+//       .pipe(gulp.dest('./' + distLoc))
+//       .pipe(rename({suffix: '.min', extname: '.js'}))
+//       .pipe(uglify())
+//       .pipe(gulp.dest('./' + distLoc))
+//   })
+//   eventStream.merge(tasks).on('end', done)
+// })
 
 // styles
 gulp.task('styles', function () {
@@ -88,7 +88,11 @@ gulp.task('mytask', function () {
   console.log(process.argv)
 })
 
+gulp.task('app-reload', function () {
+  browserSync.reload()
+})
+
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
-gulp.task('build', ['mytask', 'scripts-prod', 'styles'])
-gulp.task('deploy', sequence('scripts-prod', 'styles', 'copy'))
+gulp.task('build', ['mytask', 'scripts', 'styles'])
+gulp.task('deploy', sequence('scripts', 'styles', 'copy'))
