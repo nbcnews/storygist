@@ -88,10 +88,6 @@ gulp.task('mytask', function () {
   console.log(process.argv)
 })
 
-gulp.task('app-reload', function () {
-  browserSync.reload()
-})
-
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
 gulp.task('build', ['mytask', 'scripts', 'styles'])
