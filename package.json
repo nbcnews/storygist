@@ -4,7 +4,7 @@
   "description": "A jQuery plugin for generating a story gist that gives you the overall story quickly.",
   "private": true,
   "pre-commit": "lint-staged",
-  "main": "dist/jquery.storygist.min.js",
+  "main": "dist/storygist.bundle.js",
   "scripts": {
     "dev": "gulp serve",
     "build": "gulp build",
