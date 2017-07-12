@@ -123,6 +123,7 @@ body.gist-landscape::before {
   background-color: transparent;
   opacity: 0.4;
   padding: 0;
+  height: auto;
   cursor: pointer;
 
   .gist-beat-0-active & {
