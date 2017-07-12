@@ -127,7 +127,7 @@
           // by supplying a category that doesn't exist but isn't /amp/
           ctaURL = ctaURL.replace(ampString, '/gist/')
         }
-        window.open(ctaURL, '_blank')
+        window.open(ctaURL, '_self')
       } else {
         this.launchModal(ctaURL, currentBeatNum)
       }
