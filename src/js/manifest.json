@@ -1,6 +1,5 @@
 {
   "storygist.bundle.js": [
-    "navigo.js",
     "options.js",
     "static.js",
     "navigation.js",
