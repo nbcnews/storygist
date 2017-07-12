@@ -1,0 +1,9 @@
+{
+  "tagname-lowercase": true,
+  "attr-lowercase": ["viewBox", "preserveAspectRatio"],
+  "tag-pair": true,
+  "id-unique": true,
+  "src-not-empty": true,
+  "attr-no-duplication": true,
+  "title-require": true
+}
