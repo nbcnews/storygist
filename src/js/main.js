@@ -1,5 +1,5 @@
 // vendor
-require('navigo')
+window.Navigo = require('navigo')
 require('hammerjs')
 
 // internal
