@@ -36,7 +36,7 @@
   }
 
   sg.Navigation.goToBeat = function (beatNum) {
-    console.log('goToBeat:', beatNum)
+    // console.log('goToBeat:', beatNum)
     // set active class on current beat
     $('.gist-beat').removeClass('active')
     var $beat = $('#gist-beat-' + beatNum)

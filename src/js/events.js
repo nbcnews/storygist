@@ -28,7 +28,7 @@
   sg.prototype.nextBeat = function (beatNum, el) {
     // Handle behavior to move to next beat
     // A click on the right side of the window
-    console.log('>> Next', beatNum)
+    // console.log('>> Next', beatNum)
     this.pauseBeats()
 
     if ($(el).hasClass('last')) {
@@ -39,7 +39,7 @@
       var blurPx = 81
 
       if (window.SplitType && $nextEl.find('.js-text-block').length && this.settings.animate) {
-        console.log('Animate Textblock')
+        // console.log('Animate Textblock')
         var splitTextBlock = new SplitType('.js-text-block')
         splitTextBlock.split({
           split: 'lines',
@@ -76,7 +76,7 @@
           })
 
         if (window.SplitType && $nextEl.find('.pullquote').length) {
-          console.log('Animate PULLQUOTE')
+          // console.log('Animate PULLQUOTE')
           var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
             split: 'lines'
           })
@@ -93,7 +93,7 @@
   }
 
   sg.prototype.prevBeat = function (beatNum, el) {
-    console.log('>> Prev', beatNum)
+    // console.log('>> Prev', beatNum)
     this.pauseBeats()
     // Handle behavior to move to previous beat
     if ($(el).is('#gist-beat-0')) {
@@ -117,7 +117,7 @@
 
     if (ctaURL) {
       // console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
-      console.log($(window).width())
+      // console.log($(window).width())
       if ($(window).width() >= 1200) {
         // On desktop follow link, don't open modal
         // Also check if it's amp, if so, don't use the amp URL on desktop
@@ -165,7 +165,7 @@
         this.prevBeat(beatNum, $thisBeat)
         break
       default:
-        console.log(e.type, e.direction)
+        // console.log(e.type, e.direction)
     }
   }
 
@@ -181,7 +181,7 @@
     var posX = $thisBeat.position().left
     var clickX = e.pageX - posX
 
-    console.log('click target el', $(e.target)[0].tagName)
+    // console.log('click target el', $(e.target)[0].tagName)
 
     if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
       // If it's the last beat

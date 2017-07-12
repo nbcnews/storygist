@@ -7,7 +7,7 @@
   var $gistModalClose = $('.gist-modal-close')
 
   sg.Modal.createIframe = function (src, beatNum) {
-    console.log('createIframe>>', src, beatNum)
+    // console.log('createIframe>>', src, beatNum)
     var html = '<iframe id="beat-modal-' + beatNum + '" src="' + src + '" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>'
     $gistModalWrapper.append(html)
   }
