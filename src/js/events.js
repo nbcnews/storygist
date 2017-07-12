@@ -117,7 +117,20 @@
 
     if (ctaURL) {
       // console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
-      this.launchModal(ctaURL, currentBeatNum)
+      console.log($(window).width())
+      if ($(window).width() >= 1200) {
+        // On desktop follow link, don't open modal
+        // Also check if it's amp, if so, don't use the amp URL on desktop
+        var ampString = '/amp/'
+        if (ctaURL.includes(ampString)) {
+          // Hack the URL to show the non-amp version
+          // by supplying a category that doesn't exist but isn't /amp/
+          ctaURL = ctaURL.replace(ampString, '/gist/')
+        }
+        window.open(ctaURL, '_blank')
+      } else {
+        this.launchModal(ctaURL, currentBeatNum)
+      }
     } else {
       // Hide the storygist
       $('#gist-body').css('display', 'none')
