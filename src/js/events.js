@@ -13,6 +13,7 @@ function init (ctx) {
   totalBeats = ctx.totalBeats
   element = ctx.element
   settings = ctx.settings
+  debug('element:', element)
 }
 
 function beatVideoPlay (videoEl) {
@@ -124,7 +125,7 @@ function viewInStory () {
   var currentBeat = Static.getCurrentBeat()
   var currentBeatNum = $(currentBeat).data('origid')
   var ctaURL = $(currentBeat).data('cta-url')
-
+  debug('viewInStory(), ctaURL:', ctaURL, this)
   // pause any videos, animations, etc
   pauseBeats()
 
@@ -145,21 +146,21 @@ function viewInStory () {
     }
   } else {
     // Hide the storygist
-    $('#gist-body').css('display', 'none')
-    $(element).toggleClass('gist-active')
+    // $('#gist-body').css('display', 'none')
+    // $(element).toggleClass('gist-active')
 
     // Show all the original story elements
-    $(settings.contentParent).css('display', 'block')
-    $('.site-header').css('display', 'block')
-    $('.progress').css('display', 'block')
-
-    // Find the original element that corresponds with the current beat
-    var scrollToEl = $(settings.contentParent + ' ' + settings.beatSelector + ':eq(' + currentBeatNum + ')')
-
-    // Scroll to that element
-    $('html, body').animate({
-      scrollTop: (scrollToEl.offset().top - 80)
-    }, 2000)
+    // $(settings.contentParent).css('display', 'block')
+    // $('.site-header').css('display', 'block')
+    // $('.progress').css('display', 'block')
+    //
+    // // // Find the original element that corresponds with the current beat
+    // var scrollToEl = $(`${settings.contentParent} ${settings.beatSelector}:eq(${currentBeatNum})`)
+    // debug('scrollToEl:', scrollToEl)
+    // // // Scroll to that element
+    // $('html, body').animate({
+    //   scrollTop: (scrollToEl.offset().top - 80)
+    // }, 2000)
   }
 }
 
