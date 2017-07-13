@@ -1,4 +1,5 @@
 /* globals $ */
+const debug = require('debug')('static')
 
 function getCurrentBeat () {
   return $('#gist-beat-' + getCurrentBeatNum())
@@ -27,15 +28,15 @@ function dependencyChecker (deps) {
       depName = dep.replace('$.', '')
     }
     if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
-      console.log('### window.' + dep, ' detected')
+      debug(`### window.${dep} detected`)
     } else {
-      console.warn('### window.' + dep, ' Not Found')
+      debug(`### window.${dep} Not Found`)
     }
   })
 }
 
 function getBeatFromTarget (target) {
-  // console.log(target, 'target -> getBeat')
+  debug(target, 'target -> getBeat')
   var $beat = $(target)
   if (!$beat.hasClass('gist-beat')) {
     $beat = $beat.closest('.gist-beat')

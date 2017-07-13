@@ -3,6 +3,8 @@ import Static from './static'
 import Navigation from './navigation'
 import Modal from './browserModal'
 
+const debug = require('debug')('events')
+
 let settings = null
 let element = null
 let totalBeats = null
@@ -39,7 +41,7 @@ function pauseBeats () {
 function nextBeat (beatNum, el) {
   // Handle behavior to move to next beat
   // A click on the right side of the window
-  console.log('>> Next', beatNum)
+  debug('>> Next', beatNum)
   pauseBeats()
 
   if ($(el).hasClass('last')) {
@@ -50,7 +52,7 @@ function nextBeat (beatNum, el) {
     var blurPx = 81
 
     if (window.SplitType && $nextEl.find('.js-text-block').length && settings.animate) {
-      // console.log('Animate Textblock')
+      debug('Animate Textblock')
       var splitTextBlock = new SplitType('.js-text-block')
       splitTextBlock.split({
         split: 'lines',
@@ -87,7 +89,7 @@ function nextBeat (beatNum, el) {
         })
 
       if (window.SplitType && $nextEl.find('.pullquote').length) {
-        // console.log('Animate PULLQUOTE')
+        // debug('Animate PULLQUOTE')
         var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
           split: 'lines'
         })
@@ -104,7 +106,7 @@ function nextBeat (beatNum, el) {
 }
 
 function prevBeat (beatNum, el) {
-  // console.log('>> Prev', beatNum)
+  debug('>> Prev', beatNum)
   pauseBeats()
   // Handle behavior to move to previous beat
   if ($(el).is('#gist-beat-0')) {
@@ -127,8 +129,7 @@ function viewInStory () {
   pauseBeats()
 
   if (ctaURL) {
-    // console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
-    // console.log($(window).width())
+    debug('Do browser CTA thing:', currentBeatNum, ctaURL)
     if ($(window).width() >= 1200) {
       // On desktop follow link, don't open modal
       // Also check if it's amp, if so, don't use the amp URL on desktop
@@ -176,7 +177,7 @@ function swipeBeat (e) {
       prevBeat(beatNum, $thisBeat)
       break
     default:
-      // console.log(e.type, e.direction)
+      debug(e.type, e.direction)
   }
 }
 
@@ -192,7 +193,7 @@ function clickBeat (e) {
   var posX = $thisBeat.position().left
   var clickX = e.pageX - posX
 
-  // console.log('click target el', $(e.target)[0].tagName)
+  // debug('click target el', $(e.target)[0].tagName)
 
   if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
     // If it's the last beat

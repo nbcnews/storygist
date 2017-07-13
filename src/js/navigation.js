@@ -4,6 +4,7 @@ import Static from './static'
 import Events from './events'
 
 const router = new Navigo('', true)
+const debug = require('debug')('navigation')
 
 let totalBeats = null
 
@@ -15,7 +16,7 @@ function init (ctx) {
 
   router
   .on('/beat/:beatNum', function (params) {
-    // console.log('nav-params', params)
+    debug('nav-params', params)
     goToBeat(params.beatNum)
   })
   .resolve()
@@ -45,7 +46,7 @@ function updateGlobalActiveGist (beatNum) {
 }
 
 function goToBeat (beatNum) {
-  // console.log('goToBeat:', beatNum)
+  debug('goToBeat:', beatNum)
   // set active class on current beat
   $('.gist-beat').removeClass('active')
   var $beat = $('#gist-beat-' + beatNum)
@@ -63,7 +64,7 @@ function goToBeat (beatNum) {
 function updateProgressBar (beatNum) {
   for (var i = 0; i < totalBeats; i++) {
     if (i > beatNum) {
-      // console.log('opacity 1', i)
+      // debug('opacity 1', i)
       $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1)
     } else {
       $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 0)
@@ -109,7 +110,7 @@ function updateCta (beatNum) {
 
 function navigateToBeat (beatNum, limit) {
   const _limit = limit || totalBeats
-  console.log('nav', beatNum, _limit)
+  debug('nav', beatNum, _limit)
   if (beatNum >= 0 && beatNum <= _limit) {
     router.navigate('/beat/' + beatNum)
   }

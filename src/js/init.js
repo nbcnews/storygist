@@ -4,6 +4,8 @@ import Events from './events'
 import Navigation from './navigation'
 import Hammer from 'hammerjs'
 
+const debug = require('debug')('init')
+
 function StoryGist (element, options) {
   var encodedShareURL = encodeURIComponent(window.location.href)
   // Define icons to be used in final beat
@@ -38,6 +40,7 @@ function StoryGist (element, options) {
   this.element = element
   this.$els = {} // NOTE: used for caching elements
   this.settings = $.extend({}, defaults, options)
+  debug(this.settings)
 }
 
 function initHammer (selector) {
