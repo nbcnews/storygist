@@ -1,4 +1,4 @@
-/* globals SplitType, $ */
+/* globals SplitType, $, ga */
 import Static from './static'
 import Navigation from './navigation'
 import Modal from './browserModal'
@@ -16,11 +16,28 @@ function init (ctx) {
 }
 
 function beatVideoPlay (videoEl) {
-  if (videoEl) { videoEl.play() }
+  if (videoEl) {
+    videoEl.play()
+
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'gist',
+      eventAction: 'videoStart'
+      // ,eventLabel: 'event label'
+    })
+  }
 }
 
 function beatVideoPause (videoEl) {
-  if (videoEl) { videoEl.pause() }
+  if (videoEl) {
+    videoEl.pause()
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'gist',
+      eventAction: 'videoPause'
+      // ,eventLabel: 'event label'
+    })
+  }
 }
 
 function beatVideoPauseAll (videoEl) {
@@ -32,6 +49,13 @@ function beatVideoPauseAll (videoEl) {
 function goToBeginning () {
   // Set all beats to visible (aka go to beginning)
   $('.gist-beat').css('display', 'flex')
+
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'gist',
+    eventAction: 'goToBeginning'
+    // ,eventLabel: 'event label'
+  })
 }
 
 function pauseBeats () {
@@ -42,6 +66,13 @@ function nextBeat (beatNum, el) {
   // Handle behavior to move to next beat
   // A click on the right side of the window
   debug('>> Next', beatNum)
+
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'gist',
+    eventAction: 'nextBeat'
+    // ,eventLabel: 'event label'
+  })
   pauseBeats()
 
   if ($(el).hasClass('last')) {
@@ -106,6 +137,13 @@ function nextBeat (beatNum, el) {
 }
 
 function prevBeat (beatNum, el) {
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'gist',
+    eventAction: 'prevBeat'
+    // ,eventLabel: 'event label'
+  })
+
   debug('>> Prev', beatNum)
   pauseBeats()
   // Handle behavior to move to previous beat
@@ -120,6 +158,12 @@ function prevBeat (beatNum, el) {
 }
 
 function viewInStory () {
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'gist',
+    eventAction: 'ctaClicked'
+    // ,eventLabel: 'event label'
+  })
   // Get the current gist beat (the first that's visible)
   var currentBeat = Static.getCurrentBeat()
   var currentBeatNum = $(currentBeat).data('origid')
@@ -164,6 +208,12 @@ function viewInStory () {
 }
 
 function swipeBeat (e) {
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'gist',
+    eventAction: 'beatSwiped'
+    // ,eventLabel: 'event label'
+  })
   var $thisBeat = Static.getCurrentBeat()
   var beatNum = $thisBeat.attr('id').split('-')[2]
   switch (e.direction) {
@@ -182,6 +232,12 @@ function swipeBeat (e) {
 }
 
 function clickBeat (e) {
+  ga('send', {
+    hitType: 'event',
+    eventCategory: 'gist',
+    eventAction: 'beatClicked'
+    // ,eventLabel: 'event label'
+  })
   // Get this beat's number from it's ID
   var $thisBeat = Static.getCurrentBeat()
   var beatNum = $thisBeat.data('origid')
@@ -227,6 +283,12 @@ function onOrientationChange () {
   }
 
   if (orientation === 'landscape') {
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'gist',
+      eventAction: 'landscapeOrientation'
+      // ,eventLabel: 'event label'
+    })
     $orientationSelector.addClass('gist-landscape').removeClass('gist-portrait')
   }
 }
