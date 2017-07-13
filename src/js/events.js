@@ -53,7 +53,7 @@ function nextBeat (beatNum, el) {
   // A click on the right side of the window
   debug('>> Next', beatNum)
 
-  Tracking.sendEvent('nextBeat')
+  Tracking.sendEvent('nextBeat', beatNum)
   pauseBeats()
 
   if ($(el).hasClass('last')) {
@@ -118,7 +118,7 @@ function nextBeat (beatNum, el) {
 }
 
 function prevBeat (beatNum, el) {
-  Tracking.sendEvent('prevBeat')
+  Tracking.sendEvent('prevBeat', beatNum)
 
   debug('>> Prev', beatNum)
   pauseBeats()
