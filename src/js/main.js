@@ -1,12 +1,4 @@
-// vendor
-window.Navigo = require('navigo')
-require('hammerjs')
+import { init as pluginInit } from './plugin'
 
-// internal
-require('./options')
-require('./static')
-require('./navigation')
-require('./browserModal')
-require('./events')
 require('./init')
-require('./plugin')
+pluginInit()

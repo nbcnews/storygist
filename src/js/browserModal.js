@@ -1,42 +1,39 @@
-/* globals jQuery, StoryGist */
+/* globals $ */
+import Static from './static'
 
-;(function ($, sg) {
-  sg.Modal = {}
+const $gistModalWrapper = $('.gist-modal-wrapper')
+const $gistModalClose = $('.gist-modal-close')
 
-  var $gistModalWrapper = $('.gist-modal-wrapper')
-  var $gistModalClose = $('.gist-modal-close')
+function createIframe (src, beatNum) {
+  const html = `<iframe id="beat-modal-${beatNum}" src="${src}" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>`
+  $gistModalWrapper.append(html)
+}
 
-  sg.Modal.createIframe = function (src, beatNum) {
-    // console.log('createIframe>>', src, beatNum)
-    var html = '<iframe id="beat-modal-' + beatNum + '" src="' + src + '" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>'
-    $gistModalWrapper.append(html)
+function show (beatNum) {
+  $gistModalWrapper.addClass('is-active')
+  $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' })
+  $gistModalWrapper.show()
+}
+
+function close (beatNum) {
+  $gistModalWrapper.removeClass('is-active')
+  var $beatModal = $('#beat-modal-' + beatNum)
+  $beatModal.hide()
+  $beatModal.remove()
+}
+
+function launchModal (src, beatNum) {
+  const _beatNum = beatNum || Static.currentBeatIndex
+  const modalExists = $('#beat-modal-' + _beatNum).length
+  if (!modalExists) {
+    createIframe(src, _beatNum)
   }
+  show(_beatNum)
+}
 
-  sg.Modal.show = function (beatNum) {
-    $gistModalWrapper.addClass('is-active')
-    $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' })
-    $gistModalWrapper.show()
-  }
+// init stuff
+$gistModalClose.click(function (ev) {
+  close(Static.getCurrentBeatNum())
+})
 
-  sg.Modal.close = function (beatNum) {
-    $gistModalWrapper.removeClass('is-active')
-    var $beatModal = $('#beat-modal-' + beatNum)
-    $beatModal.hide()
-    $beatModal.remove()
-  }
-
-  // method on StoryGist(), so it can access 'this'
-  sg.prototype.launchModal = function (src, beatNum) {
-    var _beatNum = beatNum || sg.Static.currentBeatIndex
-    var modalExists = $('#beat-modal-' + _beatNum).length
-    if (!modalExists) {
-      sg.Modal.createIframe(src, _beatNum)
-    }
-    sg.Modal.show(_beatNum)
-  }
-
-  // init stuff
-  $gistModalClose.click(function (ev) {
-    sg.Modal.close(sg.Static.getCurrentBeatNum())
-  })
-})(jQuery, StoryGist)
+export default { launchModal }

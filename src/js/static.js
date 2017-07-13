@@ -1,80 +1,83 @@
-/* globals jQuery, StoryGist */
+/* globals $ */
 
-;(function ($, sg) {
-  sg.Static = {}
+function getCurrentBeat () {
+  return $('#gist-beat-' + getCurrentBeatNum())
+}
 
-  sg.Static.currentBeatIndex = 0
-
-  sg.Static.getCurrentBeat = function () {
-    return $('#gist-beat-' + sg.Static.getCurrentBeatNum())
+function getCurrentBeatNum () {
+  var $el = $('.gist-beat:visible')
+  var exists = $el.length
+  if (exists) {
+    var currentBeat = $('.gist-beat:visible').get(0)
+    return $(currentBeat).data('origid')
   }
+  return 0
+}
 
-  if (!String.prototype.includes) {
-    // eslint-disable-next-line no-extend-native
-    String.prototype.includes = function (search, start) {
-      'use strict'
-      if (typeof start !== 'number') {
-        start = 0
-      }
+function getRandTransition () {
+  return TRANSITIONS[Math.floor(Math.random() * TRANSITIONS.length)]
+}
 
-      if (start + search.length > this.length) {
-        return false
-      } else {
-        return this.indexOf(search, start) !== -1
-      }
+function dependencyChecker (deps) {
+  deps.forEach(function (dep) {
+    var global = window
+    var depName = dep
+    if (dep.indexOf('$.') === 0) {
+      global = window.$
+      depName = dep.replace('$.', '')
     }
-  }
-
-  sg.Static.getCurrentBeatNum = function () {
-    var $el = $('.gist-beat:visible')
-    var exists = $el.length
-    if (exists) {
-      var currentBeat = $('.gist-beat:visible').get(0)
-      return $(currentBeat).data('origid')
+    if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
+      console.log('### window.' + dep, ' detected')
+    } else {
+      console.warn('### window.' + dep, ' Not Found')
     }
-    return 0
-  }
+  })
+}
 
-  sg.Static.getRandTransition = function () {
-    return sg.Static.TRANSITIONS[Math.floor(Math.random() * sg.Static.TRANSITIONS.length)]
-  }
-
-  sg.Static.dependencyChecker = function (deps) {
-    deps.forEach(function (dep) {
-      var global = window
-      var depName = dep
-      if (dep.indexOf('$.') === 0) {
-        global = window.$
-        depName = dep.replace('$.', '')
-      }
-      if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
-        console.log('### window.' + dep, ' detected')
-      } else {
-        console.warn('### window.' + dep, ' Not Found')
-      }
-    })
-  }
-
-  sg.Static.getBeatFromTarget = function (target) {
-    // console.log(target, 'target -> getBeat')
-    var $beat = $(target)
+function getBeatFromTarget (target) {
+  // console.log(target, 'target -> getBeat')
+  var $beat = $(target)
+  if (!$beat.hasClass('gist-beat')) {
+    $beat = $beat.closest('.gist-beat')
     if (!$beat.hasClass('gist-beat')) {
-      $beat = $beat.closest('.gist-beat')
-      if (!$beat.hasClass('gist-beat')) {
-        return null
-      }
+      return null
     }
-    return $beat
   }
+  return $beat
+}
 
-  sg.Static.TRANSITIONS = [
-    'transition.slideLeftIn',
-    'transition.slideDownIn',
-    'transition.slideLeftBigIn',
-    'transition.shrinkIn',
-    'transition.flipXIn',
-    'transition.flipYIn',
-    'transition.fadeIn',
-    'transition.expandIn'
-  ]
-})(jQuery, StoryGist)
+if (!String.prototype.includes) {
+  // eslint-disable-next-line no-extend-native
+  String.prototype.includes = function (search, start) {
+    'use strict'
+    if (typeof start !== 'number') {
+      start = 0
+    }
+
+    if (start + search.length > this.length) {
+      return false
+    } else {
+      return this.indexOf(search, start) !== -1
+    }
+  }
+}
+
+const TRANSITIONS = [
+  'transition.slideLeftIn',
+  'transition.slideDownIn',
+  'transition.slideLeftBigIn',
+  'transition.shrinkIn',
+  'transition.flipXIn',
+  'transition.flipYIn',
+  'transition.fadeIn',
+  'transition.expandIn'
+]
+
+export default {
+  TRANSITIONS,
+  getBeatFromTarget,
+  getRandTransition,
+  getCurrentBeat,
+  getCurrentBeatNum,
+  dependencyChecker
+}
