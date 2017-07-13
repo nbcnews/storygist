@@ -368,7 +368,7 @@ var _navigation = __webpack_require__(4);
 
 var _navigation2 = _interopRequireDefault(_navigation);
 
-var _hammerjs = __webpack_require__(12);
+var _hammerjs = __webpack_require__(13);
 
 var _hammerjs2 = _interopRequireDefault(_hammerjs);
 
@@ -608,10 +608,14 @@ var _browserModal = __webpack_require__(11);
 
 var _browserModal2 = _interopRequireDefault(_browserModal);
 
+var _tracking = __webpack_require__(12);
+
+var _tracking2 = _interopRequireDefault(_tracking);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var debug = __webpack_require__(1)('events'); /* globals SplitType, $ */
-
+/* globals SplitType, $ */
+var debug = __webpack_require__(1)('events');
 
 var settings = null;
 var element = null;
@@ -621,17 +625,21 @@ function init(ctx) {
   totalBeats = ctx.totalBeats;
   element = ctx.element;
   settings = ctx.settings;
+  debug('element:', element);
 }
 
 function beatVideoPlay(videoEl) {
   if (videoEl) {
     videoEl.play();
+
+    _tracking2.default.sendEvent('videoStart');
   }
 }
 
 function beatVideoPause(videoEl) {
   if (videoEl) {
     videoEl.pause();
+    _tracking2.default.sendEvent('videoPause');
   }
 }
 
@@ -644,6 +652,8 @@ function beatVideoPauseAll(videoEl) {
 function goToBeginning() {
   // Set all beats to visible (aka go to beginning)
   $('.gist-beat').css('display', 'flex');
+
+  _tracking2.default.sendEvent('goToBeginning');
 }
 
 function pauseBeats() {
@@ -654,6 +664,8 @@ function nextBeat(beatNum, el) {
   // Handle behavior to move to next beat
   // A click on the right side of the window
   debug('>> Next', beatNum);
+
+  _tracking2.default.sendEvent('nextBeat');
   pauseBeats();
 
   if ($(el).hasClass('last')) {
@@ -714,6 +726,8 @@ function nextBeat(beatNum, el) {
 }
 
 function prevBeat(beatNum, el) {
+  _tracking2.default.sendEvent('prevBeat');
+
   debug('>> Prev', beatNum);
   pauseBeats();
   // Handle behavior to move to previous beat
@@ -728,11 +742,12 @@ function prevBeat(beatNum, el) {
 }
 
 function viewInStory() {
+  _tracking2.default.sendEvent('ctaClicked');
   // Get the current gist beat (the first that's visible)
   var currentBeat = _static2.default.getCurrentBeat();
   var currentBeatNum = $(currentBeat).data('origid');
   var ctaURL = $(currentBeat).data('cta-url');
-
+  debug('viewInStory(), ctaURL:', ctaURL, this);
   // pause any videos, animations, etc
   pauseBeats();
 
@@ -748,26 +763,28 @@ function viewInStory() {
         ctaURL = ctaURL.replace(ampString, '/gist/');
       }
       window.open(ctaURL, '_self');
+      _tracking2.default.sendEvent('ctaClicked-windowopen');
     } else {
       _browserModal2.default.launchModal(ctaURL, currentBeatNum);
+      _tracking2.default.sendEvent('ctaClicked-modalactivated');
     }
   } else {
     // Hide the storygist
-    $('#gist-body').css('display', 'none');
-    $(element).toggleClass('gist-active');
+    // $('#gist-body').css('display', 'none')
+    // $(element).toggleClass('gist-active')
 
     // Show all the original story elements
-    $(settings.contentParent).css('display', 'block');
-    $('.site-header').css('display', 'block');
-    $('.progress').css('display', 'block');
-
-    // Find the original element that corresponds with the current beat
-    var scrollToEl = $(settings.contentParent + ' ' + settings.beatSelector + ':eq(' + currentBeatNum + ')');
-
-    // Scroll to that element
-    $('html, body').animate({
-      scrollTop: scrollToEl.offset().top - 80
-    }, 2000);
+    // $(settings.contentParent).css('display', 'block')
+    // $('.site-header').css('display', 'block')
+    // $('.progress').css('display', 'block')
+    //
+    // // // Find the original element that corresponds with the current beat
+    // var scrollToEl = $(`${settings.contentParent} ${settings.beatSelector}:eq(${currentBeatNum})`)
+    // debug('scrollToEl:', scrollToEl)
+    // // // Scroll to that element
+    // $('html, body').animate({
+    //   scrollTop: (scrollToEl.offset().top - 80)
+    // }, 2000)
   }
 }
 
@@ -778,14 +795,17 @@ function swipeBeat(e) {
     case 8:
       // DIRECTION_UP
       viewInStory();
+      _tracking2.default.sendEvent('beatSwiped-up');
       break;
     case 2:
       // DIRECTION_LEFT
       nextBeat(beatNum, $thisBeat);
+      _tracking2.default.sendEvent('beatSwiped-left');
       break;
     case 4:
       // DIRECTION_RIGHT
       prevBeat(beatNum, $thisBeat);
+      _tracking2.default.sendEvent('beatSwiped-right');
       break;
     default:
       debug(e.type, e.direction);
@@ -793,6 +813,7 @@ function swipeBeat(e) {
 }
 
 function clickBeat(e) {
+  _tracking2.default.sendEvent('beatClicked');
   // Get this beat's number from it's ID
   var $thisBeat = _static2.default.getCurrentBeat();
   var beatNum = $thisBeat.data('origid');
@@ -839,6 +860,7 @@ function onOrientationChange() {
   }
 
   if (orientation === 'landscape') {
+    _tracking2.default.sendEvent('landscape-orientation');
     $orientationSelector.addClass('gist-landscape').removeClass('gist-portrait');
   }
 }
@@ -2166,6 +2188,31 @@ exports.default = { launchModal: launchModal };
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/* globals ga */
+
+function sendEvent(eventAction) {
+  if (window.ga) {
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'gist',
+      eventAction: eventAction
+      // ,eventLabel: 'event label'
+    });
+  }
+}
+
+exports.default = { sendEvent: sendEvent };
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22

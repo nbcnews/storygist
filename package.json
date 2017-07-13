@@ -1,6 +1,6 @@
 {
   "name": "storygist",
-  "version": "0.1.1",
+  "version": "0.3.0",
   "description": "A jQuery plugin for generating a story gist that gives you the overall story quickly.",
   "private": true,
   "pre-commit": "lint-staged",
