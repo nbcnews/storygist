@@ -67,96 +67,6 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-/* globals $ */
-var debug = __webpack_require__(1)('static');
-
-function getCurrentBeat() {
-  return $('#gist-beat-' + getCurrentBeatNum());
-}
-
-function getCurrentBeatNum() {
-  var $el = $('.gist-beat:visible');
-  var exists = $el.length;
-  if (exists) {
-    var currentBeat = $('.gist-beat:visible').get(0);
-    return $(currentBeat).data('origid');
-  }
-  return 0;
-}
-
-function getRandTransition() {
-  return TRANSITIONS[Math.floor(Math.random() * TRANSITIONS.length)];
-}
-
-function dependencyChecker(deps) {
-  deps.forEach(function (dep) {
-    var global = window;
-    var depName = dep;
-    if (dep.indexOf('$.') === 0) {
-      global = window.$;
-      depName = dep.replace('$.', '');
-    }
-    if (typeof global[depName] === 'function' || _typeof(global[depName]) === 'object') {
-      debug('### window.' + dep + ' detected');
-    } else {
-      debug('### window.' + dep + ' Not Found');
-    }
-  });
-}
-
-function getBeatFromTarget(target) {
-  debug(target, 'target -> getBeat');
-  var $beat = $(target);
-  if (!$beat.hasClass('gist-beat')) {
-    $beat = $beat.closest('.gist-beat');
-    if (!$beat.hasClass('gist-beat')) {
-      return null;
-    }
-  }
-  return $beat;
-}
-
-if (!String.prototype.includes) {
-  // eslint-disable-next-line no-extend-native
-  String.prototype.includes = function (search, start) {
-    'use strict';
-
-    if (typeof start !== 'number') {
-      start = 0;
-    }
-
-    if (start + search.length > this.length) {
-      return false;
-    } else {
-      return this.indexOf(search, start) !== -1;
-    }
-  };
-}
-
-var TRANSITIONS = ['transition.slideLeftIn', 'transition.slideDownIn', 'transition.slideLeftBigIn', 'transition.shrinkIn', 'transition.flipXIn', 'transition.flipYIn', 'transition.fadeIn', 'transition.expandIn'];
-
-exports.default = {
-  TRANSITIONS: TRANSITIONS,
-  getBeatFromTarget: getBeatFromTarget,
-  getRandTransition: getRandTransition,
-  getCurrentBeat: getCurrentBeat,
-  getCurrentBeatNum: getCurrentBeatNum,
-  dependencyChecker: dependencyChecker
-};
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * This is the web browser implementation of `debug()`.
  *
@@ -346,6 +256,96 @@ function localstorage() {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/* globals $ */
+var debug = __webpack_require__(0)('static');
+
+function getCurrentBeat() {
+  return $('#gist-beat-' + getCurrentBeatNum());
+}
+
+function getCurrentBeatNum() {
+  var $el = $('.gist-beat:visible');
+  var exists = $el.length;
+  if (exists) {
+    var currentBeat = $('.gist-beat:visible').get(0);
+    return $(currentBeat).data('origid');
+  }
+  return 0;
+}
+
+function getRandTransition() {
+  return TRANSITIONS[Math.floor(Math.random() * TRANSITIONS.length)];
+}
+
+function dependencyChecker(deps) {
+  deps.forEach(function (dep) {
+    var global = window;
+    var depName = dep;
+    if (dep.indexOf('$.') === 0) {
+      global = window.$;
+      depName = dep.replace('$.', '');
+    }
+    if (typeof global[depName] === 'function' || _typeof(global[depName]) === 'object') {
+      debug('### window.' + dep + ' detected');
+    } else {
+      debug('### window.' + dep + ' Not Found');
+    }
+  });
+}
+
+function getBeatFromTarget(target) {
+  debug(target, 'target -> getBeat');
+  var $beat = $(target);
+  if (!$beat.hasClass('gist-beat')) {
+    $beat = $beat.closest('.gist-beat');
+    if (!$beat.hasClass('gist-beat')) {
+      return null;
+    }
+  }
+  return $beat;
+}
+
+if (!String.prototype.includes) {
+  // eslint-disable-next-line no-extend-native
+  String.prototype.includes = function (search, start) {
+    'use strict';
+
+    if (typeof start !== 'number') {
+      start = 0;
+    }
+
+    if (start + search.length > this.length) {
+      return false;
+    } else {
+      return this.indexOf(search, start) !== -1;
+    }
+  };
+}
+
+var TRANSITIONS = ['transition.slideLeftIn', 'transition.slideDownIn', 'transition.slideLeftBigIn', 'transition.shrinkIn', 'transition.flipXIn', 'transition.flipYIn', 'transition.fadeIn', 'transition.expandIn'];
+
+exports.default = {
+  TRANSITIONS: TRANSITIONS,
+  getBeatFromTarget: getBeatFromTarget,
+  getRandTransition: getRandTransition,
+  getCurrentBeat: getCurrentBeat,
+  getCurrentBeatNum: getCurrentBeatNum,
+  dependencyChecker: dependencyChecker
+};
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -356,7 +356,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _static = __webpack_require__(0);
+var _static = __webpack_require__(1);
 
 var _static2 = _interopRequireDefault(_static);
 
@@ -375,7 +375,7 @@ var _hammerjs2 = _interopRequireDefault(_hammerjs);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* globals $ */
-var debug = __webpack_require__(1)('init');
+var debug = __webpack_require__(0)('init');
 
 function StoryGist(element, options) {
   var encodedShareURL = encodeURIComponent(window.location.href);
@@ -596,7 +596,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _static = __webpack_require__(0);
+var _static = __webpack_require__(1);
 
 var _static2 = _interopRequireDefault(_static);
 
@@ -615,7 +615,7 @@ var _tracking2 = _interopRequireDefault(_tracking);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* globals SplitType, $ */
-var debug = __webpack_require__(1)('events');
+var debug = __webpack_require__(0)('events');
 
 var settings = null;
 var element = null;
@@ -665,7 +665,7 @@ function nextBeat(beatNum, el) {
   // A click on the right side of the window
   debug('>> Next', beatNum);
 
-  _tracking2.default.sendEvent('nextBeat');
+  _tracking2.default.sendEvent('nextBeat', beatNum);
   pauseBeats();
 
   if ($(el).hasClass('last')) {
@@ -726,7 +726,7 @@ function nextBeat(beatNum, el) {
 }
 
 function prevBeat(beatNum, el) {
-  _tracking2.default.sendEvent('prevBeat');
+  _tracking2.default.sendEvent('prevBeat', beatNum);
 
   debug('>> Prev', beatNum);
   pauseBeats();
@@ -893,7 +893,7 @@ var _navigo = __webpack_require__(10);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _static = __webpack_require__(0);
+var _static = __webpack_require__(1);
 
 var _static2 = _interopRequireDefault(_static);
 
@@ -905,7 +905,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = new _navigo2.default('', true); /* globals $ */
 
-var debug = __webpack_require__(1)('navigation');
+var debug = __webpack_require__(0)('navigation');
 
 var totalBeats = null;
 
@@ -2142,7 +2142,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _static = __webpack_require__(0);
+var _static = __webpack_require__(1);
 
 var _static2 = _interopRequireDefault(_static);
 
@@ -2197,15 +2197,20 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 /* globals ga */
+var debug = __webpack_require__(0)('tracking');
 
-function sendEvent(eventAction) {
+function sendEvent(eventAction, label) {
+  var trackingObj = {
+    hitType: 'event',
+    eventCategory: 'gist',
+    eventAction: eventAction,
+    eventLabel: label
+  };
+
+  debug(trackingObj);
+
   if (window.ga) {
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'gist',
-      eventAction: eventAction
-      // ,eventLabel: 'event label'
-    });
+    ga('send', trackingObj);
   }
 }
 
