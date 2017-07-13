@@ -1,6 +1,7 @@
-/* globals jQuery, StoryGist */
-// plugin.js
-;(function ($) {
+/* globals $ */
+import StoryGist from './init'
+
+export function init () {
   $.fn.storyGist = function (options) {
     return this.each(function () {
       if (undefined === $(this).data('storyGist')) {
@@ -10,4 +11,4 @@
       }
     })
   }
-})(jQuery)
+}

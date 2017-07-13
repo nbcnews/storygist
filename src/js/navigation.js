@@ -1,115 +1,119 @@
-/* globals jQuery, StoryGist, Navigo */
-// navigation.js
-;(function ($, Navigo, sg) {
-  sg.Navigation = {}
+/* globals $ */
+import Navigo from 'navigo'
+import Static from './static'
+import Events from './events'
 
-  sg.Navigation.router = new Navigo('', true)
+const router = new Navigo('', true)
+const debug = require('debug')('navigation')
 
-  sg.Navigation.navigateToBeat = function (beatNum, limit) {
-    var _limit = limit || sg.Navigation.totalBeats
-    if (beatNum >= 0 && beatNum <= _limit) {
-      sg.Navigation.router.navigate('/beat/' + beatNum)
-    }
-  }
+let totalBeats = null
 
-  sg.Navigation.updateGlobalActiveGist = function (beatNum) {
-    // Set classes for active gist
-    var $body = $(document.body)
+function init (ctx) {
+  // init stuff
+  totalBeats = ctx.totalBeats
+  updateGlobalActiveGist(0) // Static.getCurrentBeatNum()
+  $(document).keydown(handleKeys)
 
-    $('.gist-beat').each(function (gistIndex) {
-      if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
-        $body.removeClass('gist-beat-' + gistIndex + '-active')
-      }
+  router
+  .on('/beat/:beatNum', function (params) {
+    debug('nav-params', params)
+    goToBeat(params.beatNum)
+  })
+  .resolve()
+}
 
-      if (beatNum === gistIndex) {
-        $body.addClass('gist-beat-' + gistIndex + '-active')
-      }
+function updateGlobalActiveGist (beatNum) {
+  // Set classes for active gist
+  var $body = $(document.body)
 
-      if ($body.hasClass('gist-beat-last-active')) {
-        $body.removeClass('gist-beat-last-active')
-      }
-
-      if ($('.gist-beat.last').hasClass('active')) {
-        $body.addClass('gist-beat-last-active')
-      }
-    })
-  }
-
-  sg.Navigation.goToBeat = function (beatNum) {
-    // console.log('goToBeat:', beatNum)
-    // set active class on current beat
-    $('.gist-beat').removeClass('active')
-    var $beat = $('#gist-beat-' + beatNum)
-    $beat.addClass('active')
-
-    // show current beat
-    $('.gist-beat').hide()
-    $beat.show()
-
-    sg.Navigation.updateGlobalActiveGist(+beatNum)
-    sg.Navigation.updateProgressBar(+beatNum)
-    sg.Navigation.updateCta(+beatNum)
-  }
-
-  sg.Navigation.updateProgressBar = function (beatNum) {
-    for (var i = 0; i < sg.Navigation.totalBeats; i++) {
-      if (i > beatNum) {
-        // console.log('opacity 1', i)
-        $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1)
-      } else {
-        $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 0)
-      }
+  $('.gist-beat').each(function (gistIndex) {
+    if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
+      $body.removeClass('gist-beat-' + gistIndex + '-active')
     }
 
-    // hide progress-bar on last beat before fin
-    if (+beatNum === (sg.Navigation.totalBeats)) {
-      $('#gist-progress').hide()
+    if (beatNum === gistIndex) {
+      $body.addClass('gist-beat-' + gistIndex + '-active')
+    }
+
+    if ($body.hasClass('gist-beat-last-active')) {
+      $body.removeClass('gist-beat-last-active')
+    }
+
+    if ($('.gist-beat.last').hasClass('active')) {
+      $body.addClass('gist-beat-last-active')
+    }
+  })
+}
+
+function goToBeat (beatNum) {
+  debug('goToBeat:', beatNum)
+  // set active class on current beat
+  $('.gist-beat').removeClass('active')
+  var $beat = $('#gist-beat-' + beatNum)
+  $beat.addClass('active')
+
+  // show current beat
+  $('.gist-beat').hide()
+  $beat.show()
+
+  updateGlobalActiveGist(+beatNum)
+  updateProgressBar(+beatNum)
+  updateCta(+beatNum)
+}
+
+function updateProgressBar (beatNum) {
+  for (var i = 0; i < totalBeats; i++) {
+    if (i > beatNum) {
+      // debug('opacity 1', i)
+      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1)
     } else {
-      $('#gist-progress').show()
+      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 0)
     }
   }
 
-  sg.Navigation.handleKeys = function (e) {
-    if (!e.key) {
-      return
-    }
+  // hide progress-bar on last beat before fin
+  if (+beatNum === (totalBeats)) {
+    $('#gist-progress').hide()
+  } else {
+    $('#gist-progress').show()
+  }
+}
 
-    var $thisBeat = sg.Static.getCurrentBeat()
-    var beatNum = $thisBeat.data('origid')
-
-    switch (e.key) {
-      case 'ArrowLeft':
-        this.prevBeat(beatNum, $thisBeat)
-        break
-      case 'ArrowRight':
-        this.nextBeat(beatNum, $thisBeat)
-        break
-      default: return // exit this handler for other keys
-    }
-    e.preventDefault() // prevent the default action (scroll / move caret)
+function handleKeys (e) {
+  if (!e.key) {
+    return
   }
 
-  sg.Navigation.updateCta = function (beatNum) {
-    var currentBeat = sg.Static.getCurrentBeat()
-    var ctaText = $(currentBeat).data('cta-text')
+  var $thisBeat = Static.getCurrentBeat()
+  var beatNum = $thisBeat.data('origid')
 
-    if (ctaText) {
-      $('#gist-view-story').text(ctaText)
-    }
+  switch (e.key) {
+    case 'ArrowLeft':
+      Events.prevBeat(beatNum, $thisBeat)
+      break
+    case 'ArrowRight':
+      Events.nextBeat(beatNum, $thisBeat)
+      break
+    default: return // exit this handler for other keys
   }
+  e.preventDefault() // prevent the default action (scroll / move caret)
+}
 
-  sg.prototype.initNavigation = function () {
-    // init stuff
-    sg.Navigation.totalBeats = this.totalBeats
-    sg.Navigation.$element = $(this.element)
-    sg.Navigation.updateGlobalActiveGist(0) // sg.Static.getCurrentBeatNum()
-    $(document).keydown(sg.Navigation.handleKeys.bind(this))
+function updateCta (beatNum) {
+  var currentBeat = Static.getCurrentBeat()
+  var ctaText = $(currentBeat).data('cta-text')
 
-    sg.Navigation.router
-    .on('/beat/:beatNum', function (params) {
-      // console.log('nav-params', params)
-      sg.Navigation.goToBeat(params.beatNum)
-    })
-    .resolve()
+  if (ctaText) {
+    $('#gist-view-story').text(ctaText)
   }
-})(jQuery, Navigo, StoryGist)
+}
+
+function navigateToBeat (beatNum, limit) {
+  const _limit = limit || totalBeats
+  debug('nav', beatNum, _limit)
+  if (beatNum >= 0 && beatNum <= _limit) {
+    router.navigate('/beat/' + beatNum)
+  }
+}
+
+export default { init, navigateToBeat }
