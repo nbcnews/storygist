@@ -8,7 +8,17 @@ const config = {
   },
   module: {
     rules: [
-      { test: /\.js$/, use: 'babel-loader' }
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: ['env', 'es2015', 'stage-0']
+          }
+        }
+        ]
+      }
     ]
   }
 }

@@ -84,11 +84,7 @@ gulp.task('copy', function () {
     .pipe(gulp.dest('./examples/' + distLoc))
 })
 
-gulp.task('mytask', function () {
-  console.log(process.argv)
-})
-
 // tasks aliases
 gulp.task('default', ['scripts', 'styles'])
-gulp.task('build', ['mytask', 'scripts', 'styles'])
+gulp.task('build', ['scripts', 'styles'])
 gulp.task('deploy', sequence('scripts', 'styles', 'copy'))

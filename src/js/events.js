@@ -6,12 +6,12 @@ import Modal from './browserModal'
 const debug = require('debug')('events')
 
 let settings = null
-// let element = null
+let element = null
 let totalBeats = null
 
 function init (ctx) {
   totalBeats = ctx.totalBeats
-  // element = ctx.element
+  element = ctx.element
   settings = ctx.settings
 }
 
@@ -128,9 +128,7 @@ function viewInStory () {
   // pause any videos, animations, etc
   pauseBeats()
 
-  // console.log('ctaURL --->', ctaURL, typeof ctaURL )
-
-  if (ctaURL !== null && ctaURL !== undefined) {
+  if (ctaURL) {
     debug('Do browser CTA thing:', currentBeatNum, ctaURL)
     if ($(window).width() >= 1200) {
       // On desktop follow link, don't open modal
@@ -145,25 +143,24 @@ function viewInStory () {
     } else {
       Modal.launchModal(ctaURL, currentBeatNum)
     }
+  } else {
+    // Hide the storygist
+    $('#gist-body').css('display', 'none')
+    $(element).toggleClass('gist-active')
+
+    // Show all the original story elements
+    $(settings.contentParent).css('display', 'block')
+    $('.site-header').css('display', 'block')
+    $('.progress').css('display', 'block')
+
+    // Find the original element that corresponds with the current beat
+    var scrollToEl = $(settings.contentParent + ' ' + settings.beatSelector + ':eq(' + currentBeatNum + ')')
+
+    // Scroll to that element
+    $('html, body').animate({
+      scrollTop: (scrollToEl.offset().top - 80)
+    }, 2000)
   }
-  // else {
-  //   // Hide the storygist
-  //   $('#gist-body').css('display', 'none')
-  //   $(element).toggleClass('gist-active')
-  //
-  //   // Show all the original story elements
-  //   $(settings.contentParent).css('display', 'block')
-  //   $('.site-header').css('display', 'block')
-  //   $('.progress').css('display', 'block')
-  //
-  //   // Find the original element that corresponds with the current beat
-  //   var scrollToEl = $(settings.contentParent + ' ' + settings.beatSelector + ':eq(' + currentBeatNum + ')')
-  //
-  //   // Scroll to that element
-  //   $('html, body').animate({
-  //     scrollTop: (scrollToEl.offset().top - 80)
-  //   }, 2000)
-  // }
 }
 
 function swipeBeat (e) {
