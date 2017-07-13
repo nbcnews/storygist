@@ -60,28 +60,1459 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// vendor
-__webpack_require__(1);
-__webpack_require__(2);
+"use strict";
+/* globals $ */
+const debug = __webpack_require__(1)('static');
 
-// internal
-__webpack_require__(3);
-__webpack_require__(4);
-__webpack_require__(5);
-__webpack_require__(6);
-__webpack_require__(7);
-__webpack_require__(8);
-__webpack_require__(9);
+function getCurrentBeat() {
+  return $('#gist-beat-' + getCurrentBeatNum());
+}
+
+function getCurrentBeatNum() {
+  var $el = $('.gist-beat:visible');
+  var exists = $el.length;
+  if (exists) {
+    var currentBeat = $('.gist-beat:visible').get(0);
+    return $(currentBeat).data('origid');
+  }
+  return 0;
+}
+
+function getRandTransition() {
+  return TRANSITIONS[Math.floor(Math.random() * TRANSITIONS.length)];
+}
+
+function dependencyChecker(deps) {
+  deps.forEach(function (dep) {
+    var global = window;
+    var depName = dep;
+    if (dep.indexOf('$.') === 0) {
+      global = window.$;
+      depName = dep.replace('$.', '');
+    }
+    if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
+      debug(`### window.${dep} detected`);
+    } else {
+      debug(`### window.${dep} Not Found`);
+    }
+  });
+}
+
+function getBeatFromTarget(target) {
+  debug(target, 'target -> getBeat');
+  var $beat = $(target);
+  if (!$beat.hasClass('gist-beat')) {
+    $beat = $beat.closest('.gist-beat');
+    if (!$beat.hasClass('gist-beat')) {
+      return null;
+    }
+  }
+  return $beat;
+}
+
+if (!String.prototype.includes) {
+  // eslint-disable-next-line no-extend-native
+  String.prototype.includes = function (search, start) {
+    'use strict';
+
+    if (typeof start !== 'number') {
+      start = 0;
+    }
+
+    if (start + search.length > this.length) {
+      return false;
+    } else {
+      return this.indexOf(search, start) !== -1;
+    }
+  };
+}
+
+const TRANSITIONS = ['transition.slideLeftIn', 'transition.slideDownIn', 'transition.slideLeftBigIn', 'transition.shrinkIn', 'transition.flipXIn', 'transition.flipYIn', 'transition.fadeIn', 'transition.expandIn'];
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  TRANSITIONS,
+  getBeatFromTarget,
+  getRandTransition,
+  getCurrentBeat,
+  getCurrentBeatNum,
+  dependencyChecker
+});
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * This is the web browser implementation of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = __webpack_require__(8);
+exports.log = log;
+exports.formatArgs = formatArgs;
+exports.save = save;
+exports.load = load;
+exports.useColors = useColors;
+exports.storage = 'undefined' != typeof chrome && 'undefined' != typeof chrome.storage ? chrome.storage.local : localstorage();
+
+/**
+ * Colors.
+ */
+
+exports.colors = ['lightseagreen', 'forestgreen', 'goldenrod', 'dodgerblue', 'darkorchid', 'crimson'];
+
+/**
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
+ *
+ * TODO: add a `localStorage` variable to explicitly enable/disable colors
+ */
+
+function useColors() {
+  // NB: In an Electron preload script, document will be defined but not fully
+  // initialized. Since we know we're in Chrome, we'll just detect this case
+  // explicitly
+  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+    return true;
+  }
+
+  // is webkit? http://stackoverflow.com/a/16459606/376773
+  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+  return typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance ||
+  // is firebug? http://stackoverflow.com/a/398120/376773
+  typeof window !== 'undefined' && window.console && (window.console.firebug || window.console.exception && window.console.table) ||
+  // is firefox >= v31?
+  // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+  typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31 ||
+  // double check webkit in userAgent just in case we are in a worker
+  typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
+}
+
+/**
+ * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
+ */
+
+exports.formatters.j = function (v) {
+  try {
+    return JSON.stringify(v);
+  } catch (err) {
+    return '[UnexpectedJSONParseError]: ' + err.message;
+  }
+};
+
+/**
+ * Colorize log arguments if enabled.
+ *
+ * @api public
+ */
+
+function formatArgs(args) {
+  var useColors = this.useColors;
+
+  args[0] = (useColors ? '%c' : '') + this.namespace + (useColors ? ' %c' : ' ') + args[0] + (useColors ? '%c ' : ' ') + '+' + exports.humanize(this.diff);
+
+  if (!useColors) return;
+
+  var c = 'color: ' + this.color;
+  args.splice(1, 0, c, 'color: inherit');
+
+  // the final "%c" is somewhat tricky, because there could be other
+  // arguments passed either before or after the %c, so we need to
+  // figure out the correct index to insert the CSS into
+  var index = 0;
+  var lastC = 0;
+  args[0].replace(/%[a-zA-Z%]/g, function (match) {
+    if ('%%' === match) return;
+    index++;
+    if ('%c' === match) {
+      // we only are interested in the *last* %c
+      // (the user may have provided their own)
+      lastC = index;
+    }
+  });
+
+  args.splice(lastC, 0, c);
+}
+
+/**
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
+ *
+ * @api public
+ */
+
+function log() {
+  // this hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return 'object' === typeof console && console.log && Function.prototype.apply.call(console.log, console, arguments);
+}
+
+/**
+ * Save `namespaces`.
+ *
+ * @param {String} namespaces
+ * @api private
+ */
+
+function save(namespaces) {
+  try {
+    if (null == namespaces) {
+      exports.storage.removeItem('debug');
+    } else {
+      exports.storage.debug = namespaces;
+    }
+  } catch (e) {}
+}
+
+/**
+ * Load `namespaces`.
+ *
+ * @return {String} returns the previously persisted debug modes
+ * @api private
+ */
+
+function load() {
+  var r;
+  try {
+    r = exports.storage.debug;
+  } catch (e) {}
+
+  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
+  if (!r && typeof process !== 'undefined' && 'env' in process) {
+    r = process.env.DEBUG;
+  }
+
+  return r;
+}
+
+/**
+ * Enable namespaces listed in `localStorage.debug` initially.
+ */
+
+exports.enable(load());
+
+/**
+ * Localstorage attempts to return the localstorage.
+ *
+ * This is necessary because safari throws
+ * when a user disables cookies/localstorage
+ * and you attempt to access it.
+ *
+ * @return {LocalStorage}
+ * @api private
+ */
+
+function localstorage() {
+  try {
+    return window.localStorage;
+  } catch (e) {}
+}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__static__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__events__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__navigation__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_hammerjs__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_hammerjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_hammerjs__);
+/* globals $ */
+
+
+
+
+
+const debug = __webpack_require__(1)('init');
+
+function StoryGist(element, options) {
+  var encodedShareURL = encodeURIComponent(window.location.href);
+  // Define icons to be used in final beat
+  var facebookIcon = '<svg version="1.1" x="0" y="0" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">\n<title>Facebook Logo</title>\n<desc>Share on Facebook</desc>\n<path d="M17 1H3C1.9 1 1 1.9 1 3v14c0 1.1 0.9 2 2 2h7v-7H8V9.53h2V7.48c0-2.16 1.21-3.68 3.77-3.68l1.8 0v2.61h-1.2C13.38 6.4 13 7.14 13 7.84v1.69h2.57L15 12h-2v7h4c1.1 0 2-0.9 2-2V3C19 1.9 18.1 1 17 1z"></path>\n</svg>';
+  var twitterIcon = '<svg version="1.1" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">\n<title>Twitter Logo</title>\n <desc>Share on Twitter</desc>\n <path d="M17.316 6.246c0.008 0.2 0 0.3 0 0.488c0 4.99-3.797 10.742-10.74 10.742c-2.133 0-4.116-0.625-5.787-1.697 c0.296 0 0.6 0.1 0.9 0.053c1.77 0 3.397-0.604 4.688-1.615c-1.651-0.031-3.046-1.121-3.526-2.621 c0.23 0 0.5 0.1 0.7 0.066c0.345 0 0.679-0.045 0.995-0.131c-1.727-0.348-3.028-1.873-3.028-3.703c0-0.016 0-0.031 0-0.047 c0.509 0.3 1.1 0.5 1.7 0.473c-1.013-0.678-1.68-1.832-1.68-3.143c0-0.691 0.186-1.34 0.512-1.898 C3.942 5.5 6.7 7 9.9 7.158C9.798 6.9 9.8 6.6 9.8 6.297c0-2.084 1.689-3.773 3.774-3.773 c1.086 0 2.1 0.5 2.8 1.191c0.859-0.17 1.667-0.484 2.397-0.916c-0.282 0.881-0.881 1.621-1.66 2.1 c0.764-0.092 1.49-0.293 2.168-0.594C18.694 5.1 18.1 5.7 17.3 6.246z"></path>\n</svg>';
+  var mailIcon = '<svg version="1.1" x="0" y="0" viewBox="0 0 20 20" xml:space="preserve">\n<title>Email Icon</title>\n<desc>Email page link</desc>\n<path d="M1.57 5.29c0.49 0.26 7.25 3.89 7.5 4.03C9.33 9.45 9.65 9.51 9.98 9.51c0.33 0 0.65-0.06 0.91-0.2s7.01-3.77 7.5-4.03C18.88 5.02 19.34 4 18.44 4H1.52C0.62 4 1.09 5.02 1.57 5.29zM18.61 7.49c-0.56 0.29-7.39 3.85-7.73 4.03s-0.58 0.2-0.91 0.2 -0.57-0.02-0.91-0.2S1.94 7.78 1.39 7.49C1 7.28 1 7.52 1 7.71S1 15 1 15c0 0.42 0.57 1 1 1h16c0.43 0 1-0.58 1-1 0 0 0-7.11 0-7.29S19 7.29 18.61 7.49z"></path>\n</svg>';
+  var goToIcon = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n\t viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">\n<path d="M0.685,10h2.372V9.795c0.108-4.434,3.724-7.996,8.169-7.996c4.515,0,8.174,3.672,8.174,8.201s-3.659,8.199-8.174,8.199\n\tc-1.898,0-3.645-0.65-5.033-1.738l1.406-1.504c1.016,0.748,2.27,1.193,3.627,1.193c3.386,0,6.131-2.754,6.131-6.15\n\tc0-3.396-2.745-6.15-6.131-6.15c-3.317,0-6.018,2.643-6.125,5.945V10h2.672l-3.494,3.894L0.685,10z"/>\n</svg>';
+  var prevIcon = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" xml:space="preserve"> <polygon points="352,115.4 331.3,96 160,256 331.3,416 352,396.7 201.5,256 "/> </svg>';
+  var nextIcon = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve"> <polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "/> </svg>';
+
+  // TODO: replace with templates
+  var finalBeatHTML = '<div class="gist-beat-container"><!--Entypo pictograms by Daniel Bruce — www.entypo.com--><div class="gist-beat-row"><h4>Share</h4><ul class="gist-share"><li><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + encodedShareURL + '">' + facebookIcon + '</a></li><li><a target="_blank" href="https://twitter.com/intent/tweet?url=' + encodedShareURL + '">' + twitterIcon + '</a></li><li><a target="_blank" href="mailto:?body=' + encodedShareURL + '">' + mailIcon + '</a></li></ul></div><div class="gist-beat-row"><h4 class="go-to-beginning">Go to the beginning</h4><ul></li><a class="go-to-beginning" href="/#/beat/0">' + goToIcon + '</li></ul></div></div>';
+  var pagerHTML = '<div class="gist-pager"><button class="gist-pager__btn gist-pager__btn--prev" aria-label="previous">' + prevIcon + '</button> <button class="gist-pager__btn gist-pager__btn--next" aria-label="next">' + nextIcon + '</button></div>';
+
+  var defaults = {
+    beatSelector: '[data-sg]',
+    contentParent: 'main',
+    initWidth: 640,
+    animate: false,
+    onboard: true,
+    callToAction: 'View in full story ↓',
+    pager: {
+      html: pagerHTML
+    },
+    finalBeat: {
+      raw: null,
+      html: finalBeatHTML,
+      type: 'DIV'
+    }
+  };
+
+  this.element = element;
+  this.$els = {}; // NOTE: used for caching elements
+  this.settings = $.extend({}, defaults, options);
+  debug(this.settings);
+}
+
+function initHammer(selector) {
+  // ++++ Swiping via Hammer.js
+  $(selector).each(function (index, beat) {
+    var hammer = new __WEBPACK_IMPORTED_MODULE_3_hammerjs___default.a(beat);
+    hammer.on('swipe', __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].swipeBeat);
+    hammer.get('swipe').set({ direction: __WEBPACK_IMPORTED_MODULE_3_hammerjs___default.a.DIRECTION_ALL }); // enables 'Swipe Up'
+  });
+}
+
+StoryGist.prototype.init = function () {
+  var self = this;
+  // check dependencies
+
+  var $body = $(self.element); // TODO: add to $els object
+  // var $loading = $('<div id="loading-screen"></div>')
+  // $body.prepend($loading)
+
+  __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].dependencyChecker(['jQuery', 'Hammer', 'Navigo', 'SplitType', 'videojs', '$.Velocity', 'lazySizes']);
+
+  if ($(window).width() <= self.settings.initWidth) {
+    var parsedGistEls = [];
+    var $originalStoryContent = $(self.settings.contentParent);
+    var gistEls = $(self.settings.beatSelector);
+
+    // Make the element our storygist beats will live in
+    $body.prepend('<div id="gist-body"></div>');
+
+    if (self.settings.onboard === true) {
+      // Create the first div with explainer
+      var $onboardDiv = $('<div class="gist-onboard-container"><p>You\'re viewing the <strong>Gist</strong> of this story. The Gist gives you a visual summary of the story.</p><div class="gist-onboard-ui-container"><div class="gist-onboard-ui-left"><div class="gist-onboard-ui-text"> <p>← <strong>Tap</strong> to go <strong>backward</strong> in Gist</p></div></div><div class="gist-onboard-ui-right"><div class="gist-onboard-ui-text"><p><strong>Tap</strong> to go <br /> <strong>forward</strong> in Gist →</div></div></div><div class="gist-onboard-ui-text gist-onboard-ui-text-cta animated infinite bounce">Scroll to enter Gist <br />↓</p></div></div>');
+      $body.prepend($onboardDiv);
+    }
+    var $gistBody = $('#gist-body');
+
+    // Hide the element that held the original content
+    $originalStoryContent.css('display', 'none');
+    $body.addClass('gist-active');
+
+    gistEls.each((i, el) => {
+      // Create a new object for our beat
+      var beat = {
+        raw: el,
+        html: el.outerHTML, // The HTML inside the beat
+        type: el.nodeName, // The beat's element (p, h2, etc..)
+        id: i,
+        ctaUrl: '',
+        ctaText: 'View Story'
+      };
+
+      if ($(el).data('cta-url')) {
+        beat.ctaUrl = $(el).data('cta-url');
+      }
+
+      if ($(el).data('cta-text')) {
+        beat.ctaText = $(el).data('cta-text');
+      }
+
+      // If the beat has a preceding element, add it's type to the object
+      if (el.previousElementSibling != null) {
+        beat.prevtype = el.previousElementSibling.nodeName;
+      }
+
+      // If the beat is a paragraph, do some special logic
+      if (beat.type.toLowerCase() === 'p' && beat.prevtype !== undefined) {
+        if (beat.prevtype.toLowerCase() === 'h2' || beat.prevtype.toLowerCase() === 'figure') {
+          // Only add p elements preceded by h2 or figure
+          parsedGistEls.push(beat);
+        }
+      } else {
+        // If it isn't, just push it to the gist beats
+        parsedGistEls.push(beat);
+      }
+    });
+
+    parsedGistEls.push(self.settings.finalBeat);
+
+    // Empty the page of old content
+    $gistBody.append(`<button id="gist-view-story">${self.settings.callToAction}</button>`);
+
+    $('#gist-view-story').click(() => {
+      // View beat in story when 'view in story' CTA is clicked
+      window.removeEventListener('touchmove', __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].scrollLock);
+      __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].viewInStory();
+    });
+
+    self.totalBeats = +(parsedGistEls.length - 1);
+
+    // Create element to hold navbar
+    $gistBody.append('<div id="gist-progress"></div>');
+    var $pager = $(self.settings.pager.html);
+
+    $pager.find('.gist-pager__btn--next').on('click', () => {
+      var el = __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeat();
+      var beatNum = __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeatNum();
+      __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].nextBeat(beatNum, el);
+    });
+
+    $pager.find('.gist-pager__btn--prev').on('click', () => {
+      var el = __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeat();
+      var beatNum = __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeatNum();
+      __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].prevBeat(beatNum, el);
+    });
+
+    $gistBody.append($pager);
+
+    // Write the beats back to the page
+    parsedGistEls.forEach((el, i) => {
+      if (el.onBoard === true) {
+        $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat gist-beat-onboard" style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>');
+      } else {
+        $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-cta-url="' + el.ctaUrl + '" data-cta-text="' + el.ctaText + '" data-origid="' + i + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>');
+      }
+
+      // Create progress bar
+      if (+i !== +self.totalBeats) {
+        $('#gist-progress').append('<div id="gist-progress-beat-' + i + '" class="gist-progress-beat inactive" style="flex: 1;"></div>');
+      }
+    });
+
+    var $initBeat = $('#gist-beat-0');
+
+    $('.go-to-beginning').click(() => {
+      $('#gist-progress').css('display', 'flex');
+      $('.gist-progress-beat').removeClass('inactive');
+      $('.gist-progress-beat').css('opacity', 1);
+      $('.gist-beat.last').removeClass('active');
+      $initBeat.addClass('active');
+      __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].goToBeginning();
+    });
+
+    $initBeat.addClass('active');
+    $('.gist-beat').click(__WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].clickBeat.bind(self));
+    $('.gist-beat:last-of-type').addClass('last');
+
+    // Changes videos in beats to have a unique ID. Allows play() and pause() to work.
+    $('.gist-beat').each(function (i) {
+      var videoEl = $(this).find('video');
+      var videoJsEl = $(this).find('.video-js');
+      var videoElId = $(videoEl).attr('id');
+      var videoJsElId = $(videoJsEl).attr('id');
+
+      if (videoElId !== undefined) {
+        $(videoEl).attr('id', videoElId + '-gist-beat');
+      }
+
+      if (videoJsElId !== undefined) {
+        $(videoJsEl).attr('id', videoJsElId + '-gist-beat');
+      }
+    });
+
+    // TODO: move to events.js
+    window.addEventListener('scroll', function scrollListener() {
+      if (window.pageYOffset >= $gistBody.offset().top) {
+        if ($onboardDiv) {
+          $onboardDiv.remove();
+        }
+        window.removeEventListener('scroll', scrollListener);
+        window.addEventListener('touchmove', __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].scrollLock);
+      }
+    });
+
+    window.addEventListener('orientationchange', __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].onOrientationChange);
+    __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].onOrientationChange();
+    __WEBPACK_IMPORTED_MODULE_1__events__["a" /* default */].init(self);
+    initHammer('.gist-beat');
+    __WEBPACK_IMPORTED_MODULE_2__navigation__["a" /* default */].init(self);
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (StoryGist);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__static__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__navigation__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__browserModal__ = __webpack_require__(11);
+/* globals SplitType, $ */
+
+
+
+
+const debug = __webpack_require__(1)('events');
+
+let settings = null;
+let element = null;
+let totalBeats = null;
+
+function init(ctx) {
+  totalBeats = ctx.totalBeats;
+  element = ctx.element;
+  settings = ctx.settings;
+}
+
+function beatVideoPlay(videoEl) {
+  if (videoEl) {
+    videoEl.play();
+  }
+}
+
+function beatVideoPause(videoEl) {
+  if (videoEl) {
+    videoEl.pause();
+  }
+}
+
+function beatVideoPauseAll(videoEl) {
+  $('video').each(function (idx, el) {
+    beatVideoPause(el);
+  });
+}
+
+function goToBeginning() {
+  // Set all beats to visible (aka go to beginning)
+  $('.gist-beat').css('display', 'flex');
+}
+
+function pauseBeats() {
+  beatVideoPauseAll();
+}
+
+function nextBeat(beatNum, el) {
+  // Handle behavior to move to next beat
+  // A click on the right side of the window
+  debug('>> Next', beatNum);
+  pauseBeats();
+
+  if ($(el).hasClass('last')) {
+    // Do nothing for the final beat
+  } else {
+    var $nextEl = $(el).next('.gist-beat');
+    var baseAnimSpeed = 750;
+    var blurPx = 81;
+
+    if (window.SplitType && $nextEl.find('.js-text-block').length && settings.animate) {
+      debug('Animate Textblock');
+      var splitTextBlock = new SplitType('.js-text-block');
+      splitTextBlock.split({
+        split: 'lines',
+        position: 'relative'
+      });
+
+      $.Velocity(splitTextBlock.lines, __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].TRANSITIONS[3], { duration: baseAnimSpeed * 0.6, stagger: baseAnimSpeed * 0.05 });
+    }
+
+    if (settings.animate) {
+      $nextEl.find('figure img')
+      // .css('margin-bottom', -800)
+      .velocity({
+        'blur': 0
+        // 'margin-bottom': 0,
+      }, { 'duration': baseAnimSpeed,
+        'begin': function (el) {
+          $nextEl.find('figure figcaption').css('opacity', 0);
+          $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)');
+        },
+        'complete': function (el) {
+          $nextEl.find('figure figcaption').velocity('transition.slideLeftIn', { 'duration': baseAnimSpeed * 1.75 });
+        }
+      });
+
+      $nextEl.find('figure.media').velocity({ 'blur': 0 }, { 'duration': baseAnimSpeed,
+        'begin': function (el) {
+          $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)');
+        }
+      });
+
+      if (window.SplitType && $nextEl.find('.pullquote').length) {
+        // debug('Animate PULLQUOTE')
+        var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
+          split: 'lines'
+        });
+
+        $.Velocity(splitPullQuote.lines, __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getRandTransition(), { 'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2 });
+      }
+    }
+
+    var $videoElNext = $nextEl.find('video').get(0);
+    beatVideoPlay($videoElNext);
+  }
+
+  __WEBPACK_IMPORTED_MODULE_1__navigation__["a" /* default */].navigateToBeat(+beatNum + 1, +totalBeats);
+}
+
+function prevBeat(beatNum, el) {
+  debug('>> Prev', beatNum);
+  pauseBeats();
+  // Handle behavior to move to previous beat
+  if ($(el).is('#gist-beat-0')) {
+    // Do nothing for the first beat
+  } else {
+    var $videoEl = $(el).prev('.gist-beat').find('video').get(0);
+    beatVideoPlay($videoEl);
+  }
+
+  __WEBPACK_IMPORTED_MODULE_1__navigation__["a" /* default */].navigateToBeat(+beatNum - 1);
+}
+
+function viewInStory() {
+  // Get the current gist beat (the first that's visible)
+  var currentBeat = __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeat();
+  var currentBeatNum = $(currentBeat).data('origid');
+  var ctaURL = $(currentBeat).data('cta-url');
+
+  // pause any videos, animations, etc
+  pauseBeats();
+
+  if (ctaURL !== null && ctaURL !== undefined) {
+    debug('Do browser CTA thing:', currentBeatNum, ctaURL);
+    if ($(window).width() >= 1200) {
+      // On desktop follow link, don't open modal
+      // Also check if it's amp, if so, don't use the amp URL on desktop
+      var ampString = '/amp/';
+      if (ctaURL.includes(ampString)) {
+        // Hack the URL to show the non-amp version
+        // by supplying a category that doesn't exist but isn't /amp/
+        ctaURL = ctaURL.replace(ampString, '/gist/');
+      }
+      window.open(ctaURL, '_self');
+    } else {
+      __WEBPACK_IMPORTED_MODULE_2__browserModal__["a" /* default */].launchModal(ctaURL, currentBeatNum);
+    }
+  } else {
+    // Hide the storygist
+    $('#gist-body').css('display', 'none');
+    $(element).toggleClass('gist-active');
+
+    // Show all the original story elements
+    $(settings.contentParent).css('display', 'block');
+    $('.site-header').css('display', 'block');
+    $('.progress').css('display', 'block');
+
+    // Find the original element that corresponds with the current beat
+    var scrollToEl = $(settings.contentParent + ' ' + settings.beatSelector + ':eq(' + currentBeatNum + ')');
+
+    // Scroll to that element
+    $('html, body').animate({
+      scrollTop: scrollToEl.offset().top - 80
+    }, 2000);
+  }
+}
+
+function swipeBeat(e) {
+  var $thisBeat = __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeat();
+  var beatNum = $thisBeat.attr('id').split('-')[2];
+  switch (e.direction) {
+    case 8:
+      // DIRECTION_UP
+      viewInStory();
+      break;
+    case 2:
+      // DIRECTION_LEFT
+      nextBeat(beatNum, $thisBeat);
+      break;
+    case 4:
+      // DIRECTION_RIGHT
+      prevBeat(beatNum, $thisBeat);
+      break;
+    default:
+      debug(e.type, e.direction);
+  }
+}
+
+function clickBeat(e) {
+  // Get this beat's number from it's ID
+  var $thisBeat = __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeat();
+  var beatNum = $thisBeat.data('origid');
+
+  // Get pagewidth and mouse position
+  // Which we use to determine whether to go prev/next
+  // var pageWidth = $(window).width()
+  var pageWidth = $thisBeat.width();
+  var posX = $thisBeat.position().left;
+  var clickX = e.pageX - posX;
+
+  // debug('click target el', $(e.target)[0].tagName)
+
+  if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
+    // If it's the last beat
+    if (clickX > pageWidth / 2.5) {
+      // A click on the right side of the window
+      nextBeat(beatNum, $thisBeat);
+    } else {
+      prevBeat(beatNum, $thisBeat);
+    };
+  }
+}
+
+function scrollLock(e) {
+  e.preventDefault();
+}
+
+function onOrientationChange() {
+  var angle = window.orientation;
+  if (window.screen && window.screen.orientation) {
+    angle = window.screen.orientation.angle;
+  }
+
+  var orientation = Math.abs(angle) === 90 ? 'landscape' : 'portrait';
+  if (Math.abs(angle) === 270) {
+    // secondary landscape
+    orientation = 'landscape';
+  }
+  var $orientationSelector = $('body');
+
+  if (orientation === 'portrait') {
+    $orientationSelector.addClass('gist-portrait').removeClass('gist-landscape');
+  }
+
+  if (orientation === 'landscape') {
+    $orientationSelector.addClass('gist-landscape').removeClass('gist-portrait');
+  }
+}
+
+// TODO: reduce amount of exported functions
+/* harmony default export */ __webpack_exports__["a"] = ({
+  init,
+  onOrientationChange,
+  scrollLock,
+  viewInStory,
+  swipeBeat,
+  prevBeat,
+  nextBeat,
+  goToBeginning,
+  clickBeat
+});
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_navigo__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_navigo___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_navigo__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__static__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__events__ = __webpack_require__(3);
+/* globals $ */
+
+
+
+
+const router = new __WEBPACK_IMPORTED_MODULE_0_navigo___default.a('', true);
+const debug = __webpack_require__(1)('navigation');
+
+let totalBeats = null;
+
+function init(ctx) {
+  // init stuff
+  totalBeats = ctx.totalBeats;
+  updateGlobalActiveGist(0); // Static.getCurrentBeatNum()
+  $(document).keydown(handleKeys);
+
+  router.on('/beat/:beatNum', function (params) {
+    debug('nav-params', params);
+    goToBeat(params.beatNum);
+  }).resolve();
+}
+
+function updateGlobalActiveGist(beatNum) {
+  // Set classes for active gist
+  var $body = $(document.body);
+
+  $('.gist-beat').each(function (gistIndex) {
+    if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
+      $body.removeClass('gist-beat-' + gistIndex + '-active');
+    }
+
+    if (beatNum === gistIndex) {
+      $body.addClass('gist-beat-' + gistIndex + '-active');
+    }
+
+    if ($body.hasClass('gist-beat-last-active')) {
+      $body.removeClass('gist-beat-last-active');
+    }
+
+    if ($('.gist-beat.last').hasClass('active')) {
+      $body.addClass('gist-beat-last-active');
+    }
+  });
+}
+
+function goToBeat(beatNum) {
+  debug('goToBeat:', beatNum);
+  // set active class on current beat
+  $('.gist-beat').removeClass('active');
+  var $beat = $('#gist-beat-' + beatNum);
+  $beat.addClass('active');
+
+  // show current beat
+  $('.gist-beat').hide();
+  $beat.show();
+
+  updateGlobalActiveGist(+beatNum);
+  updateProgressBar(+beatNum);
+  updateCta(+beatNum);
+}
+
+function updateProgressBar(beatNum) {
+  for (var i = 0; i < totalBeats; i++) {
+    if (i > beatNum) {
+      // debug('opacity 1', i)
+      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1);
+    } else {
+      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 0);
+    }
+  }
+
+  // hide progress-bar on last beat before fin
+  if (+beatNum === totalBeats) {
+    $('#gist-progress').hide();
+  } else {
+    $('#gist-progress').show();
+  }
+}
+
+function handleKeys(e) {
+  if (!e.key) {
+    return;
+  }
+
+  var $thisBeat = __WEBPACK_IMPORTED_MODULE_1__static__["a" /* default */].getCurrentBeat();
+  var beatNum = $thisBeat.data('origid');
+
+  switch (e.key) {
+    case 'ArrowLeft':
+      __WEBPACK_IMPORTED_MODULE_2__events__["a" /* default */].prevBeat(beatNum, $thisBeat);
+      break;
+    case 'ArrowRight':
+      __WEBPACK_IMPORTED_MODULE_2__events__["a" /* default */].nextBeat(beatNum, $thisBeat);
+      break;
+    default:
+      return; // exit this handler for other keys
+  }
+  e.preventDefault(); // prevent the default action (scroll / move caret)
+}
+
+function updateCta(beatNum) {
+  var currentBeat = __WEBPACK_IMPORTED_MODULE_1__static__["a" /* default */].getCurrentBeat();
+  var ctaText = $(currentBeat).data('cta-text');
+
+  if (ctaText) {
+    $('#gist-view-story').text(ctaText);
+  }
+}
+
+function navigateToBeat(beatNum, limit) {
+  const _limit = limit || totalBeats;
+  debug('nav', beatNum, _limit);
+  if (beatNum >= 0 && beatNum <= _limit) {
+    router.navigate('/beat/' + beatNum);
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = ({ init, navigateToBeat });
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__plugin__ = __webpack_require__(6);
+
+
+__webpack_require__(2);
+Object(__WEBPACK_IMPORTED_MODULE_0__plugin__["a" /* init */])();
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = init;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__init__ = __webpack_require__(2);
+/* globals $ */
+
+
+function init() {
+  $.fn.storyGist = function (options) {
+    return this.each(function () {
+      if (undefined === $(this).data('storyGist')) {
+        var plugin = new __WEBPACK_IMPORTED_MODULE_0__init__["default"](this, options);
+        plugin.init();
+        // $(this).data('storyGist', plugin)
+      }
+    });
+  };
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout() {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+})();
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch (e) {
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e) {
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e) {
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while (len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) {
+    return [];
+};
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () {
+    return '/';
+};
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function () {
+    return 0;
+};
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
+exports.coerce = coerce;
+exports.disable = disable;
+exports.enable = enable;
+exports.enabled = enabled;
+exports.humanize = __webpack_require__(9);
+
+/**
+ * The currently active debug mode names, and names to skip.
+ */
+
+exports.names = [];
+exports.skips = [];
+
+/**
+ * Map of special "%n" handling functions, for the debug "format" argument.
+ *
+ * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
+ */
+
+exports.formatters = {};
+
+/**
+ * Previous log timestamp.
+ */
+
+var prevTime;
+
+/**
+ * Select a color.
+ * @param {String} namespace
+ * @return {Number}
+ * @api private
+ */
+
+function selectColor(namespace) {
+  var hash = 0,
+      i;
+
+  for (i in namespace) {
+    hash = (hash << 5) - hash + namespace.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return exports.colors[Math.abs(hash) % exports.colors.length];
+}
+
+/**
+ * Create a debugger with the given `namespace`.
+ *
+ * @param {String} namespace
+ * @return {Function}
+ * @api public
+ */
+
+function createDebug(namespace) {
+
+  function debug() {
+    // disabled?
+    if (!debug.enabled) return;
+
+    var self = debug;
+
+    // set `diff` timestamp
+    var curr = +new Date();
+    var ms = curr - (prevTime || curr);
+    self.diff = ms;
+    self.prev = prevTime;
+    self.curr = curr;
+    prevTime = curr;
+
+    // turn the `arguments` into a proper Array
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+
+    args[0] = exports.coerce(args[0]);
+
+    if ('string' !== typeof args[0]) {
+      // anything else let's inspect with %O
+      args.unshift('%O');
+    }
+
+    // apply any `formatters` transformations
+    var index = 0;
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, function (match, format) {
+      // if we encounter an escaped % then don't increase the array index
+      if (match === '%%') return match;
+      index++;
+      var formatter = exports.formatters[format];
+      if ('function' === typeof formatter) {
+        var val = args[index];
+        match = formatter.call(self, val);
+
+        // now we need to remove `args[index]` since it's inlined in the `format`
+        args.splice(index, 1);
+        index--;
+      }
+      return match;
+    });
+
+    // apply env-specific formatting (colors, etc.)
+    exports.formatArgs.call(self, args);
+
+    var logFn = debug.log || exports.log || console.log.bind(console);
+    logFn.apply(self, args);
+  }
+
+  debug.namespace = namespace;
+  debug.enabled = exports.enabled(namespace);
+  debug.useColors = exports.useColors();
+  debug.color = selectColor(namespace);
+
+  // env-specific initialization logic for debug instances
+  if ('function' === typeof exports.init) {
+    exports.init(debug);
+  }
+
+  return debug;
+}
+
+/**
+ * Enables a debug mode by namespaces. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} namespaces
+ * @api public
+ */
+
+function enable(namespaces) {
+  exports.save(namespaces);
+
+  exports.names = [];
+  exports.skips = [];
+
+  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
+  var len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    if (!split[i]) continue; // ignore empty strings
+    namespaces = split[i].replace(/\*/g, '.*?');
+    if (namespaces[0] === '-') {
+      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+    } else {
+      exports.names.push(new RegExp('^' + namespaces + '$'));
+    }
+  }
+}
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+function disable() {
+  exports.enable('');
+}
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+function enabled(name) {
+  var i, len;
+  for (i = 0, len = exports.skips.length; i < len; i++) {
+    if (exports.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (i = 0, len = exports.names.length; i < len; i++) {
+    if (exports.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Coerce `val`.
+ *
+ * @param {Mixed} val
+ * @return {Mixed}
+ * @api private
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+/**
+ * Helpers.
+ */
+
+var s = 1000;
+var m = s * 60;
+var h = m * 60;
+var d = h * 24;
+var y = d * 365.25;
+
+/**
+ * Parse or format the given `val`.
+ *
+ * Options:
+ *
+ *  - `long` verbose formatting [false]
+ *
+ * @param {String|Number} val
+ * @param {Object} [options]
+ * @throws {Error} throw an error if val is not a non-empty string or a number
+ * @return {String|Number}
+ * @api public
+ */
+
+module.exports = function (val, options) {
+  options = options || {};
+  var type = typeof val;
+  if (type === 'string' && val.length > 0) {
+    return parse(val);
+  } else if (type === 'number' && isNaN(val) === false) {
+    return options.long ? fmtLong(val) : fmtShort(val);
+  }
+  throw new Error('val is not a non-empty string or a valid number. val=' + JSON.stringify(val));
+};
+
+/**
+ * Parse the given `str` and return milliseconds.
+ *
+ * @param {String} str
+ * @return {Number}
+ * @api private
+ */
+
+function parse(str) {
+  str = String(str);
+  if (str.length > 100) {
+    return;
+  }
+  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
+  if (!match) {
+    return;
+  }
+  var n = parseFloat(match[1]);
+  var type = (match[2] || 'ms').toLowerCase();
+  switch (type) {
+    case 'years':
+    case 'year':
+    case 'yrs':
+    case 'yr':
+    case 'y':
+      return n * y;
+    case 'days':
+    case 'day':
+    case 'd':
+      return n * d;
+    case 'hours':
+    case 'hour':
+    case 'hrs':
+    case 'hr':
+    case 'h':
+      return n * h;
+    case 'minutes':
+    case 'minute':
+    case 'mins':
+    case 'min':
+    case 'm':
+      return n * m;
+    case 'seconds':
+    case 'second':
+    case 'secs':
+    case 'sec':
+    case 's':
+      return n * s;
+    case 'milliseconds':
+    case 'millisecond':
+    case 'msecs':
+    case 'msec':
+    case 'ms':
+      return n;
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Short format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function fmtShort(ms) {
+  if (ms >= d) {
+    return Math.round(ms / d) + 'd';
+  }
+  if (ms >= h) {
+    return Math.round(ms / h) + 'h';
+  }
+  if (ms >= m) {
+    return Math.round(ms / m) + 'm';
+  }
+  if (ms >= s) {
+    return Math.round(ms / s) + 's';
+  }
+  return ms + 'ms';
+}
+
+/**
+ * Long format for `ms`.
+ *
+ * @param {Number} ms
+ * @return {String}
+ * @api private
+ */
+
+function fmtLong(ms) {
+  return plural(ms, d, 'day') || plural(ms, h, 'hour') || plural(ms, m, 'minute') || plural(ms, s, 'second') || ms + ' ms';
+}
+
+/**
+ * Pluralization helper.
+ */
+
+function plural(ms, n, name) {
+  if (ms < n) {
+    return;
+  }
+  if (ms < n * 1.5) {
+    return Math.floor(ms / n) + ' ' + name;
+  }
+  return Math.ceil(ms / n) + ' ' + name + 's';
+}
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -606,7 +2037,53 @@ __webpack_require__(9);
 //# sourceMappingURL=navigo.js.map
 
 /***/ }),
-/* 2 */
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__static__ = __webpack_require__(0);
+/* globals $ */
+
+
+const $gistModalWrapper = $('.gist-modal-wrapper');
+const $gistModalClose = $('.gist-modal-close');
+
+function createIframe(src, beatNum) {
+  const html = `<iframe id="beat-modal-${beatNum}" src="${src}" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>`;
+  $gistModalWrapper.append(html);
+}
+
+function show(beatNum) {
+  $gistModalWrapper.addClass('is-active');
+  $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' });
+  $gistModalWrapper.show();
+}
+
+function close(beatNum) {
+  $gistModalWrapper.removeClass('is-active');
+  var $beatModal = $('#beat-modal-' + beatNum);
+  $beatModal.hide();
+  $beatModal.remove();
+}
+
+function launchModal(src, beatNum) {
+  const _beatNum = beatNum || __WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].currentBeatIndex;
+  const modalExists = $('#beat-modal-' + _beatNum).length;
+  if (!modalExists) {
+    createIframe(src, _beatNum);
+  }
+  show(_beatNum);
+}
+
+// init stuff
+$gistModalClose.click(function (ev) {
+  close(__WEBPACK_IMPORTED_MODULE_0__static__["a" /* default */].getCurrentBeatNum());
+});
+
+/* harmony default export */ __webpack_exports__["a"] = ({ launchModal });
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
@@ -3239,735 +4716,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
         window[exportName] = Hammer;
     }
 })(window, document, 'Hammer');
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-/* globals jQuery */
-
-// jQuery Storygist
-// A jQuery plugin to quickly create story gists
-// Release Versions: https://github.com/nbcnews/storygist/releases
-// Github: https://github.com/nbcnews/storygist
-// License: The MIT License (MIT)
-// by EJ Fox, Max Peterson, and Ian Rose
-
-// options.js
-;(function ($) {
-  function StoryGist(element, options) {
-    var encodedShareURL = encodeURIComponent(window.location.href);
-    // Define icons to be used in final beat
-    var facebookIcon = '<svg version="1.1" x="0" y="0" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">\n<title>Facebook Logo</title>\n<desc>Share on Facebook</desc>\n<path d="M17 1H3C1.9 1 1 1.9 1 3v14c0 1.1 0.9 2 2 2h7v-7H8V9.53h2V7.48c0-2.16 1.21-3.68 3.77-3.68l1.8 0v2.61h-1.2C13.38 6.4 13 7.14 13 7.84v1.69h2.57L15 12h-2v7h4c1.1 0 2-0.9 2-2V3C19 1.9 18.1 1 17 1z"></path>\n</svg>';
-    var twitterIcon = '<svg version="1.1" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">\n<title>Twitter Logo</title>\n <desc>Share on Twitter</desc>\n <path d="M17.316 6.246c0.008 0.2 0 0.3 0 0.488c0 4.99-3.797 10.742-10.74 10.742c-2.133 0-4.116-0.625-5.787-1.697 c0.296 0 0.6 0.1 0.9 0.053c1.77 0 3.397-0.604 4.688-1.615c-1.651-0.031-3.046-1.121-3.526-2.621 c0.23 0 0.5 0.1 0.7 0.066c0.345 0 0.679-0.045 0.995-0.131c-1.727-0.348-3.028-1.873-3.028-3.703c0-0.016 0-0.031 0-0.047 c0.509 0.3 1.1 0.5 1.7 0.473c-1.013-0.678-1.68-1.832-1.68-3.143c0-0.691 0.186-1.34 0.512-1.898 C3.942 5.5 6.7 7 9.9 7.158C9.798 6.9 9.8 6.6 9.8 6.297c0-2.084 1.689-3.773 3.774-3.773 c1.086 0 2.1 0.5 2.8 1.191c0.859-0.17 1.667-0.484 2.397-0.916c-0.282 0.881-0.881 1.621-1.66 2.1 c0.764-0.092 1.49-0.293 2.168-0.594C18.694 5.1 18.1 5.7 17.3 6.246z"></path>\n</svg>';
-    var mailIcon = '<svg version="1.1" x="0" y="0" viewBox="0 0 20 20" xml:space="preserve">\n<title>Email Icon</title>\n<desc>Email page link</desc>\n<path d="M1.57 5.29c0.49 0.26 7.25 3.89 7.5 4.03C9.33 9.45 9.65 9.51 9.98 9.51c0.33 0 0.65-0.06 0.91-0.2s7.01-3.77 7.5-4.03C18.88 5.02 19.34 4 18.44 4H1.52C0.62 4 1.09 5.02 1.57 5.29zM18.61 7.49c-0.56 0.29-7.39 3.85-7.73 4.03s-0.58 0.2-0.91 0.2 -0.57-0.02-0.91-0.2S1.94 7.78 1.39 7.49C1 7.28 1 7.52 1 7.71S1 15 1 15c0 0.42 0.57 1 1 1h16c0.43 0 1-0.58 1-1 0 0 0-7.11 0-7.29S19 7.29 18.61 7.49z"></path>\n</svg>';
-    var goToIcon = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n\t viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">\n<path d="M0.685,10h2.372V9.795c0.108-4.434,3.724-7.996,8.169-7.996c4.515,0,8.174,3.672,8.174,8.201s-3.659,8.199-8.174,8.199\n\tc-1.898,0-3.645-0.65-5.033-1.738l1.406-1.504c1.016,0.748,2.27,1.193,3.627,1.193c3.386,0,6.131-2.754,6.131-6.15\n\tc0-3.396-2.745-6.15-6.131-6.15c-3.317,0-6.018,2.643-6.125,5.945V10h2.672l-3.494,3.894L0.685,10z"/>\n</svg>';
-    var prevIcon = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 512 512" xml:space="preserve"> <polygon points="352,115.4 331.3,96 160,256 331.3,416 352,396.7 201.5,256 "/> </svg>';
-    var nextIcon = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve"> <polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "/> </svg>';
-
-    // TODO: replace with templates
-    var finalBeatHTML = '<div class="gist-beat-container"><!--Entypo pictograms by Daniel Bruce — www.entypo.com--><div class="gist-beat-row"><h4>Share</h4><ul class="gist-share"><li><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + encodedShareURL + '">' + facebookIcon + '</a></li><li><a target="_blank" href="https://twitter.com/intent/tweet?url=' + encodedShareURL + '">' + twitterIcon + '</a></li><li><a target="_blank" href="mailto:?body=' + encodedShareURL + '">' + mailIcon + '</a></li></ul></div><div class="gist-beat-row"><h4 class="go-to-beginning">Go to the beginning</h4><ul></li><a class="go-to-beginning" href="/#/beat/0">' + goToIcon + '</li></ul></div></div>';
-    var pagerHTML = '<div class="gist-pager"><button class="gist-pager__btn gist-pager__btn--prev" aria-label="previous">' + prevIcon + '</button> <button class="gist-pager__btn gist-pager__btn--next" aria-label="next">' + nextIcon + '</button></div>';
-
-    var defaults = {
-      beatSelector: '[data-sg]',
-      contentParent: 'main',
-      initWidth: 640,
-      animate: false,
-      onboard: true,
-      callToAction: 'View in full story ↓',
-      pager: {
-        html: pagerHTML
-      },
-      finalBeat: {
-        raw: null,
-        html: finalBeatHTML,
-        type: 'DIV'
-      }
-    };
-
-    this.element = element;
-    this.$els = {}; // NOTE: used for caching elements
-    this.settings = $.extend({}, defaults, options);
-  }
-
-  window.StoryGist = StoryGist; // export to window for use in modules
-})(jQuery);
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-/* globals jQuery, StoryGist */
-
-;(function ($, sg) {
-  sg.Static = {};
-
-  sg.Static.currentBeatIndex = 0;
-
-  sg.Static.getCurrentBeat = function () {
-    return $('#gist-beat-' + sg.Static.getCurrentBeatNum());
-  };
-
-  if (!String.prototype.includes) {
-    // eslint-disable-next-line no-extend-native
-    String.prototype.includes = function (search, start) {
-      'use strict';
-
-      if (typeof start !== 'number') {
-        start = 0;
-      }
-
-      if (start + search.length > this.length) {
-        return false;
-      } else {
-        return this.indexOf(search, start) !== -1;
-      }
-    };
-  }
-
-  sg.Static.getCurrentBeatNum = function () {
-    var $el = $('.gist-beat:visible');
-    var exists = $el.length;
-    if (exists) {
-      var currentBeat = $('.gist-beat:visible').get(0);
-      return $(currentBeat).data('origid');
-    }
-    return 0;
-  };
-
-  sg.Static.getRandTransition = function () {
-    return sg.Static.TRANSITIONS[Math.floor(Math.random() * sg.Static.TRANSITIONS.length)];
-  };
-
-  sg.Static.dependencyChecker = function (deps) {
-    deps.forEach(function (dep) {
-      var global = window;
-      var depName = dep;
-      if (dep.indexOf('$.') === 0) {
-        global = window.$;
-        depName = dep.replace('$.', '');
-      }
-      if (typeof global[depName] === 'function' || typeof global[depName] === 'object') {
-        console.log('### window.' + dep, ' detected');
-      } else {
-        console.warn('### window.' + dep, ' Not Found');
-      }
-    });
-  };
-
-  sg.Static.getBeatFromTarget = function (target) {
-    // console.log(target, 'target -> getBeat')
-    var $beat = $(target);
-    if (!$beat.hasClass('gist-beat')) {
-      $beat = $beat.closest('.gist-beat');
-      if (!$beat.hasClass('gist-beat')) {
-        return null;
-      }
-    }
-    return $beat;
-  };
-
-  sg.Static.TRANSITIONS = ['transition.slideLeftIn', 'transition.slideDownIn', 'transition.slideLeftBigIn', 'transition.shrinkIn', 'transition.flipXIn', 'transition.flipYIn', 'transition.fadeIn', 'transition.expandIn'];
-})(jQuery, StoryGist);
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-/* globals jQuery, StoryGist, Navigo */
-// navigation.js
-;(function ($, Navigo, sg) {
-  sg.Navigation = {};
-
-  sg.Navigation.router = new Navigo('', true);
-
-  sg.Navigation.navigateToBeat = function (beatNum, limit) {
-    var _limit = limit || sg.Navigation.totalBeats;
-    if (beatNum >= 0 && beatNum <= _limit) {
-      sg.Navigation.router.navigate('/beat/' + beatNum);
-    }
-  };
-
-  sg.Navigation.updateGlobalActiveGist = function (beatNum) {
-    // Set classes for active gist
-    var $body = $(document.body);
-
-    $('.gist-beat').each(function (gistIndex) {
-      if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
-        $body.removeClass('gist-beat-' + gistIndex + '-active');
-      }
-
-      if (beatNum === gistIndex) {
-        $body.addClass('gist-beat-' + gistIndex + '-active');
-      }
-
-      if ($body.hasClass('gist-beat-last-active')) {
-        $body.removeClass('gist-beat-last-active');
-      }
-
-      if ($('.gist-beat.last').hasClass('active')) {
-        $body.addClass('gist-beat-last-active');
-      }
-    });
-  };
-
-  sg.Navigation.goToBeat = function (beatNum) {
-    // console.log('goToBeat:', beatNum)
-    // set active class on current beat
-    $('.gist-beat').removeClass('active');
-    var $beat = $('#gist-beat-' + beatNum);
-    $beat.addClass('active');
-
-    // show current beat
-    $('.gist-beat').hide();
-    $beat.show();
-
-    sg.Navigation.updateGlobalActiveGist(+beatNum);
-    sg.Navigation.updateProgressBar(+beatNum);
-    sg.Navigation.updateCta(+beatNum);
-  };
-
-  sg.Navigation.updateProgressBar = function (beatNum) {
-    for (var i = 0; i < sg.Navigation.totalBeats; i++) {
-      if (i > beatNum) {
-        // console.log('opacity 1', i)
-        $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1);
-      } else {
-        $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 0);
-      }
-    }
-
-    // hide progress-bar on last beat before fin
-    if (+beatNum === sg.Navigation.totalBeats) {
-      $('#gist-progress').hide();
-    } else {
-      $('#gist-progress').show();
-    }
-  };
-
-  sg.Navigation.handleKeys = function (e) {
-    if (!e.key) {
-      return;
-    }
-
-    var $thisBeat = sg.Static.getCurrentBeat();
-    var beatNum = $thisBeat.data('origid');
-
-    switch (e.key) {
-      case 'ArrowLeft':
-        this.prevBeat(beatNum, $thisBeat);
-        break;
-      case 'ArrowRight':
-        this.nextBeat(beatNum, $thisBeat);
-        break;
-      default:
-        return; // exit this handler for other keys
-    }
-    e.preventDefault(); // prevent the default action (scroll / move caret)
-  };
-
-  sg.Navigation.updateCta = function (beatNum) {
-    var currentBeat = sg.Static.getCurrentBeat();
-    var ctaText = $(currentBeat).data('cta-text');
-
-    if (ctaText) {
-      $('#gist-view-story').text(ctaText);
-    }
-  };
-
-  sg.prototype.initNavigation = function () {
-    // init stuff
-    sg.Navigation.totalBeats = this.totalBeats;
-    sg.Navigation.$element = $(this.element);
-    sg.Navigation.updateGlobalActiveGist(0); // sg.Static.getCurrentBeatNum()
-    $(document).keydown(sg.Navigation.handleKeys.bind(this));
-
-    sg.Navigation.router.on('/beat/:beatNum', function (params) {
-      // console.log('nav-params', params)
-      sg.Navigation.goToBeat(params.beatNum);
-    }).resolve();
-  };
-})(jQuery, Navigo, StoryGist);
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-/* globals jQuery, StoryGist */
-
-;(function ($, sg) {
-  sg.Modal = {};
-
-  var $gistModalWrapper = $('.gist-modal-wrapper');
-  var $gistModalClose = $('.gist-modal-close');
-
-  sg.Modal.createIframe = function (src, beatNum) {
-    // console.log('createIframe>>', src, beatNum)
-    var html = '<iframe id="beat-modal-' + beatNum + '" src="' + src + '" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>';
-    $gistModalWrapper.append(html);
-  };
-
-  sg.Modal.show = function (beatNum) {
-    $gistModalWrapper.addClass('is-active');
-    $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' });
-    $gistModalWrapper.show();
-  };
-
-  sg.Modal.close = function (beatNum) {
-    $gistModalWrapper.removeClass('is-active');
-    var $beatModal = $('#beat-modal-' + beatNum);
-    $beatModal.hide();
-    $beatModal.remove();
-  };
-
-  // method on StoryGist(), so it can access 'this'
-  sg.prototype.launchModal = function (src, beatNum) {
-    var _beatNum = beatNum || sg.Static.currentBeatIndex;
-    var modalExists = $('#beat-modal-' + _beatNum).length;
-    if (!modalExists) {
-      sg.Modal.createIframe(src, _beatNum);
-    }
-    sg.Modal.show(_beatNum);
-  };
-
-  // init stuff
-  $gistModalClose.click(function (ev) {
-    sg.Modal.close(sg.Static.getCurrentBeatNum());
-  });
-})(jQuery, StoryGist);
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-/* globals SplitType, jQuery, StoryGist */
-// events.js
-;(function ($, sg) {
-  sg.prototype.beatVideoPlay = function (videoEl) {
-    if (videoEl) {
-      videoEl.play();
-    }
-  };
-
-  sg.prototype.beatVideoPause = function (videoEl) {
-    if (videoEl) {
-      videoEl.pause();
-    }
-  };
-
-  sg.prototype.beatVideoPauseAll = function (videoEl) {
-    var self = this;
-    $('video').each(function (idx, el) {
-      self.beatVideoPause(el);
-    });
-  };
-
-  sg.prototype.goToBeginning = function () {
-    // Set all beats to visible (aka go to beginning)
-    $('.gist-beat').css('display', 'flex');
-  };
-
-  sg.prototype.pauseBeats = function () {
-    this.beatVideoPauseAll();
-  };
-
-  sg.prototype.nextBeat = function (beatNum, el) {
-    // Handle behavior to move to next beat
-    // A click on the right side of the window
-    // console.log('>> Next', beatNum)
-    this.pauseBeats();
-
-    if ($(el).hasClass('last')) {
-      // Do nothing for the final beat
-    } else {
-      var $nextEl = $(el).next('.gist-beat');
-      var baseAnimSpeed = 750;
-      var blurPx = 81;
-
-      if (window.SplitType && $nextEl.find('.js-text-block').length && this.settings.animate) {
-        // console.log('Animate Textblock')
-        var splitTextBlock = new SplitType('.js-text-block');
-        splitTextBlock.split({
-          split: 'lines',
-          position: 'relative'
-        });
-
-        $.Velocity(splitTextBlock.lines, sg.Static.TRANSITIONS[3], { duration: baseAnimSpeed * 0.6, stagger: baseAnimSpeed * 0.05 });
-      }
-
-      if (this.settings.animate) {
-        $nextEl.find('figure img')
-        // .css('margin-bottom', -800)
-        .velocity({
-          'blur': 0
-          // 'margin-bottom': 0,
-        }, { 'duration': baseAnimSpeed,
-          'begin': function (el) {
-            $nextEl.find('figure figcaption').css('opacity', 0);
-            $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)');
-          },
-          'complete': function (el) {
-            $nextEl.find('figure figcaption').velocity('transition.slideLeftIn', { 'duration': baseAnimSpeed * 1.75 });
-          }
-        });
-
-        $nextEl.find('figure.media').velocity({ 'blur': 0 }, { 'duration': baseAnimSpeed,
-          'begin': function (el) {
-            $(el).css('-webkit-filter', 'blur(' + blurPx + 'px)');
-          }
-        });
-
-        if (window.SplitType && $nextEl.find('.pullquote').length) {
-          // console.log('Animate PULLQUOTE')
-          var splitPullQuote = new SplitType($nextEl.find('.pullquote'), {
-            split: 'lines'
-          });
-
-          $.Velocity(splitPullQuote.lines, sg.Static.getRandTransition(), { 'duration': baseAnimSpeed, 'stagger': baseAnimSpeed / 2 });
-        }
-      }
-
-      var $videoElNext = $nextEl.find('video').get(0);
-      this.beatVideoPlay($videoElNext);
-    }
-
-    sg.Navigation.navigateToBeat(+beatNum + 1, +this.totalBeats);
-  };
-
-  sg.prototype.prevBeat = function (beatNum, el) {
-    // console.log('>> Prev', beatNum)
-    this.pauseBeats();
-    // Handle behavior to move to previous beat
-    if ($(el).is('#gist-beat-0')) {
-      // Do nothing for the first beat
-    } else {
-      var $videoEl = $(el).prev('.gist-beat').find('video').get(0);
-      this.beatVideoPlay($videoEl);
-    }
-
-    sg.Navigation.navigateToBeat(+beatNum - 1);
-  };
-
-  sg.prototype.viewInStory = function () {
-    // Get the current gist beat (the first that's visible)
-    var currentBeat = sg.Static.getCurrentBeat();
-    var currentBeatNum = $(currentBeat).data('origid');
-    var ctaURL = $(currentBeat).data('cta-url');
-
-    // pause any videos, animations, etc
-    this.pauseBeats();
-
-    if (ctaURL) {
-      // console.log('Do browser CTA thing:', currentBeatNum, ctaURL)
-      // console.log($(window).width())
-      if ($(window).width() >= 1200) {
-        // On desktop follow link, don't open modal
-        // Also check if it's amp, if so, don't use the amp URL on desktop
-        var ampString = '/amp/';
-        if (ctaURL.includes(ampString)) {
-          // Hack the URL to show the non-amp version
-          // by supplying a category that doesn't exist but isn't /amp/
-          ctaURL = ctaURL.replace(ampString, '/gist/');
-        }
-        window.open(ctaURL, '_self');
-      } else {
-        this.launchModal(ctaURL, currentBeatNum);
-      }
-    } else {
-      // Hide the storygist
-      $('#gist-body').css('display', 'none');
-      $(this.element).toggleClass('gist-active');
-
-      // Show all the original story elements
-      $(this.settings.contentParent).css('display', 'block');
-      $('.site-header').css('display', 'block');
-      $('.progress').css('display', 'block');
-
-      // Find the original element that corresponds with the current beat
-      var scrollToEl = $(this.settings.contentParent + ' ' + this.settings.beatSelector + ':eq(' + currentBeatNum + ')');
-
-      // Scroll to that element
-      $('html, body').animate({
-        scrollTop: scrollToEl.offset().top - 80
-      }, 2000);
-    }
-  };
-
-  sg.prototype.swipeBeat = function (e) {
-    var $thisBeat = sg.Static.getCurrentBeat();
-    var beatNum = $thisBeat.attr('id').split('-')[2];
-    switch (e.direction) {
-      case 8:
-        // DIRECTION_UP
-        this.viewInStory();
-        break;
-      case 2:
-        // DIRECTION_LEFT
-        this.nextBeat(beatNum, $thisBeat);
-        break;
-      case 4:
-        // DIRECTION_RIGHT
-        this.prevBeat(beatNum, $thisBeat);
-        break;
-      default:
-      // console.log(e.type, e.direction)
-    }
-  };
-
-  sg.prototype.clickBeat = function (e) {
-    // Get this beat's number from it's ID
-    var $thisBeat = sg.Static.getCurrentBeat();
-    var beatNum = $thisBeat.data('origid');
-
-    // Get pagewidth and mouse position
-    // Which we use to determine whether to go prev/next
-    // var pageWidth = $(window).width()
-    var pageWidth = $thisBeat.width();
-    var posX = $thisBeat.position().left;
-    var clickX = e.pageX - posX;
-
-    // console.log('click target el', $(e.target)[0].tagName)
-
-    if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
-      // If it's the last beat
-      if (clickX > pageWidth / 2.5) {
-        // A click on the right side of the window
-        this.nextBeat(beatNum, $thisBeat);
-      } else {
-        this.prevBeat(beatNum, $thisBeat);
-      };
-    }
-  };
-
-  sg.prototype.scrollLock = function (e) {
-    e.preventDefault();
-  };
-
-  sg.prototype.onOrientationChange = function () {
-    var angle = window.orientation;
-    if (window.screen && window.screen.orientation) {
-      angle = window.screen.orientation.angle;
-    }
-
-    var orientation = Math.abs(angle) === 90 ? 'landscape' : 'portrait';
-    if (Math.abs(angle) === 270) {
-      // secondary landscape
-      orientation = 'landscape';
-    }
-    var $orientationSelector = $('body');
-
-    if (orientation === 'portrait') {
-      $orientationSelector.addClass('gist-portrait').removeClass('gist-landscape');
-    }
-
-    if (orientation === 'landscape') {
-      $orientationSelector.addClass('gist-landscape').removeClass('gist-portrait');
-    }
-  };
-})(jQuery, StoryGist);
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-/* globals jQuery, StoryGist, Hammer */
-// init.js
-;(function ($, sg) {
-  // called in plugin.js
-  sg.prototype.init = function () {
-    var self = this;
-    // check dependencies
-
-    var $body = $(self.element); // TODO: add to $els object
-    // var $loading = $('<div id="loading-screen"></div>')
-    // $body.prepend($loading)
-
-    sg.Static.dependencyChecker(['jQuery', 'Hammer', 'Navigo', 'SplitType', 'videojs', '$.Velocity', 'lazySizes']);
-
-    if ($(window).width() <= self.settings.initWidth) {
-      var parsedGistEls = [];
-      var $originalStoryContent = $(self.settings.contentParent);
-      var gistEls = $(self.settings.beatSelector);
-
-      // Make the element our storygist beats will live in
-      $body.prepend('<div id="gist-body"></div>');
-
-      if (self.settings.onboard === true) {
-        // Create the first div with explainer
-        var $onboardDiv = $('<div class="gist-onboard-container"><p>You\'re viewing the <strong>Gist</strong> of this story. The Gist gives you a visual summary of the story.</p><div class="gist-onboard-ui-container"><div class="gist-onboard-ui-left"><div class="gist-onboard-ui-text"> <p>← <strong>Tap</strong> to go <strong>backward</strong> in Gist</p></div></div><div class="gist-onboard-ui-right"><div class="gist-onboard-ui-text"><p><strong>Tap</strong> to go <br /> <strong>forward</strong> in Gist →</div></div></div><div class="gist-onboard-ui-text gist-onboard-ui-text-cta animated infinite bounce">Scroll to enter Gist <br />↓</p></div></div>');
-        $body.prepend($onboardDiv);
-      }
-      var $gistBody = $('#gist-body');
-
-      // Hide the element that held the original content
-      $originalStoryContent.css('display', 'none');
-      $body.addClass('gist-active');
-
-      gistEls.each(function (i, el) {
-        // Create a new object for our beat
-        var beat = {
-          raw: el,
-          html: el.outerHTML, // The HTML inside the beat
-          type: el.nodeName, // The beat's element (p, h2, etc..)
-          id: i,
-          ctaUrl: '',
-          ctaText: 'View Story'
-        };
-
-        if ($(el).data('cta-url')) {
-          beat.ctaUrl = $(el).data('cta-url');
-        }
-
-        if ($(el).data('cta-text')) {
-          beat.ctaText = $(el).data('cta-text');
-        }
-
-        // If the beat has a preceding element, add it's type to the object
-        if (el.previousElementSibling != null) {
-          beat.prevtype = el.previousElementSibling.nodeName;
-        }
-
-        // If the beat is a paragraph, do some special logic
-        if (beat.type.toLowerCase() === 'p' && beat.prevtype !== undefined) {
-          if (beat.prevtype.toLowerCase() === 'h2' || beat.prevtype.toLowerCase() === 'figure') {
-            // Only add p elements preceded by h2 or figure
-            parsedGistEls.push(beat);
-          }
-        } else {
-          // If it isn't, just push it to the gist beats
-          parsedGistEls.push(beat);
-        }
-      });
-
-      parsedGistEls.push(self.settings.finalBeat);
-
-      // Empty the page of old content
-      $gistBody.append('<button id="gist-view-story">' + self.settings.callToAction + '</button>');
-
-      $('#gist-view-story').click(function () {
-        // View beat in story when 'view in story' CTA is clicked
-        window.removeEventListener('touchmove', self.scrollLock);
-        self.viewInStory();
-      });
-
-      self.totalBeats = +(parsedGistEls.length - 1);
-
-      // Create element to hold navbar
-      $gistBody.append('<div id="gist-progress"></div>');
-      var $pager = $(self.settings.pager.html);
-
-      $pager.find('.gist-pager__btn--next').on('click', function () {
-        var el = sg.Static.getCurrentBeat();
-        var beatNum = sg.Static.getCurrentBeatNum();
-        self.nextBeat(beatNum, el);
-      });
-
-      $pager.find('.gist-pager__btn--prev').on('click', function () {
-        var el = sg.Static.getCurrentBeat();
-        var beatNum = sg.Static.getCurrentBeatNum();
-        self.prevBeat(beatNum, el);
-      });
-
-      $gistBody.append($pager);
-
-      // Write the beats back to the page
-      parsedGistEls.forEach(function (el, i) {
-        if (el.onBoard === true) {
-          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat gist-beat-onboard" style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>');
-        } else {
-          $gistBody.append('<div id="gist-beat-' + i + '" class="gist-beat" data-cta-url="' + el.ctaUrl + '" data-cta-text="' + el.ctaText + '" data-origid="' + i + '"  style="z-index:' + (self.totalBeats - i) + ';">' + el.html + '</div>');
-        }
-
-        // Create progress bar
-        if (+i !== +self.totalBeats) {
-          $('#gist-progress').append('<div id="gist-progress-beat-' + i + '" class="gist-progress-beat inactive" style="flex: 1;"></div>');
-        }
-      });
-
-      var $initBeat = $('#gist-beat-0');
-
-      $('.go-to-beginning').click(function () {
-        $('#gist-progress').css('display', 'flex');
-        $('.gist-progress-beat').removeClass('inactive');
-        $('.gist-progress-beat').css('opacity', 1);
-        $('.gist-beat.last').removeClass('active');
-        $initBeat.addClass('active');
-        self.goToBeginning();
-      });
-
-      $initBeat.addClass('active');
-      $('.gist-beat').click(self.clickBeat.bind(self));
-      $('.gist-beat:last-of-type').addClass('last');
-
-      // Changes videos in beats to have a unique ID. Allows play() and pause() to work.
-      $('.gist-beat').each(function (i) {
-        var videoEl = $(this).find('video');
-        var videoJsEl = $(this).find('.video-js');
-        var videoElId = $(videoEl).attr('id');
-        var videoJsElId = $(videoJsEl).attr('id');
-
-        if (videoElId !== undefined) {
-          $(videoEl).attr('id', videoElId + '-gist-beat');
-        }
-
-        if (videoJsElId !== undefined) {
-          $(videoJsEl).attr('id', videoJsElId + '-gist-beat');
-        }
-      });
-
-      // TODO: move to events.js
-      window.addEventListener('scroll', function scrollListener() {
-        if (window.pageYOffset >= $gistBody.offset().top) {
-          if ($onboardDiv) {
-            $onboardDiv.remove();
-          }
-          window.removeEventListener('scroll', scrollListener);
-          window.addEventListener('touchmove', self.scrollLock);
-        }
-      });
-
-      window.addEventListener('orientationchange', self.onOrientationChange);
-      self.onOrientationChange();
-      self.initHammer();
-      self.initNavigation();
-
-      // $loading.animate({opacity: 0, duration: 500})
-      // $loading.remove()
-    }
-  };
-
-  sg.prototype.initHammer = function () {
-    var self = this;
-    // ++++ Swiping via Hammer.js
-    if (typeof window.Hammer === 'function') {
-      $('.gist-beat').each(function (index, beat) {
-        // console.log('Hammer init:', index)
-        var hammer = new Hammer(beat);
-        hammer.on('swipe', self.swipeBeat.bind(self));
-        hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }); // enables 'Swipe Up'
-      });
-    }
-  };
-})(jQuery, StoryGist);
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-/* globals jQuery, StoryGist */
-// plugin.js
-;(function ($) {
-  $.fn.storyGist = function (options) {
-    return this.each(function () {
-      if (undefined === $(this).data('storyGist')) {
-        var plugin = new StoryGist(this, options);
-        plugin.init();
-        // $(this).data('storyGist', plugin)
-      }
-    });
-  };
-})(jQuery);
 
 /***/ })
 /******/ ]);
