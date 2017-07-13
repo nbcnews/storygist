@@ -2,6 +2,7 @@
 import Static from './static'
 import Navigation from './navigation'
 import Modal from './browserModal'
+import Tracking from './tracking'
 
 const debug = require('debug')('events')
 
@@ -16,11 +17,18 @@ function init (ctx) {
 }
 
 function beatVideoPlay (videoEl) {
-  if (videoEl) { videoEl.play() }
+  if (videoEl) {
+    videoEl.play()
+
+    Tracking.sendEvent('videoStart')
+  }
 }
 
 function beatVideoPause (videoEl) {
-  if (videoEl) { videoEl.pause() }
+  if (videoEl) {
+    videoEl.pause()
+    Tracking.sendEvent('videoPause')
+  }
 }
 
 function beatVideoPauseAll (videoEl) {
@@ -32,6 +40,8 @@ function beatVideoPauseAll (videoEl) {
 function goToBeginning () {
   // Set all beats to visible (aka go to beginning)
   $('.gist-beat').css('display', 'flex')
+
+  Tracking.sendEvent('goToBeginning')
 }
 
 function pauseBeats () {
@@ -42,6 +52,8 @@ function nextBeat (beatNum, el) {
   // Handle behavior to move to next beat
   // A click on the right side of the window
   debug('>> Next', beatNum)
+
+  Tracking.sendEvent('nextBeat')
   pauseBeats()
 
   if ($(el).hasClass('last')) {
@@ -106,6 +118,8 @@ function nextBeat (beatNum, el) {
 }
 
 function prevBeat (beatNum, el) {
+  Tracking.sendEvent('prevBeat')
+
   debug('>> Prev', beatNum)
   pauseBeats()
   // Handle behavior to move to previous beat
@@ -120,6 +134,7 @@ function prevBeat (beatNum, el) {
 }
 
 function viewInStory () {
+  Tracking.sendEvent('ctaClicked')
   // Get the current gist beat (the first that's visible)
   var currentBeat = Static.getCurrentBeat()
   var currentBeatNum = $(currentBeat).data('origid')
@@ -140,8 +155,10 @@ function viewInStory () {
         ctaURL = ctaURL.replace(ampString, '/gist/')
       }
       window.open(ctaURL, '_self')
+      Tracking.sendEvent('ctaClicked-windowopen')
     } else {
       Modal.launchModal(ctaURL, currentBeatNum)
+      Tracking.sendEvent('ctaClicked-modalactivated')
     }
   } else {
     // Hide the storygist
@@ -169,12 +186,15 @@ function swipeBeat (e) {
   switch (e.direction) {
     case 8: // DIRECTION_UP
       viewInStory()
+      Tracking.sendEvent('beatSwiped-up')
       break
     case 2: // DIRECTION_LEFT
       nextBeat(beatNum, $thisBeat)
+      Tracking.sendEvent('beatSwiped-left')
       break
     case 4: // DIRECTION_RIGHT
       prevBeat(beatNum, $thisBeat)
+      Tracking.sendEvent('beatSwiped-right')
       break
     default:
       debug(e.type, e.direction)
@@ -182,6 +202,7 @@ function swipeBeat (e) {
 }
 
 function clickBeat (e) {
+  Tracking.sendEvent('beatClicked')
   // Get this beat's number from it's ID
   var $thisBeat = Static.getCurrentBeat()
   var beatNum = $thisBeat.data('origid')
@@ -227,6 +248,7 @@ function onOrientationChange () {
   }
 
   if (orientation === 'landscape') {
+    Tracking.sendEvent('landscape-orientation')
     $orientationSelector.addClass('gist-landscape').removeClass('gist-portrait')
   }
 }
