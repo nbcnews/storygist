@@ -128,7 +128,7 @@ function viewInStory () {
   // pause any videos, animations, etc
   pauseBeats()
 
-  if (ctaURL) {
+  if (ctaURL !== null && ctaURL !== undefined) {
     debug('Do browser CTA thing:', currentBeatNum, ctaURL)
     if ($(window).width() >= 1200) {
       // On desktop follow link, don't open modal
