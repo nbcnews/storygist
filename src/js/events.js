@@ -1,7 +1,8 @@
-/* globals SplitType, $, ga */
+/* globals SplitType, $ */
 import Static from './static'
 import Navigation from './navigation'
 import Modal from './browserModal'
+import Tracking from './tracking'
 
 const debug = require('debug')('events')
 
@@ -19,24 +20,14 @@ function beatVideoPlay (videoEl) {
   if (videoEl) {
     videoEl.play()
 
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'gist',
-      eventAction: 'videoStart'
-      // ,eventLabel: 'event label'
-    })
+    Tracking.sendEvent('videoStart')
   }
 }
 
 function beatVideoPause (videoEl) {
   if (videoEl) {
     videoEl.pause()
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'gist',
-      eventAction: 'videoPause'
-      // ,eventLabel: 'event label'
-    })
+    Tracking.sendEvent('videoPause')
   }
 }
 
@@ -50,12 +41,7 @@ function goToBeginning () {
   // Set all beats to visible (aka go to beginning)
   $('.gist-beat').css('display', 'flex')
 
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'gist',
-    eventAction: 'goToBeginning'
-    // ,eventLabel: 'event label'
-  })
+  Tracking.sendEvent('goToBeginning')
 }
 
 function pauseBeats () {
@@ -67,12 +53,7 @@ function nextBeat (beatNum, el) {
   // A click on the right side of the window
   debug('>> Next', beatNum)
 
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'gist',
-    eventAction: 'nextBeat'
-    // ,eventLabel: 'event label'
-  })
+  Tracking.sendEvent('nextBeat')
   pauseBeats()
 
   if ($(el).hasClass('last')) {
@@ -137,12 +118,7 @@ function nextBeat (beatNum, el) {
 }
 
 function prevBeat (beatNum, el) {
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'gist',
-    eventAction: 'prevBeat'
-    // ,eventLabel: 'event label'
-  })
+  Tracking.sendEvent('prevBeat')
 
   debug('>> Prev', beatNum)
   pauseBeats()
@@ -158,12 +134,7 @@ function prevBeat (beatNum, el) {
 }
 
 function viewInStory () {
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'gist',
-    eventAction: 'ctaClicked'
-    // ,eventLabel: 'event label'
-  })
+  Tracking.sendEvent('ctaClicked')
   // Get the current gist beat (the first that's visible)
   var currentBeat = Static.getCurrentBeat()
   var currentBeatNum = $(currentBeat).data('origid')
@@ -184,8 +155,10 @@ function viewInStory () {
         ctaURL = ctaURL.replace(ampString, '/gist/')
       }
       window.open(ctaURL, '_self')
+      Tracking.sendEvent('ctaClicked-windowopen')
     } else {
       Modal.launchModal(ctaURL, currentBeatNum)
+      Tracking.sendEvent('ctaClicked-modalactivated')
     }
   } else {
     // Hide the storygist
@@ -208,23 +181,20 @@ function viewInStory () {
 }
 
 function swipeBeat (e) {
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'gist',
-    eventAction: 'beatSwiped'
-    // ,eventLabel: 'event label'
-  })
   var $thisBeat = Static.getCurrentBeat()
   var beatNum = $thisBeat.attr('id').split('-')[2]
   switch (e.direction) {
     case 8: // DIRECTION_UP
       viewInStory()
+      Tracking.sendEvent('beatSwiped-up')
       break
     case 2: // DIRECTION_LEFT
       nextBeat(beatNum, $thisBeat)
+      Tracking.sendEvent('beatSwiped-left')
       break
     case 4: // DIRECTION_RIGHT
       prevBeat(beatNum, $thisBeat)
+      Tracking.sendEvent('beatSwiped-right')
       break
     default:
       debug(e.type, e.direction)
@@ -232,12 +202,7 @@ function swipeBeat (e) {
 }
 
 function clickBeat (e) {
-  ga('send', {
-    hitType: 'event',
-    eventCategory: 'gist',
-    eventAction: 'beatClicked'
-    // ,eventLabel: 'event label'
-  })
+  Tracking.sendEvent('beatClicked')
   // Get this beat's number from it's ID
   var $thisBeat = Static.getCurrentBeat()
   var beatNum = $thisBeat.data('origid')
@@ -283,12 +248,7 @@ function onOrientationChange () {
   }
 
   if (orientation === 'landscape') {
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'gist',
-      eventAction: 'landscapeOrientation'
-      // ,eventLabel: 'event label'
-    })
+    Tracking.sendEvent('landscape-orientation')
     $orientationSelector.addClass('gist-landscape').removeClass('gist-portrait')
   }
 }
