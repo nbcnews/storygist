@@ -88,7 +88,7 @@ StoryGist.prototype.init = function () {
         html: el.outerHTML, // The HTML inside the beat
         type: el.nodeName, // The beat's element (p, h2, etc..)
         id: i,
-        ctaUrl: '',
+        ctaUrl: null,
         ctaText: 'View Story'
       }
 
