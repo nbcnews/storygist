@@ -116,4 +116,18 @@ function navigateToBeat (beatNum, limit) {
   }
 }
 
-export default { init, navigateToBeat }
+function panBeat (ev) {
+  if (ev.type === 'panleft') {
+    const $nextBeat = Static.getCurrentBeat(1)
+    $nextBeat.show()
+  }
+  const $currentBeat = Static.getCurrentBeat()
+  $currentBeat.css({ left: ev.deltaX })
+}
+
+function panBeatEnd (ev) {
+  const $currentBeat = Static.getCurrentBeat()
+  $currentBeat.animate({ left: 0 })
+}
+
+export default { init, navigateToBeat, panBeat, panBeatEnd }

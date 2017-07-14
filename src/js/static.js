@@ -1,15 +1,15 @@
 /* globals $ */
 const debug = require('debug')('static')
 
-function getCurrentBeat () {
-  return $('#gist-beat-' + getCurrentBeatNum())
+function getCurrentBeat (offset = 0) {
+  return $(`#gist-beat-${(getCurrentBeatNum() + offset)}`)
 }
 
 function getCurrentBeatNum () {
   var $el = $('.gist-beat:visible')
   var exists = $el.length
   if (exists) {
-    var currentBeat = $('.gist-beat:visible').get(0)
+    var currentBeat = $('.gist-beat').filter(':visible').get(0)
     return $(currentBeat).data('origid')
   }
   return 0

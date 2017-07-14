@@ -46,9 +46,11 @@ function StoryGist (element, options) {
 function initHammer (selector) {
   // ++++ Swiping via Hammer.js
   $(selector).each(function (index, beat) {
-    var hammer = new Hammer(beat)
-    hammer.on('swipe', Events.swipeBeat)
-    hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'
+    var hammerBeat = new Hammer(beat)
+    hammerBeat.on('swipe', Events.swipeBeat)
+    hammerBeat.on('panleft panright', Navigation.panBeat)
+    hammerBeat.on('panend', Navigation.panBeatEnd)
+    hammerBeat.get('swipe').set({ direction: Hammer.DIRECTION_ALL }) // enables 'Swipe Up'
   })
 }
 
