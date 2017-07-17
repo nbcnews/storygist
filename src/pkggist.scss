@@ -18,6 +18,7 @@ a {
 .pkg-beat {
   background-color: $pkg-beat-background;
   position: relative;
+  height: 100%;
 
   & > img,
   & > video {
