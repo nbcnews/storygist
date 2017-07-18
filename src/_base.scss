@@ -48,6 +48,11 @@
   }
 }
 
+html.gist-active,
+body.gist-active {
+  height: 100%;
+}
+
 #gist-body {
   position: relative;
   z-index: $gist-body-index;
@@ -138,7 +143,7 @@ body.gist-landscape::before {
 .gist-beat {
   position: absolute;
   background-color: $beat-background;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   display: flex;
   align-items: center;
@@ -432,7 +437,7 @@ body.gist-landscape::before {
 
 @if $pkg-gist {
   #gist-body {
-    height: 100vh;
+    height: 100%;
 
     [data-sg] {
       width: 100%;

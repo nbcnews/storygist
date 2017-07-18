@@ -57,6 +57,7 @@ StoryGist.prototype.init = function () {
   // check dependencies
 
   var $body = $(self.element) // TODO: add to $els object
+  var $html = $('html')
   // var $loading = $('<div id="loading-screen"></div>')
   // $body.prepend($loading)
 
@@ -80,6 +81,7 @@ StoryGist.prototype.init = function () {
     // Hide the element that held the original content
     $originalStoryContent.css('display', 'none')
     $body.addClass('gist-active')
+    $html.addClass('gist-active')
 
     gistEls.each((i, el) => {
       // Create a new object for our beat
