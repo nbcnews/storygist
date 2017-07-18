@@ -353,10 +353,10 @@ body.gist-landscape::before {
   z-index: 157;
   width: 100%;
 
-  @media (min-width: $pkg-gist-bp) {
+  @media (min-width: $pkg-gist-width-bp) and (min-height: $pkg-gist-height-bp) {
     top: 50%;
     transform: translate(-50%, -50%);
-    max-width: $pkg-gist-bp;
+    max-width: $pkg-gist-width-bp;
     left: 50%;
     z-index: 0;
   }
@@ -449,7 +449,7 @@ body.gist-landscape::before {
   }
 
   .gist-beat {
-    @media (min-width: $pkg-gist-bp) {
+    @media (min-width: $pkg-gist-width-bp) and (min-height: $pkg-gist-height-bp) {
       max-width: 520px;
       left: 50%;
       top: 50%;
