@@ -217,7 +217,8 @@ function clickBeat (e) {
 
   // debug('click target el', $(e.target)[0].tagName)
 
-  if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
+  var targetTag = $(e.target)[0].tagName
+  if (!targetTag.match('INPUT|BUTTON|A')) {
     // If it's the last beat
     if (clickX > (pageWidth / 2.5)) {
       // A click on the right side of the window
