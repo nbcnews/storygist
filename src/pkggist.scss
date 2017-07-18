@@ -28,7 +28,7 @@ a {
     height: 100vh;
     width: 100%;
 
-    @media (min-width: $pkg-gist-bp) {
+    @media (min-width: $pkg-gist-width-bp) and (min-height: $pkg-gist-height-bp) {
       height: 70.213vh;
     }
   }
