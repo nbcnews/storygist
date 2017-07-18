@@ -218,7 +218,8 @@ function clickBeat (e) {
   // debug('click target el', $(e.target)[0].tagName)
 
   var targetTag = $(e.target)[0].tagName
-  if (!targetTag.match('INPUT|BUTTON|A|SVG')) {
+  console.log('targetTag', targetTag)
+  if (!targetTag.toUpperCase().match('INPUT|BUTTON|A|SVG|PATH')) {
     // If it's the last beat
     if (clickX > (pageWidth / 2.5)) {
       // A click on the right side of the window
