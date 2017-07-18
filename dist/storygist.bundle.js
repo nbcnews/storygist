@@ -428,6 +428,7 @@ StoryGist.prototype.init = function () {
   // check dependencies
 
   var $body = $(self.element); // TODO: add to $els object
+  var $html = $('html');
   // var $loading = $('<div id="loading-screen"></div>')
   // $body.prepend($loading)
 
@@ -451,6 +452,7 @@ StoryGist.prototype.init = function () {
     // Hide the element that held the original content
     $originalStoryContent.css('display', 'none');
     $body.addClass('gist-active');
+    $html.addClass('gist-active');
 
     gistEls.each(function (i, el) {
       // Create a new object for our beat
@@ -827,7 +829,8 @@ function clickBeat(e) {
 
   // debug('click target el', $(e.target)[0].tagName)
 
-  if ($(e.target)[0].tagName !== 'INPUT' && $(e.target)[0].tagName !== 'BUTTON') {
+  var targetTag = $(e.target)[0].tagName;
+  if (!targetTag.match('INPUT|BUTTON|A')) {
     // If it's the last beat
     if (clickX > pageWidth / 2.5) {
       // A click on the right side of the window
