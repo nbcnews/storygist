@@ -34,11 +34,6 @@ To create a Gist of your content, you need to include jQuery and Gist's JS and C
 
 ```html
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-<script src="http://vjs.zencdn.net/5.6.0/video.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-
 
 <link rel="stylesheet" href="/build/pkggist.css">
 <script src="/build/storygist.bundle.js"></script>
