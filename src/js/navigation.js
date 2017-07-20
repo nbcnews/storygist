@@ -2,6 +2,7 @@
 import Navigo from 'navigo'
 import Static from './static'
 import Events from './events'
+import Modal from './browserModal'
 
 const router = new Navigo('', true)
 const debug = require('debug')('navigation')
@@ -18,6 +19,9 @@ function init (ctx) {
   .on('/beat/:beatNum', function (params) {
     debug('nav-params', params)
     goToBeat(params.beatNum)
+  })
+  .on('/beat/:beatNum/modal', function (params) {
+    debug('nav-params', params, 'modal')
   })
   .resolve()
 }
@@ -59,6 +63,7 @@ function goToBeat (beatNum) {
   updateGlobalActiveGist(+beatNum)
   updateProgressBar(+beatNum)
   updateCta(+beatNum)
+  Modal.close(beatNum) // close Modal if user clicks browser BACK
 }
 
 function updateProgressBar (beatNum) {
@@ -116,4 +121,4 @@ function navigateToBeat (beatNum, limit) {
   }
 }
 
-export default { init, navigateToBeat }
+export default { init, navigateToBeat, router }

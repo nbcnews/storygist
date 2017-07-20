@@ -1,5 +1,6 @@
 /* globals $ */
 import Static from './static'
+import Navigation from './navigation'
 
 const $gistModalWrapper = $('.gist-modal-wrapper')
 const $gistModalClose = $('.gist-modal-close')
@@ -29,6 +30,7 @@ function launchModal (src, beatNum) {
     createIframe(src, _beatNum)
   }
   show(_beatNum)
+  Navigation.router.navigate(`/beat/${beatNum}/modal`)
 }
 
 // init stuff
@@ -36,4 +38,4 @@ $gistModalClose.click(function (ev) {
   close(Static.getCurrentBeatNum())
 })
 
-export default { launchModal }
+export default { launchModal, close }
