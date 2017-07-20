@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,7 +73,7 @@
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(8);
+exports = module.exports = __webpack_require__(9);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -253,7 +253,7 @@ function localstorage() {
   } catch (e) {}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
 
 /***/ }),
 /* 1 */
@@ -356,15 +356,162 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _navigo = __webpack_require__(11);
+
+var _navigo2 = _interopRequireDefault(_navigo);
+
 var _static = __webpack_require__(1);
 
 var _static2 = _interopRequireDefault(_static);
 
-var _events = __webpack_require__(3);
+var _events = __webpack_require__(4);
 
 var _events2 = _interopRequireDefault(_events);
 
-var _navigation = __webpack_require__(4);
+var _browserModal = __webpack_require__(5);
+
+var _browserModal2 = _interopRequireDefault(_browserModal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* globals $ */
+var router = new _navigo2.default('', true);
+var debug = __webpack_require__(0)('navigation');
+
+var totalBeats = null;
+
+function init(ctx) {
+  // init stuff
+  totalBeats = ctx.totalBeats;
+  updateGlobalActiveGist(0); // Static.getCurrentBeatNum()
+  $(document).keydown(handleKeys);
+
+  router.on('/beat/:beatNum', function (params) {
+    debug('nav-params', params);
+    goToBeat(params.beatNum);
+  }).on('/beat/:beatNum/modal', function (params) {
+    debug('nav-params', params, 'modal');
+  }).resolve();
+}
+
+function updateGlobalActiveGist(beatNum) {
+  // Set classes for active gist
+  var $body = $(document.body);
+
+  $('.gist-beat').each(function (gistIndex) {
+    if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
+      $body.removeClass('gist-beat-' + gistIndex + '-active');
+    }
+
+    if (beatNum === gistIndex) {
+      $body.addClass('gist-beat-' + gistIndex + '-active');
+    }
+
+    if ($body.hasClass('gist-beat-last-active')) {
+      $body.removeClass('gist-beat-last-active');
+    }
+
+    if ($('.gist-beat.last').hasClass('active')) {
+      $body.addClass('gist-beat-last-active');
+    }
+  });
+}
+
+function goToBeat(beatNum) {
+  debug('goToBeat:', beatNum);
+  // set active class on current beat
+  $('.gist-beat').removeClass('active');
+  var $beat = $('#gist-beat-' + beatNum);
+  $beat.addClass('active');
+
+  // show current beat
+  $('.gist-beat').hide();
+  $beat.show();
+
+  updateGlobalActiveGist(+beatNum);
+  updateProgressBar(+beatNum);
+  updateCta(+beatNum);
+  _browserModal2.default.close(beatNum); // close Modal if user clicks browser BACK
+}
+
+function updateProgressBar(beatNum) {
+  for (var i = 0; i < totalBeats; i++) {
+    if (i > beatNum) {
+      // debug('opacity 1', i)
+      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1);
+    } else {
+      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 0);
+    }
+  }
+
+  // hide progress-bar on last beat before fin
+  if (+beatNum === totalBeats) {
+    $('#gist-progress').hide();
+  } else {
+    $('#gist-progress').show();
+  }
+}
+
+function handleKeys(e) {
+  if (!e.key) {
+    return;
+  }
+
+  var $thisBeat = _static2.default.getCurrentBeat();
+  var beatNum = $thisBeat.data('origid');
+
+  switch (e.key) {
+    case 'ArrowLeft':
+      _events2.default.prevBeat(beatNum, $thisBeat);
+      break;
+    case 'ArrowRight':
+      _events2.default.nextBeat(beatNum, $thisBeat);
+      break;
+    default:
+      return; // exit this handler for other keys
+  }
+  e.preventDefault(); // prevent the default action (scroll / move caret)
+}
+
+function updateCta(beatNum) {
+  var currentBeat = _static2.default.getCurrentBeat();
+  var ctaText = $(currentBeat).data('cta-text');
+
+  if (ctaText) {
+    $('#gist-view-story').text(ctaText);
+  }
+}
+
+function navigateToBeat(beatNum, limit) {
+  var _limit = limit || totalBeats;
+  debug('nav', beatNum, _limit);
+  if (beatNum >= 0 && beatNum <= _limit) {
+    router.navigate('/beat/' + beatNum);
+  }
+}
+
+exports.default = { init: init, navigateToBeat: navigateToBeat, router: router };
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _static = __webpack_require__(1);
+
+var _static2 = _interopRequireDefault(_static);
+
+var _events = __webpack_require__(4);
+
+var _events2 = _interopRequireDefault(_events);
+
+var _navigation = __webpack_require__(2);
 
 var _navigation2 = _interopRequireDefault(_navigation);
 
@@ -588,7 +735,7 @@ StoryGist.prototype.init = function () {
 exports.default = StoryGist;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -602,11 +749,11 @@ var _static = __webpack_require__(1);
 
 var _static2 = _interopRequireDefault(_static);
 
-var _navigation = __webpack_require__(4);
+var _navigation = __webpack_require__(2);
 
 var _navigation2 = _interopRequireDefault(_navigation);
 
-var _browserModal = __webpack_require__(11);
+var _browserModal = __webpack_require__(5);
 
 var _browserModal2 = _interopRequireDefault(_browserModal);
 
@@ -883,7 +1030,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -893,149 +1040,69 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _navigo = __webpack_require__(10);
-
-var _navigo2 = _interopRequireDefault(_navigo);
-
 var _static = __webpack_require__(1);
 
 var _static2 = _interopRequireDefault(_static);
 
-var _events = __webpack_require__(3);
+var _navigation = __webpack_require__(2);
 
-var _events2 = _interopRequireDefault(_events);
+var _navigation2 = _interopRequireDefault(_navigation);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var router = new _navigo2.default('', true); /* globals $ */
+/* globals $ */
+var $gistModalWrapper = $('.gist-modal-wrapper');
+var $gistModalClose = $('.gist-modal-close');
 
-var debug = __webpack_require__(0)('navigation');
-
-var totalBeats = null;
-
-function init(ctx) {
-  // init stuff
-  totalBeats = ctx.totalBeats;
-  updateGlobalActiveGist(0); // Static.getCurrentBeatNum()
-  $(document).keydown(handleKeys);
-
-  router.on('/beat/:beatNum', function (params) {
-    debug('nav-params', params);
-    goToBeat(params.beatNum);
-  }).resolve();
+function createIframe(src, beatNum) {
+  var html = '<iframe id="beat-modal-' + beatNum + '" src="' + src + '" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>';
+  $gistModalWrapper.append(html);
 }
 
-function updateGlobalActiveGist(beatNum) {
-  // Set classes for active gist
-  var $body = $(document.body);
-
-  $('.gist-beat').each(function (gistIndex) {
-    if ($body.hasClass('gist-beat-' + gistIndex + '-active')) {
-      $body.removeClass('gist-beat-' + gistIndex + '-active');
-    }
-
-    if (beatNum === gistIndex) {
-      $body.addClass('gist-beat-' + gistIndex + '-active');
-    }
-
-    if ($body.hasClass('gist-beat-last-active')) {
-      $body.removeClass('gist-beat-last-active');
-    }
-
-    if ($('.gist-beat.last').hasClass('active')) {
-      $body.addClass('gist-beat-last-active');
-    }
-  });
+function show(beatNum) {
+  $gistModalWrapper.addClass('is-active');
+  $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' });
+  $gistModalWrapper.show();
 }
 
-function goToBeat(beatNum) {
-  debug('goToBeat:', beatNum);
-  // set active class on current beat
-  $('.gist-beat').removeClass('active');
-  var $beat = $('#gist-beat-' + beatNum);
-  $beat.addClass('active');
-
-  // show current beat
-  $('.gist-beat').hide();
-  $beat.show();
-
-  updateGlobalActiveGist(+beatNum);
-  updateProgressBar(+beatNum);
-  updateCta(+beatNum);
+function close(beatNum) {
+  $gistModalWrapper.removeClass('is-active');
+  var $beatModal = $('#beat-modal-' + beatNum);
+  $beatModal.hide();
+  $beatModal.remove();
 }
 
-function updateProgressBar(beatNum) {
-  for (var i = 0; i < totalBeats; i++) {
-    if (i > beatNum) {
-      // debug('opacity 1', i)
-      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 1);
-    } else {
-      $('#gist-progress #gist-progress-beat-' + (i - 1)).css('opacity', 0);
-    }
+function launchModal(src, beatNum) {
+  var _beatNum = beatNum || _static2.default.currentBeatIndex;
+  var modalExists = $('#beat-modal-' + _beatNum).length;
+  if (!modalExists) {
+    createIframe(src, _beatNum);
   }
-
-  // hide progress-bar on last beat before fin
-  if (+beatNum === totalBeats) {
-    $('#gist-progress').hide();
-  } else {
-    $('#gist-progress').show();
-  }
+  show(_beatNum);
+  _navigation2.default.router.navigate('/beat/' + beatNum + '/modal');
 }
 
-function handleKeys(e) {
-  if (!e.key) {
-    return;
-  }
+// init stuff
+$gistModalClose.click(function (ev) {
+  close(_static2.default.getCurrentBeatNum());
+});
 
-  var $thisBeat = _static2.default.getCurrentBeat();
-  var beatNum = $thisBeat.data('origid');
-
-  switch (e.key) {
-    case 'ArrowLeft':
-      _events2.default.prevBeat(beatNum, $thisBeat);
-      break;
-    case 'ArrowRight':
-      _events2.default.nextBeat(beatNum, $thisBeat);
-      break;
-    default:
-      return; // exit this handler for other keys
-  }
-  e.preventDefault(); // prevent the default action (scroll / move caret)
-}
-
-function updateCta(beatNum) {
-  var currentBeat = _static2.default.getCurrentBeat();
-  var ctaText = $(currentBeat).data('cta-text');
-
-  if (ctaText) {
-    $('#gist-view-story').text(ctaText);
-  }
-}
-
-function navigateToBeat(beatNum, limit) {
-  var _limit = limit || totalBeats;
-  debug('nav', beatNum, _limit);
-  if (beatNum >= 0 && beatNum <= _limit) {
-    router.navigate('/beat/' + beatNum);
-  }
-}
-
-exports.default = { init: init, navigateToBeat: navigateToBeat };
+exports.default = { launchModal: launchModal, close: close };
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _plugin = __webpack_require__(6);
+var _plugin = __webpack_require__(7);
 
-__webpack_require__(2);
+__webpack_require__(3);
 (0, _plugin.init)();
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1046,7 +1113,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.init = init;
 
-var _init = __webpack_require__(2);
+var _init = __webpack_require__(3);
 
 var _init2 = _interopRequireDefault(_init);
 
@@ -1065,7 +1132,7 @@ function init() {
 } /* globals $ */
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -1255,7 +1322,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1271,7 +1338,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(9);
+exports.humanize = __webpack_require__(10);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -1463,7 +1530,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 /**
@@ -1621,7 +1688,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -2134,61 +2201,6 @@ return /******/ (function(modules) { // webpackBootstrap
 });
 ;
 //# sourceMappingURL=navigo.js.map
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _static = __webpack_require__(1);
-
-var _static2 = _interopRequireDefault(_static);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var $gistModalWrapper = $('.gist-modal-wrapper'); /* globals $ */
-
-var $gistModalClose = $('.gist-modal-close');
-
-function createIframe(src, beatNum) {
-  var html = '<iframe id="beat-modal-' + beatNum + '" src="' + src + '" frameborder="0" width="100%" scrolling="yes" allowtransparency="true"></iframe>';
-  $gistModalWrapper.append(html);
-}
-
-function show(beatNum) {
-  $gistModalWrapper.addClass('is-active');
-  $('#beat-modal-' + beatNum).show().css({ width: '100%', height: '100%' });
-  $gistModalWrapper.show();
-}
-
-function close(beatNum) {
-  $gistModalWrapper.removeClass('is-active');
-  var $beatModal = $('#beat-modal-' + beatNum);
-  $beatModal.hide();
-  $beatModal.remove();
-}
-
-function launchModal(src, beatNum) {
-  var _beatNum = beatNum || _static2.default.currentBeatIndex;
-  var modalExists = $('#beat-modal-' + _beatNum).length;
-  if (!modalExists) {
-    createIframe(src, _beatNum);
-  }
-  show(_beatNum);
-}
-
-// init stuff
-$gistModalClose.click(function (ev) {
-  close(_static2.default.getCurrentBeatNum());
-});
-
-exports.default = { launchModal: launchModal };
 
 /***/ }),
 /* 12 */
