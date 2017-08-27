@@ -77,7 +77,8 @@ body::after {
   text-indent: -10000px;
 }
 
-body.gist-active::after {
+body.gist-active::after,
+body.gist-inactive::after {
   display: none;
 }
 

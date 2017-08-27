@@ -212,6 +212,9 @@ StoryGist.prototype.init = function () {
     Events.init(self)
     initHammer('.gist-beat')
     Navigation.init(self)
+  } else {
+    $body.addClass('gist-inactive')
+    $html.addClass('gist-inactive')
   }
 }
 
