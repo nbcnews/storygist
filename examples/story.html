@@ -7,9 +7,26 @@
     <link href="https://vjs.zencdn.net/5.6.0/video-js.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.rawgit.com/ianrose/storysettings/ba670bd5/dist/assets/storysettings/styles/toolkit.css">
     <link rel="stylesheet" href="/build/storygist.css">
+    <style>
+      .banner {
+        background-color: #000;
+        color: #fff;
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 14px;
+        display: none;
+      }
+
+      @media (min-width: 1200px) {
+        .banner {
+          display: block;
+        }
+      }
+    </style>
   </head>
   <body>
     <main>
+      <div class="banner">StoryGist active at viewport less than 1200px</div>
       <article data-sset="story" class="story" itemscope itemtype="http://schema.org/NewsArticle">
         <header class="story-header" data-sset="story-header" data-sg>
           <div class="story-header__intro" data-sset="story-header-intro">
