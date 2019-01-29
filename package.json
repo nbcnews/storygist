@@ -69,7 +69,7 @@
     "webpack": "3.2.0"
   },
   "dependencies": {
-    "debug": "2.6.8",
+    "debug": "^3.0.0",
     "hammerjs": "2.0.8",
     "navigo": "5.2.0"
   }
